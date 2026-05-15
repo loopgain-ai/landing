@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LoopGain — Barkhausen stability monitor for AI agent loops</title>
+<meta name="description" content="Stop guessing max_iterations. LoopGain measures the loop gain Aβ of your agent loops in real time and stops them at the exact iteration the math says to." />
+<meta name="theme-color" content="#0A0B0D" />
+<meta property="og:title" content="LoopGain — Barkhausen stability monitor for AI agent loops" />
+<meta property="og:description" content="A real-time Aβ monitor for AI agent loops. Catch divergence the iteration it starts. Stop oscillating loops before they burn another dollar." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+
+<!-- ─── nav ──────────────────────────────────────────────────────────── -->
+<header class="nav" data-screen-label="nav">
+  <a class="nav-brand" href="#top" aria-label="LoopGain home">
+    <svg class="nav-mark" viewBox="0 0 128 128" width="26" height="26" aria-hidden="true">
+      <path d="M 102 65 A 38 38 0 1 0 26 65" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M 26 65 L 26 91.6 L 62.9 91.6" fill="none" stroke="var(--accent)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="75.4" cy="91.6" r="9" fill="none" stroke="var(--accent)" stroke-width="4"/>
+      <line x1="70.8" y1="87" x2="80" y2="96.2" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+      <line x1="70.8" y1="96.2" x2="80" y2="87" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <span class="nav-word"><span>Loop</span><span class="accent">Gain</span></span>
+    <span class="nav-version mono">v0.1.7</span>
+  </a>
+  <nav class="nav-links" aria-label="primary">
+    <a href="#bands">bands</a>
+    <a href="#install">install</a>
+    <a href="#dashboard">dashboard</a>
+    <a href="#pricing">pricing</a>
+    <a href="https://github.com/loopgain-ai" rel="noopener">github ↗</a>
+    <button class="nav-theme" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v2M8 12.5v2M3.7 3.7l1.4 1.4M10.9 10.9l1.4 1.4M1.5 8h2M12.5 8h2M3.7 12.3l1.4-1.4M10.9 5.1l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+    </button>
+    <a class="nav-cta" href="https://dashboard.loopgain.ai" rel="noopener">open dashboard →</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<!-- ─── hero ─────────────────────────────────────────────────────────── -->
+<section class="hero" data-screen-label="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow">
+        <span class="status-dot"></span>
+        <span>Apache-2.0 · adapters for LangGraph, CrewAI, AutoGen</span>
+      </div>
+      <h1>
+        Stop guessing<br/>
+        <span class="mono code-inline">max_iterations</span>.
+      </h1>
+      <p class="hero-sub">
+        Every agent in production ships with a number somebody made up. LoopGain replaces it with the
+        <em>loop gain&nbsp;Aβ</em> — a real-time Barkhausen-stability measurement — and tells you the
+        iteration to stop on. It's the math from 1921. We're applying it to the loop you wrote last week.
+      </p>
+
+      <div class="hero-actions">
+        <div class="copy-box" data-copy="pip install loopgain" role="button" tabindex="0">
+          <span class="copy-prompt mono">$</span>
+          <code class="mono">pip install loopgain</code>
+          <span class="copy-hint mono">copy</span>
+        </div>
+        <a class="btn btn-amber" href="https://dashboard.loopgain.ai" rel="noopener">
+          open dashboard
+          <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+
+      <div class="hero-meta mono">
+        <span><span class="hm-key">v</span> 0.1.7</span>
+        <span class="dot-sep"></span>
+        <span><span class="hm-key">py</span> ≥ 3.10</span>
+        <span class="dot-sep"></span>
+        <span><span class="hm-key">deps</span> 0</span>
+        <span class="dot-sep"></span>
+        <span><span class="hm-key">tests</span> 118 passing</span>
+      </div>
+    </div>
+
+    <!-- live convergence chart -->
+    <figure class="hero-chart" aria-label="A simulated agent loop converging across the five gain bands">
+      <div class="hero-chart-head">
+        <span class="mono label">loop · checkout-rewriter / iter 1–20</span>
+        <span class="mono band-readout" id="bandReadout">FAST_CONVERGE</span>
+      </div>
+      <div class="hero-chart-stage">
+        <!-- Five-band y-axis backdrop -->
+        <div class="band-rail" aria-hidden="true">
+          <div class="band band-div"  data-range="> 1.05"   data-name="DIVERGING"></div>
+          <div class="band band-osc"  data-range="0.95–1.05" data-name="OSCILLATING"></div>
+          <div class="band band-stall" data-range="0.85–0.95" data-name="STALLING"></div>
+          <div class="band band-conv" data-range="0.30–0.85" data-name="CONVERGING"></div>
+          <div class="band band-fast" data-range="< 0.30"    data-name="FAST_CONVERGE"></div>
+        </div>
+        <!-- Axis labels overlaid -->
+        <div class="band-labels mono" aria-hidden="true">
+          <span>DIVERGING<i>&gt; 1.05</i></span>
+          <span>OSCILLATING<i>0.95–1.05</i></span>
+          <span>STALLING<i>0.85–0.95</i></span>
+          <span>CONVERGING<i>0.30–0.85</i></span>
+          <span>FAST_CONVERGE<i>&lt; 0.30</i></span>
+        </div>
+        <!-- The line -->
+        <svg class="hero-chart-svg" viewBox="0 0 600 360" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="convFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--band-stall)" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="var(--band-fast)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- vertical gridlines (iterations) -->
+          <g class="grid">
+            <line x1="60"  y1="0" x2="60"  y2="360"/>
+            <line x1="120" y1="0" x2="120" y2="360"/>
+            <line x1="180" y1="0" x2="180" y2="360"/>
+            <line x1="240" y1="0" x2="240" y2="360"/>
+            <line x1="300" y1="0" x2="300" y2="360"/>
+            <line x1="360" y1="0" x2="360" y2="360"/>
+            <line x1="420" y1="0" x2="420" y2="360"/>
+            <line x1="480" y1="0" x2="480" y2="360"/>
+            <line x1="540" y1="0" x2="540" y2="360"/>
+          </g>
+          <!-- area under the line -->
+          <path id="chartArea" fill="url(#convFill)" d=""></path>
+          <!-- the line, rendered as N-1 per-band-colored segments -->
+          <g id="chartLine" fill="none" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></g>
+          <!-- moving head -->
+          <circle id="chartHead" r="5" fill="var(--accent)" cx="0" cy="0"/>
+          <circle id="chartHeadGlow" r="11" fill="var(--accent)" fill-opacity="0.18" cx="0" cy="0"/>
+          <!-- target line -->
+          <line x1="0" y1="320" x2="600" y2="320" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="592" y="316" text-anchor="end" font-family="var(--mono)" font-size="11" fill="var(--text-3)">target ε = 0.10</text>
+        </svg>
+      </div>
+      <figcaption class="hero-chart-foot mono">
+        <div class="hcf-cell">
+          <span class="label">iter</span>
+          <span class="num" id="iterNum">01</span>
+        </div>
+        <div class="hcf-cell">
+          <span class="label">Aβ_smoothed</span>
+          <span class="num" id="abNum">—</span>
+        </div>
+        <div class="hcf-cell">
+          <span class="label">ε</span>
+          <span class="num" id="epsNum">—</span>
+        </div>
+        <div class="hcf-cell">
+          <span class="label">eta</span>
+          <span class="num" id="etaNum">— iter</span>
+        </div>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ─── the problem ──────────────────────────────────────────────────── -->
+<section class="prob" id="problem" data-screen-label="problem">
+  <div class="section-head">
+    <span class="eyebrow mono">§01 · the problem</span>
+    <h2>Every agent in production is running on a guess.</h2>
+  </div>
+  <div class="prob-grid">
+    <div class="prob-copy">
+      <p>
+        Search any agent codebase for <code class="code-inline mono">max_iterations</code>. You'll find <code class="code-inline mono">5</code>.
+        Sometimes <code class="code-inline mono">10</code>. Nobody can defend the number, because no one has a principled way to pick it.
+      </p>
+      <p>
+        It's the universal pre-crash hack. It fires too early on a loop that was three iterations from converging, or too late on one that started diverging in iteration two — the model is now five rewrites deep into a hallucination and the bill is real.
+      </p>
+      <figure class="prob-quote">
+        <span class="prob-quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="prob-quote-text">we just set it to five and hope.</blockquote>
+        <figcaption class="prob-quote-by mono">— literally every team that ships an agent</figcaption>
+      </figure>
+    </div>
+    <div class="prob-stats">
+      <div class="ps-row">
+        <div class="ps-num num-mono">01</div>
+        <div class="ps-lab"><b>The loop hits the ceiling without converging.</b> Two iterations short of target. You ship iteration 5 and call it a feature.</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-num num-mono ps-num-osc">02</div>
+        <div class="ps-lab"><b>The loop is oscillating by iteration 3.</b> The reviser is undoing what it just wrote. Every later token is waste, and a fixed cap can&apos;t see it.</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-num num-mono ps-num-fast">03</div>
+        <div class="ps-lab"><b>The loop was about to converge — and got cut off.</b> One more iteration would have landed at target. The cap fired anyway.</div>
+      </div>
+      <p class="ps-foot mono">three failure modes a static cap can&apos;t tell apart · what Aβ tells you in one number</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── the five bands ────────────────────────────────────────────────── -->
+<section class="bands-sec" id="bands" data-screen-label="bands">
+  <div class="section-head">
+    <span class="eyebrow mono">§02 · the fix</span>
+    <h2>Five named bands. One number per iteration. A decision either way.</h2>
+    <p class="section-sub">
+      Each iteration produces an error signal. The ratio of consecutive errors is the loop gain&nbsp;<span class="mono code-inline">Aβ</span>.
+      Smooth it over a small window and you get a stability reading. Five bands. Two of them say "stop." Three say "keep going." No more guessing.
+    </p>
+  </div>
+
+  <div class="band-cards">
+
+    <article class="bc bc-fast">
+      <header class="bc-head">
+        <span class="bc-dot"></span>
+        <span class="bc-name mono">FAST_CONVERGE</span>
+      </header>
+      <div class="bc-range mono">Aβ &lt; 0.30</div>
+      <p class="bc-desc">Error is shrinking by more than 3× per iteration. The loop is smashing it; the only correct move is to stay out of the way.</p>
+      <div class="bc-spark" data-spark="fast" aria-hidden="true"></div>
+      <footer class="bc-foot mono"><span>→</span> KEEP GOING</footer>
+    </article>
+
+    <article class="bc bc-conv">
+      <header class="bc-head">
+        <span class="bc-dot"></span>
+        <span class="bc-name mono">CONVERGING</span>
+      </header>
+      <div class="bc-range mono">0.30 ≤ Aβ &lt; 0.85</div>
+      <p class="bc-desc">Healthy progress. Error contracts by a meaningful fraction every step. Most well-tuned agent loops live here.</p>
+      <div class="bc-spark" data-spark="conv" aria-hidden="true"></div>
+      <footer class="bc-foot mono"><span>→</span> KEEP GOING</footer>
+    </article>
+
+    <article class="bc bc-stall">
+      <header class="bc-head">
+        <span class="bc-dot"></span>
+        <span class="bc-name mono">STALLING</span>
+      </header>
+      <div class="bc-range mono">0.85 ≤ Aβ &lt; 0.95</div>
+      <p class="bc-desc">The loop is moving, barely. Each iteration is shaving fractions off the error. Almost always a sign you're at a plateau that won't break on its own.</p>
+      <div class="bc-spark" data-spark="stall" aria-hidden="true"></div>
+      <footer class="bc-foot mono"><span>⚠</span> WATCH</footer>
+    </article>
+
+    <article class="bc bc-osc">
+      <header class="bc-head">
+        <span class="bc-dot"></span>
+        <span class="bc-name mono">OSCILLATING</span>
+      </header>
+      <div class="bc-range mono">0.95 ≤ Aβ ≤ 1.05</div>
+      <p class="bc-desc">The model is undoing its own last revision. The next iteration is statistically guaranteed to be no better than two ago. <b>Rollback. Stop.</b></p>
+      <div class="bc-spark" data-spark="osc" aria-hidden="true"></div>
+      <footer class="bc-foot mono"><span>■</span> ROLLBACK · STOP</footer>
+    </article>
+
+    <article class="bc bc-div">
+      <header class="bc-head">
+        <span class="bc-dot"></span>
+        <span class="bc-name mono">DIVERGING</span>
+      </header>
+      <div class="bc-range mono">Aβ &gt; 1.05</div>
+      <p class="bc-desc">Each iteration is making the output strictly worse. The longer it runs, the more money you light on fire. <b>Rollback. Stop.</b></p>
+      <div class="bc-spark" data-spark="div" aria-hidden="true"></div>
+      <footer class="bc-foot mono"><span>■</span> ROLLBACK · STOP</footer>
+    </article>
+
+  </div>
+
+  <div class="bands-formula">
+    <div class="bf-eq mono" aria-label="loop gain formula">
+      <span class="bf-sym">Aβ<sub class="bf-sub">smooth</sub></span>
+      <span class="bf-eq-sign">=</span>
+      <span class="bf-smooth">EMA(</span>
+      <span class="bf-frac">
+        <span class="bf-num">‖<b>e</b><sub>n</sub>‖</span>
+        <span class="bf-den">‖<b>e</b><sub>n−1</sub>‖</span>
+      </span>
+      <span class="bf-smooth">,&nbsp;<b>w</b>=3&nbsp;)</span>
+    </div>
+    <p class="bf-note mono">
+      The whole library is a few hundred lines around this ratio. The result is a stop decision your model never had to make.
+    </p>
+  </div>
+</section>
+
+<!-- ─── install / code ────────────────────────────────────────────────── -->
+<section class="code-sec" id="install" data-screen-label="install">
+  <div class="section-head">
+    <span class="eyebrow mono">§03 · integration</span>
+    <h2>Three lines, then your loop knows when to stop.</h2>
+    <p class="section-sub">
+      The raw API is two methods: <code class="code-inline mono">observe()</code> and <code class="code-inline mono">should_continue()</code>. Drop them around the loop you already have.
+      Framework adapters wrap the same primitive — pick the one that matches your stack, or stay raw.
+    </p>
+  </div>
+
+  <div class="code-tabs" role="tablist" aria-label="Code examples">
+    <button class="ct-tab is-active" role="tab" data-tab="raw" aria-selected="true">Raw API</button>
+    <button class="ct-tab" role="tab" data-tab="langgraph">LangGraph</button>
+    <button class="ct-tab" role="tab" data-tab="crewai">CrewAI</button>
+    <button class="ct-tab" role="tab" data-tab="autogen">AutoGen</button>
+    <span class="ct-spacer"></span>
+    <button class="ct-copy mono" id="codeCopy" title="Copy snippet">copy</button>
+  </div>
+
+  <div class="code-panels">
+    <pre class="code-panel is-active mono" data-panel="raw"><code><span class="tk-com"># amber stripe = the lines you add. everything else is your existing loop.</span>
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span>
+<span class="tk-kw">while</span> lg.should_continue():
+    errors = verifier.verify(output)
+<span class="tk-add">    lg.observe(errors, output=output)</span>    output = reviser.revise(output, errors)
+
+result = lg.result
+<span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "max_iterations"</span>
+<span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span>
+<span class="tk-com"># lg.eta              → log(ε_target / ε) / log(Aβ_smooth) — iterations to ε (live)</span>
+<span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="langgraph"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[langgraph]'</span>
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> LangGraphAdapter</span>
+graph = build_verify_revise_graph().compile()
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = LangGraphAdapter(
+    lg=lg,
+    error_fn=<span class="tk-kw">lambda</span> update: len(update.get(<span class="tk-str">"verifier"</span>, {}).get(<span class="tk-str">"errors"</span>, [])),
+)</span><span class="tk-add">final_state = adapter.run(graph, {<span class="tk-str">"draft"</span>: initial})</span>
+<span class="tk-com"># adapter.stream() yields each step if you want the full trace.</span>
+<span class="tk-com"># adapter.arun() / adapter.astream() are the async counterparts.</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="crewai"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[crewai]'</span>
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> CrewAIAdapter</span>
+crew = Crew(agents=[writer_agent, verifier_agent], tasks=[task])
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = CrewAIAdapter(
+    lg=lg,
+    task_error_fn=<span class="tk-kw">lambda</span> task_output: count_failed_checks(task_output.raw),
+)</span><span class="tk-add"><span class="tk-kw">with</span> adapter:               <span class="tk-com"># installs callbacks; uninstalls on exit</span></span><span class="tk-add">    adapter.install(crew)</span>    result = crew.kickoff()
+
+<span class="tk-com"># Observations land on `lg.result` — same shape as the raw API.</span>
+<span class="tk-com"># Existing callbacks you had installed are chained, not clobbered.</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="autogen"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[autogen]'</span>
+<span class="tk-kw">from</span> autogen_agentchat.teams <span class="tk-kw">import</span> RoundRobinGroupChat
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> AutoGenAdapter</span>
+team = RoundRobinGroupChat(participants=[generator, verifier])
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = AutoGenAdapter(
+    lg=lg,
+    error_fn=<span class="tk-kw">lambda</span> msg: parse_verifier_score(msg.content),
+    observe_sources={<span class="tk-str">"verifier"</span>},      <span class="tk-com"># only verifier drives observe()</span>
+)</span><span class="tk-add">result = <span class="tk-kw">await</span> adapter.run(team, task=<span class="tk-str">"draft, verify, revise"</span>)</span>
+<span class="tk-com"># Legacy v0.2 ConversableAgent.initiate_chat is not supported.</span>
+</code></pre>
+  </div>
+</section>
+
+<!-- ─── what you get ─────────────────────────────────────────────────── -->
+<section class="feat-sec" data-screen-label="features">
+  <div class="section-head">
+    <span class="eyebrow mono">§04 · what you get</span>
+    <h2>A small library that does one thing precisely.</h2>
+  </div>
+  <div class="feat-grid">
+    <article class="feat">
+      <div class="feat-num mono">01</div>
+      <h3>Five-band decision engine</h3>
+      <p>One smoothed reading per iteration. Three bands say go, two bands say stop. The library never asks you to interpret a number — the band <em>is</em> the decision.</p>
+    </article>
+    <article class="feat">
+      <div class="feat-num mono">02</div>
+      <h3>Best-so-far buffer</h3>
+      <p>Every iteration's output is held in a ring buffer keyed by error. On rollback you don't get the latest draft — you get <span class="mono code-inline">argmin(E(n))</span>, the actually-best one the loop produced.</p>
+    </article>
+    <article class="feat">
+      <div class="feat-num mono">03</div>
+      <h3>Closed-form ETA</h3>
+      <p>If you're CONVERGING and the gain is stable, the number of iterations to your target ε is a logarithm, not a guess. <span class="mono code-inline">log(ε_t / ε) / log(Aβ)</span>. Displayed live.</p>
+    </article>
+    <article class="feat">
+      <div class="feat-num mono">04</div>
+      <h3>Framework adapters</h3>
+      <p>LangGraph conditional edge. CrewAI callback. AutoGen termination check. Raw <span class="mono code-inline">LoopGain</span> class if you have your own runner. All four wrap the same core.</p>
+    </article>
+    <article class="feat">
+      <div class="feat-num mono">05</div>
+      <h3>Opt-in telemetry</h3>
+      <p>Off by default. If you turn it on, we receive band transitions and gain readings — never your prompts or outputs. The contract is in the README and the receiver is open-source.</p>
+    </article>
+    <article class="feat">
+      <div class="feat-num mono">06</div>
+      <h3>Optional adapter installs</h3>
+      <p>The core wheel has zero runtime deps. Framework adapters are pip extras — <span class="mono code-inline">pip install 'loopgain[langgraph]'</span>, <span class="mono code-inline">[crewai]</span>, <span class="mono code-inline">[autogen]</span>, or <span class="mono code-inline">[all]</span>. Your service tree stays clean.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ─── dashboard ────────────────────────────────────────────────────── -->
+<section class="dash-sec" id="dashboard" data-screen-label="dashboard">
+  <div class="section-head">
+    <span class="eyebrow mono">§05 · hosted dashboard</span>
+    <h2>The same readings, on a screen built for an operations room.</h2>
+    <p class="section-sub">
+      Six panels over your real fleet. Loop Health Map, Convergence Profiles, Waste Report, Gain Margin Distribution, Rollback Log, ETA Accuracy. Alerts on band transitions. A live demo runs against synthetic traffic so you can poke at it without integrating first.
+    </p>
+  </div>
+
+  <div class="dash-mocks">
+
+    <!-- Loop Health Map mockup -->
+    <figure class="dm dm-health">
+      <header class="dm-head">
+        <span class="mono dm-name">Loop Health Map</span>
+        <span class="mono dm-meta">38 loops · demo</span>
+      </header>
+      <div class="dm-tilebox">
+        <!-- treemap-ish tiles -->
+        <div class="tile tf" style="--span:7;">checkout-rewriter<span class="tile-sub mono">12.4k · 0.42</span></div>
+        <div class="tile tc" style="--span:5;">sql-resolver<span class="tile-sub mono">8.1k · 0.61</span></div>
+        <div class="tile tc" style="--span:4;">spec-extractor<span class="tile-sub mono">3.9k · 0.58</span></div>
+        <div class="tile ts" style="--span:3;">draft-emailer<span class="tile-sub mono">1.2k · 0.91</span></div>
+        <div class="tile tf" style="--span:4;">faq-router<span class="tile-sub mono">6.4k · 0.18</span></div>
+        <div class="tile tc" style="--span:3;">copy-revise<span class="tile-sub mono">2.7k · 0.74</span></div>
+        <div class="tile td" style="--span:2;">incident-sum<span class="tile-sub mono">240 · 1.18</span></div>
+        <div class="tile to" style="--span:2;">memo-loop<span class="tile-sub mono">410 · 0.98</span></div>
+        <div class="tile tc" style="--span:3;">policy-rewriter<span class="tile-sub mono">2.0k · 0.68</span></div>
+        <div class="tile tf" style="--span:3;">prompt-debugger<span class="tile-sub mono">3.0k · 0.22</span></div>
+      </div>
+      <footer class="dm-foot mono">tile size = run volume · tile color = Aβ band</footer>
+    </figure>
+
+    <!-- Waste Report mockup -->
+    <figure class="dm dm-waste">
+      <header class="dm-head">
+        <span class="mono dm-name">Waste Report · 30d</span>
+        <span class="mono dm-meta">$3,847 saved · demo</span>
+      </header>
+      <div class="dm-waste-body">
+        <div class="ww-row">
+          <span class="mono ww-lab">caught DIVERGING</span>
+          <div class="ww-bar"><span class="ww-fill ww-div" style="--w:78%"></span></div>
+          <span class="mono ww-val">$2,981</span>
+        </div>
+        <div class="ww-row">
+          <span class="mono ww-lab">caught OSCILLATING</span>
+          <div class="ww-bar"><span class="ww-fill ww-osc" style="--w:42%"></span></div>
+          <span class="mono ww-val">$612</span>
+        </div>
+        <div class="ww-row">
+          <span class="mono ww-lab">rescued from cutoff</span>
+          <div class="ww-bar"><span class="ww-fill ww-fast" style="--w:18%"></span></div>
+          <span class="mono ww-val">$254</span>
+        </div>
+        <div class="ww-row ww-row-tot">
+          <span class="mono ww-lab">total saved</span>
+          <div class="ww-bar"></div>
+          <span class="mono ww-val ww-val-tot">$3,847</span>
+        </div>
+      </div>
+      <footer class="dm-foot mono">vs. fixed max_iterations=5 baseline · gpt-4-class pricing</footer>
+    </figure>
+
+    <!-- ETA Accuracy mockup -->
+    <figure class="dm dm-eta">
+      <header class="dm-head">
+        <span class="mono dm-name">ETA Accuracy</span>
+        <span class="mono dm-meta">±0.7 iter · demo</span>
+      </header>
+      <div class="dm-eta-body">
+        <svg viewBox="0 0 320 180" preserveAspectRatio="none" class="dm-eta-svg" aria-hidden="true">
+          <!-- y = x ideal line -->
+          <line x1="20" y1="160" x2="300" y2="20" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="3 3"/>
+          <!-- scatter dots -->
+          <g fill="var(--band-fast)" fill-opacity="0.9">
+            <circle cx="42"  cy="148" r="3"/>
+            <circle cx="58"  cy="138" r="3"/>
+            <circle cx="74"  cy="132" r="3"/>
+            <circle cx="92"  cy="120" r="3"/>
+          </g>
+          <g fill="var(--band-conv)" fill-opacity="0.9">
+            <circle cx="110" cy="112" r="3"/>
+            <circle cx="128" cy="100" r="3"/>
+            <circle cx="146" cy="92"  r="3"/>
+            <circle cx="164" cy="78"  r="3"/>
+            <circle cx="182" cy="72"  r="3"/>
+            <circle cx="200" cy="62"  r="3"/>
+            <circle cx="218" cy="55"  r="3"/>
+            <circle cx="236" cy="44"  r="3"/>
+          </g>
+          <g fill="var(--band-stall)" fill-opacity="0.9">
+            <circle cx="252" cy="40"  r="3"/>
+            <circle cx="266" cy="35"  r="3"/>
+            <circle cx="278" cy="30"  r="3"/>
+          </g>
+        </svg>
+        <div class="dm-eta-legend mono">
+          <span><i class="ld ld-fast"></i>fast</span>
+          <span><i class="ld ld-conv"></i>conv</span>
+          <span><i class="ld ld-stall"></i>stall</span>
+        </div>
+      </div>
+      <footer class="dm-foot mono">predicted iter · actual iter — closed-form log estimate</footer>
+    </figure>
+
+  </div>
+
+  <div class="dash-cta">
+    <a class="btn btn-amber" href="https://dashboard.loopgain.ai" rel="noopener">
+      view live demo
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+    </a>
+    <span class="dash-cta-note mono">demo runs against synthetic traffic. no auth, no signup.</span>
+  </div>
+</section>
+
+<!-- ─── pricing ──────────────────────────────────────────────────────── -->
+<section class="price-sec" id="pricing" data-screen-label="pricing">
+  <div class="section-head">
+    <span class="eyebrow mono">§06 · pricing</span>
+    <h2>Free if you self-host. Paid when you&apos;d rather not.</h2>
+    <p class="section-sub">
+      Apache-2.0 across the stack — library, receiver, dashboard. Self-host the whole thing if you want; the code is there. The Team and Enterprise tiers are what you buy when you&apos;d rather we run it: history, alerts, per-loop calibration, and the on-call pager.
+    </p>
+  </div>
+
+  <div class="price-cards">
+
+    <article class="pc">
+      <header class="pc-head">
+        <span class="mono pc-tag">tier · 01</span>
+        <h3>Open Source</h3>
+        <div class="pc-price"><span class="pc-amt mono">Free</span><span class="pc-per mono">forever · Apache-2.0</span></div>
+      </header>
+      <ul class="pc-list">
+        <li>Full <span class="mono">LoopGain</span> library — zero runtime deps</li>
+        <li>Framework adapters (LangGraph, CrewAI, AutoGen)</li>
+        <li>Best-so-far buffer + rollback</li>
+        <li>Closed-form ETA + first-prediction capture</li>
+        <li>Self-host telemetry receiver + dashboard</li>
+      </ul>
+      <div class="pc-cta">
+        <div class="copy-box copy-box-sm" data-copy="pip install loopgain" role="button" tabindex="0">
+          <span class="copy-prompt mono">$</span>
+          <code class="mono">pip install loopgain</code>
+          <span class="copy-hint mono">copy</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="pc pc-mid">
+      <header class="pc-head">
+        <span class="mono pc-tag">tier · 02</span>
+        <h3>Team</h3>
+        <div class="pc-price"><span class="pc-amt mono">$199</span><span class="pc-per mono">/ month · per workspace</span></div>
+      </header>
+      <ul class="pc-list">
+        <li>Everything in Open Source</li>
+        <li>Hosted dashboard — no infra, no auth, no patches</li>
+        <li>30-day run history, retained for you</li>
+        <li>Alerts delivered to Slack, email, or webhooks</li>
+        <li>Waste Report — dollar-accurate ROI for stakeholders</li>
+        <li>Per-iteration scrubber + share links</li>
+      </ul>
+      <div class="pc-cta">
+        <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
+        <p class="pc-cta-note mono">paid plans launching soon — <a href="mailto:hello@loopgain.ai?subject=Team-tier%20waitlist">join the waitlist</a></p>
+      </div>
+    </article>
+
+    <article class="pc">
+      <header class="pc-head">
+        <span class="mono pc-tag">tier · 03</span>
+        <h3>Enterprise</h3>
+        <div class="pc-price"><span class="pc-amt mono">$999</span><span class="pc-per mono">/ month · starts here</span></div>
+      </header>
+      <ul class="pc-list">
+        <li>Everything in Team</li>
+        <li>Unlimited history</li>
+        <li>Custom Aβ thresholds per loop type</li>
+        <li>Read &amp; ingest API</li>
+        <li>SSO (SAML / OIDC)</li>
+        <li>Audit log + evidence pack for SOC 2 prep</li>
+        <li>Dedicated support channel</li>
+      </ul>
+      <div class="pc-cta">
+        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=LoopGain%20Enterprise">email hello@loopgain.ai</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ─── why it works ─────────────────────────────────────────────────── -->
+<section class="why-sec" data-screen-label="why">
+  <div class="why-grid">
+    <div class="why-lineage">
+      <span class="eyebrow mono">§07 · why it works</span>
+      <div class="why-year mono">
+        <span class="wy-num">1921</span>
+        <span class="wy-name">Heinrich Barkhausen</span>
+        <span class="wy-where">Technische Hochschule Dresden</span>
+      </div>
+      <div class="why-arrow mono">↓</div>
+      <div class="why-year mono why-year-now">
+        <span class="wy-num">2026</span>
+        <span class="wy-name">LoopGain v0.1.7</span>
+        <span class="wy-where">your agent loop</span>
+      </div>
+    </div>
+    <div class="why-copy">
+      <h2>One hundred and five years of control theory, finally pointed at the right loop.</h2>
+      <p>
+        The Barkhausen criterion is the foundational stability result in feedback engineering. It says: if the loop gain is greater than one, your system oscillates or diverges. If it's less than one, it converges. Every amplifier, every PID controller, every closed-loop electronic circuit since 1921 has used this idea.
+      </p>
+      <p>
+        An LLM agent loop <em>is</em> a feedback loop. Output in, scored output out, fed back as the next input. The math doesn't care that the gain element is a transformer instead of a vacuum tube. Apply Barkhausen and you get the same answer you'd get in any other control system: this loop is stable, this one isn't, stop the unstable one before it costs you anything else.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ─── footer ───────────────────────────────────────────────────────── -->
+<footer class="foot" data-screen-label="footer">
+  <div class="foot-row">
+    <a class="foot-brand" href="#top" aria-label="LoopGain home">
+      <svg viewBox="0 0 128 128" width="20" height="20" aria-hidden="true">
+        <path d="M 102 65 A 38 38 0 1 0 26 65" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 26 65 L 26 91.6 L 62.9 91.6" fill="none" stroke="var(--accent)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="75.4" cy="91.6" r="9" fill="none" stroke="var(--accent)" stroke-width="4"/>
+        <line x1="70.8" y1="87" x2="80" y2="96.2" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="70.8" y1="96.2" x2="80" y2="87" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span><span>Loop</span><span class="accent">Gain</span></span>
+    </a>
+    <nav class="foot-links mono" aria-label="footer">
+      <a href="https://github.com/loopgain-ai" rel="noopener">github</a>
+      <a href="https://pypi.org/project/loopgain" rel="noopener">pypi</a>
+      <a href="https://dashboard.loopgain.ai" rel="noopener">dashboard</a>
+      <a href="mailto:hello@loopgain.ai">hello@loopgain.ai</a>
+    </nav>
+  </div>
+  <div class="foot-row foot-row-fine mono">
+    <span>© 2026 LoopGain · Apache-2.0</span>
+    <span class="dot-sep"></span>
+    <span>Barkhausen stability monitor for AI agent loops</span>
+  </div>
+</footer>
+
+<script src="landing.js"></script>
+</body>
+</html>
