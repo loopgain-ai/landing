@@ -113,13 +113,21 @@
   const CHART_W = 600, CHART_H = 360;
   const PADX = 30;
 
-  // Map an Aβ value to a y-coord in the chart, using band-rail flex weights.
-  // We anchor: ab=0 → bottom (y=360-pad), ab=1.20 → top.
+  // Map an Aβ value to a y-coord. Linear mapping from ab=0 (bottom) to
+  // ab=1.20 (top). Band-rail flex weights in CSS are sized to match the
+  // actual Aβ widths of each band, so the data line lands inside its
+  // colored stripe (e.g. ab=0.88 → STALL amber).
+  //
+  // Note: this is intentionally LINEAR for the landing's marketing
+  // chart, while the dashboard's Convergence Profiles panel uses log Y
+  // (because real fleet data spans orders of magnitude). The 12-point
+  // demo trajectory here doesn't have that spread, and log Y compressed
+  // STALL/OSC into unreadable slivers — see the deploy topology memo.
   function abToY(ab) {
     const top = 8, bot = CHART_H - 8;
     const ab_min = 0, ab_max = 1.20;
     const t = Math.min(1, Math.max(0, (ab - ab_min) / (ab_max - ab_min)));
-    return bot - t * (bot - top);  // small ab → near bottom (FAST_CONVERGE band)
+    return bot - t * (bot - top);
   }
   function idxToX(i) {
     return PADX + (i / (N - 1)) * (CHART_W - PADX * 2);

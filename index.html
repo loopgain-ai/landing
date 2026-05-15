@@ -134,9 +134,10 @@
           <!-- moving head -->
           <circle id="chartHead" r="5" fill="var(--accent)" cx="0" cy="0"/>
           <circle id="chartHeadGlow" r="11" fill="var(--accent)" fill-opacity="0.18" cx="0" cy="0"/>
-          <!-- target line -->
-          <line x1="0" y1="320" x2="600" y2="320" stroke="var(--text-3)" stroke-width="1" stroke-dasharray="3 3"/>
-          <text x="592" y="316" text-anchor="end" font-family="var(--mono)" font-size="11" fill="var(--text-3)">target ε = 0.10</text>
+          <!-- (Removed dashed "target ε = 0.10" line: the chart's y-axis is
+               Aβ_smoothed, not ε, so a ε-target line is geometric nonsense
+               here. The ETA cell still surfaces "at target" when the loop
+               converges below the internal target threshold.) -->
         </svg>
       </div>
       <figcaption class="hero-chart-foot mono">

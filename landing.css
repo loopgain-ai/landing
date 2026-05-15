@@ -411,16 +411,17 @@ section + section {
   opacity: 0.10;
 }
 [data-theme="light"] .band { opacity: 0.16; }
-/* Flex weights are the actual Aβ widths of each band (visible chart
-   range is 0..1.20). DIVERGING is 1.05→1.20 = 0.15, OSCILLATING and
-   STALLING are 0.10 each, CONVERGING is 0.55, FAST_CONVERGE is 0.30.
-   Scaled ×10 for legibility. This is what lets the line's linear
-   abToY mapping land inside the correct band's colored stripe. */
-.band-fast  { background: var(--band-fast); flex: 3; }
-.band-conv  { background: var(--band-conv); flex: 5.5; }
-.band-stall { background: var(--band-stall); flex: 1; }
-.band-osc   { background: var(--band-osc); flex: 1; }
-.band-div   { background: var(--band-div); flex: 1.5; }
+/* Flex weights are the actual Aβ widths of each band over the visible
+   chart range (Aβ 0..1.20). DIVERGING is 1.05→1.20 = 0.15, OSCILLATING
+   and STALLING are 0.10 each, CONVERGING is 0.55, FAST_CONVERGE is
+   0.30. Scaled ×10 for legibility. Matches the chart's linear abToY
+   in landing.js, so each band's colored stripe is the same height as
+   the y-range it represents. */
+.band-fast  { background: var(--band-fast);  flex: 3;   }
+.band-conv  { background: var(--band-conv);  flex: 5.5; }
+.band-stall { background: var(--band-stall); flex: 1;   }
+.band-osc   { background: var(--band-osc);   flex: 1;   }
+.band-div   { background: var(--band-div);   flex: 1.5; }
 .band-rail .band + .band { border-top: 1px dashed color-mix(in oklab, var(--text-3) 30%, transparent); }
 
 .band-labels {
@@ -445,10 +446,10 @@ section + section {
 /* Label flex weights mirror .band-rail above so each label sits inside
    its stripe. Don't change one without the other. */
 .band-labels span:nth-child(1) { color: var(--band-div);   flex: 1.5; }
-.band-labels span:nth-child(2) { color: var(--band-osc);   flex: 1; }
-.band-labels span:nth-child(3) { color: var(--band-stall); flex: 1; }
+.band-labels span:nth-child(2) { color: var(--band-osc);   flex: 1;   }
+.band-labels span:nth-child(3) { color: var(--band-stall); flex: 1;   }
 .band-labels span:nth-child(4) { color: var(--band-conv);  flex: 5.5; }
-.band-labels span:nth-child(5) { color: var(--band-fast);  flex: 3; }
+.band-labels span:nth-child(5) { color: var(--band-fast);  flex: 3;   }
 .band-labels i { color: var(--text-4); font-style: normal; font-weight: 500; opacity: 0.85; }
 [data-theme="light"] .band-labels i { color: var(--text-3); }
 
