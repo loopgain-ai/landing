@@ -250,9 +250,19 @@ section + section {
   position: relative;
 }
 .hero::before {
+  /* Full-bleed glow: the .hero section is centered inside a max-width
+     container, but the radial-gradient backgrounds should fade out at
+     the viewport edges, not get clipped at the content-area boundary.
+     left:50% + width:100vw + translateX(-50%) centers a viewport-wide
+     box on .hero's center (which == viewport center). body has
+     overflow-x: hidden so the extra width doesn't add a scrollbar. */
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
   background:
     radial-gradient(ellipse 60% 80% at 15% 0%, color-mix(in oklab, var(--accent) 6%, transparent) 0%, transparent 60%),
     radial-gradient(ellipse 50% 70% at 95% 30%, color-mix(in oklab, var(--band-fast) 4%, transparent) 0%, transparent 60%);
