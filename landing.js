@@ -311,6 +311,9 @@
         eta = '✓ at target';
       }
       etaNum.textContent = eta;
+      // Highlight the ETA cell when the loop is at target so the
+      // success state pops visually (styled via .is-at-target in CSS).
+      etaNum.classList.toggle('is-at-target', eta === '✓ at target');
 
       requestAnimationFrame(tick);
     }

@@ -487,7 +487,11 @@ section + section {
   font-weight: 500;
   letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
+  transition: color 200ms ease;
 }
+/* When the loop reaches its convergence target, flip the ETA cell's
+   number text to the CONVERGING band color so it pops visually. */
+.hcf-cell .num.is-at-target { color: var(--band-conv); }
 
 /* ───────────────── problem section ───────────────── */
 .prob-grid {
