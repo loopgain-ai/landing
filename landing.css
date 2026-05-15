@@ -467,12 +467,13 @@ section + section {
 
 .hero-chart-foot {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr 1fr 1.6fr;
   border-top: 1px solid var(--border);
 }
 .hcf-cell {
   padding: 10px 14px;
   display: flex; flex-direction: column; gap: 3px;
+  min-width: 0;
 }
 .hcf-cell + .hcf-cell { border-left: 1px solid var(--border); }
 .hcf-cell .label {
@@ -480,6 +481,7 @@ section + section {
   color: var(--text-3);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  overflow-wrap: anywhere;
 }
 .hcf-cell .num {
   font-size: 16px;

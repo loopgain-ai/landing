@@ -7,7 +7,7 @@
 <meta name="description" content="Stop guessing max_iterations. LoopGain measures the loop gain Aβ of your agent loops in real time and stops them at the exact iteration the math says to." />
 <meta name="theme-color" content="#0A0B0D" />
 <meta property="og:title" content="LoopGain — Barkhausen stability monitor for AI agent loops" />
-<meta property="og:description" content="A real-time Aβ monitor for AI agent loops. Catch divergence the iteration it starts. Stop oscillating loops before they burn another dollar." />
+<meta property="og:description" content="A real-time Aβ monitor for AI agent loops. Catch divergence within two iterations of onset. Stop oscillating loops before they burn another dollar." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -80,7 +80,7 @@
         <span class="dot-sep"></span>
         <span><span class="hm-key">deps</span> 0</span>
         <span class="dot-sep"></span>
-        <span><span class="hm-key">tests</span> 118 passing</span>
+        <span><span class="hm-key">tests</span> 119 passing</span>
       </div>
     </div>
 
@@ -208,7 +208,7 @@
     <h2>Five named bands. One number per iteration. A decision either way.</h2>
     <p class="section-sub">
       Each iteration produces an error signal. The ratio of consecutive errors is the loop gain&nbsp;<span class="mono code-inline">Aβ</span>.
-      Smooth it over a small window and you get a stability reading. Five bands. Two of them say "stop." Three say "keep going." No more guessing.
+      Smooth it over a small window and you get a stability reading. Five bands: two say keep going, two say stop, one says watch. The band itself is the decision.
     </p>
   </div>
 
@@ -220,7 +220,7 @@
         <span class="bc-name mono">FAST_CONVERGE</span>
       </header>
       <div class="bc-range mono">Aβ &lt; 0.30</div>
-      <p class="bc-desc">Error is shrinking by more than 3× per iteration. The loop is smashing it; the only correct move is to stay out of the way.</p>
+      <p class="bc-desc">Error is shrinking by more than 3× per iteration. The reviser is operating well inside its competence; the only correct move is to stay out of the way.</p>
       <div class="bc-spark" data-spark="fast" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>→</span> KEEP GOING</footer>
     </article>
@@ -242,7 +242,7 @@
         <span class="bc-name mono">STALLING</span>
       </header>
       <div class="bc-range mono">0.85 ≤ Aβ &lt; 0.95</div>
-      <p class="bc-desc">The loop is moving, barely. Each iteration is shaving fractions off the error. Almost always a sign you're at a plateau that won't break on its own.</p>
+      <p class="bc-desc">The loop is moving, barely — each iteration is shaving fractions off the error. The library keeps running; the dashboard flags it. Repeated STALLING in the same loop type usually means the reviser prompt has hit a plateau and needs tuning.</p>
       <div class="bc-spark" data-spark="stall" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>⚠</span> WATCH</footer>
     </article>
@@ -294,7 +294,7 @@
     <span class="eyebrow mono">§03 · integration</span>
     <h2>A few lines, then your loop knows when to stop.</h2>
     <p class="section-sub">
-      The raw API is two methods: <code class="code-inline mono">observe()</code> and <code class="code-inline mono">should_continue()</code>. Drop them around the loop you already have.
+      Two calls inside your loop: <code class="code-inline mono">should_continue()</code> to gate it, <code class="code-inline mono">observe()</code> to feed it the latest error. Read <code class="code-inline mono">lg.result</code> when it exits. That's the whole integration.
       Framework adapters wrap the same primitive — pick the one that matches your stack, or stay raw.
     </p>
   </div>
@@ -361,7 +361,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
 <section class="feat-sec" data-screen-label="features">
   <div class="section-head">
     <span class="eyebrow mono">§04 · what you get</span>
-    <h2>A small library that does one thing precisely.</h2>
+    <h2>A small library that does one thing precisely: replace <span class="mono code-inline">max_iterations</span> with a stop decision.</h2>
   </div>
   <div class="feat-grid">
     <article class="feat">
@@ -372,12 +372,12 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
     <article class="feat">
       <div class="feat-num mono">02</div>
       <h3>Best-so-far buffer</h3>
-      <p>Every iteration's output is held in a ring buffer keyed by error. On rollback you don't get the latest draft — you get <span class="mono code-inline">argmin(E(n))</span>, the actually-best one the loop produced.</p>
+      <p>Every iteration's output is held in a rolling buffer paired with its error score, with <span class="mono code-inline">argmin(E(n))</span> tracked. On rollback you don't get the latest draft — you get the actually-best one the loop produced.</p>
     </article>
     <article class="feat">
       <div class="feat-num mono">03</div>
       <h3>Closed-form ETA</h3>
-      <p>If you're CONVERGING and the gain is stable, the number of iterations to your target ε is a logarithm, not a guess. <span class="mono code-inline">log(ε_t / ε) / log(Aβ)</span>. Displayed live.</p>
+      <p>If you're CONVERGING and the gain is stable, the number of iterations to your target ε is a logarithm, not a guess. <span class="mono code-inline">log(ε_target / ε) / log(Aβ_smooth)</span>. Displayed live.</p>
     </article>
     <article class="feat">
       <div class="feat-num mono">04</div>
@@ -612,7 +612,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
     <div class="why-copy">
       <h2>One hundred and five years of control theory, finally pointed at the right loop.</h2>
       <p>
-        The Barkhausen criterion is the foundational stability result in feedback engineering. It says: if the loop gain is greater than one, your system oscillates or diverges. If it's less than one, it converges. Every amplifier, every PID controller, every closed-loop electronic circuit since 1921 has used this idea.
+        The Barkhausen criterion is the foundational stability result in feedback engineering. It says: if the loop gain is greater than one, your system oscillates or diverges. If it's less than one, it converges. Every amplifier, every closed-loop electronic system since has had to satisfy it.
       </p>
       <p>
         An LLM agent loop <em>is</em> a feedback loop. Output in, scored output out, fed back as the next input. The math doesn't care that the gain element is a transformer instead of a vacuum tube. Apply Barkhausen and you get the same answer you'd get in any other control system: this loop is stable, this one isn't, stop the unstable one before it costs you anything else.
