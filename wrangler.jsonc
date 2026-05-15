@@ -1,0 +1,16 @@
+{
+  // Cloudflare Worker config for the LoopGain landing page.
+  //
+  // Deployed as a Workers-with-static-assets project: no Worker script,
+  // just the directory of static files. `_headers` (security headers)
+  // and `_redirects` (none yet) are honored the same way Pages does.
+  //
+  // The .assetsignore file excludes repo-management files (README,
+  // LICENSE, .git, etc.) from being uploaded as servable assets.
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "loopgain-landing",
+  "compatibility_date": "2026-05-15",
+  "assets": {
+    "directory": "./"
+  }
+}

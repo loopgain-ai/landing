@@ -1,0 +1,12 @@
+# Files in the repo that should NOT be uploaded as servable static
+# assets. Gitignore-style patterns. _headers and _redirects are
+# intentionally NOT listed — Cloudflare reads them from the asset
+# directory as configuration, not as files to serve.
+README.md
+LICENSE
+.gitignore
+.gitattributes
+.github/
+wrangler.jsonc
+.assetsignore
+node_modules/
