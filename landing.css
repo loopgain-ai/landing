@@ -264,8 +264,8 @@ section + section {
   width: 100vw;
   transform: translateX(-50%);
   background:
-    radial-gradient(ellipse 60% 80% at 15% 0%, color-mix(in oklab, var(--accent) 6%, transparent) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 70% at 95% 30%, color-mix(in oklab, var(--band-fast) 4%, transparent) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 80% at 15% 0%, color-mix(in oklab, var(--accent) 14%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 70% at 95% 30%, color-mix(in oklab, var(--band-fast) 11%, transparent) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
 }

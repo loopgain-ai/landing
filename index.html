@@ -291,7 +291,7 @@
 <section class="code-sec" id="install" data-screen-label="install">
   <div class="section-head">
     <span class="eyebrow mono">§03 · integration</span>
-    <h2>Three lines, then your loop knows when to stop.</h2>
+    <h2>A few lines, then your loop knows when to stop.</h2>
     <p class="section-sub">
       The raw API is two methods: <code class="code-inline mono">observe()</code> and <code class="code-inline mono">should_continue()</code>. Drop them around the loop you already have.
       Framework adapters wrap the same primitive — pick the one that matches your stack, or stay raw.
@@ -308,20 +308,18 @@
   </div>
 
   <div class="code-panels">
-    <pre class="code-panel is-active mono" data-panel="raw"><code><span class="tk-com"># amber stripe = the lines you add. everything else is your existing loop.</span>
+    <pre class="code-panel is-active mono" data-panel="raw"><code><span class="tk-com"># amber stripe = the lines you add or change. everything else is your existing loop.</span>
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span>
-<span class="tk-kw">while</span> lg.should_continue():
-    errors = verifier.verify(output)
+<span class="tk-add"><span class="tk-kw">while</span> lg.should_continue():</span>    errors = verifier.verify(output)
 <span class="tk-add">    lg.observe(errors, output=output)</span>    output = reviser.revise(output, errors)
 
-result = lg.result
-<span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "max_iterations"</span>
+<span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "max_iterations"</span>
 <span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span>
 <span class="tk-com"># lg.eta              → log(ε_target / ε) / log(Aβ_smooth) — iterations to ε (live)</span>
 <span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
 </code></pre>
 
-    <pre class="code-panel mono" data-panel="langgraph"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[langgraph]'</span>
+    <pre class="code-panel mono" data-panel="langgraph"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[langgraph]'</span>
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> LangGraphAdapter</span>
 graph = build_verify_revise_graph().compile()
 <span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = LangGraphAdapter(
@@ -332,19 +330,19 @@ graph = build_verify_revise_graph().compile()
 <span class="tk-com"># adapter.arun() / adapter.astream() are the async counterparts.</span>
 </code></pre>
 
-    <pre class="code-panel mono" data-panel="crewai"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[crewai]'</span>
+    <pre class="code-panel mono" data-panel="crewai"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[crewai]'</span>
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> CrewAIAdapter</span>
 crew = Crew(agents=[writer_agent, verifier_agent], tasks=[task])
 <span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = CrewAIAdapter(
     lg=lg,
     task_error_fn=<span class="tk-kw">lambda</span> task_output: count_failed_checks(task_output.raw),
-)</span><span class="tk-add"><span class="tk-kw">with</span> adapter:               <span class="tk-com"># installs callbacks; uninstalls on exit</span></span><span class="tk-add">    adapter.install(crew)</span>    result = crew.kickoff()
+)</span><span class="tk-add"><span class="tk-kw">with</span> adapter:               <span class="tk-com"># installs callbacks; uninstalls on exit</span></span><span class="tk-add">    adapter.install(crew)</span><span class="tk-add">    result = crew.kickoff()</span>
 
 <span class="tk-com"># Observations land on `lg.result` — same shape as the raw API.</span>
 <span class="tk-com"># Existing callbacks you had installed are chained, not clobbered.</span>
 </code></pre>
 
-    <pre class="code-panel mono" data-panel="autogen"><code><span class="tk-com"># amber stripe = the lines you add. pip install 'loopgain[autogen]'</span>
+    <pre class="code-panel mono" data-panel="autogen"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[autogen]'</span>
 <span class="tk-kw">from</span> autogen_agentchat.teams <span class="tk-kw">import</span> RoundRobinGroupChat
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> AutoGenAdapter</span>
 team = RoundRobinGroupChat(participants=[generator, verifier])
