@@ -26,7 +26,7 @@
       <line x1="70.8" y1="96.2" x2="80" y2="87" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
     </svg>
     <span class="nav-word"><span>Loop</span><span class="accent">Gain</span></span>
-    <span class="nav-version mono">v0.1.7</span>
+    <span class="nav-version mono">v0.1.9</span>
   </a>
   <nav class="nav-links" aria-label="primary">
     <a href="#bands">bands</a>
@@ -74,13 +74,13 @@
       </div>
 
       <div class="hero-meta mono">
-        <span><span class="hm-key">v</span> 0.1.7</span>
+        <span><span class="hm-key">v</span> 0.1.9</span>
         <span class="dot-sep"></span>
         <span><span class="hm-key">py</span> ≥ 3.10</span>
         <span class="dot-sep"></span>
         <span><span class="hm-key">deps</span> 0</span>
         <span class="dot-sep"></span>
-        <span><span class="hm-key">tests</span> 119 passing</span>
+        <span><span class="hm-key">tests</span> 121 passing</span>
       </div>
     </div>
 
@@ -357,10 +357,72 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
   </div>
 </section>
 
+<!-- ─── see it in action ─────────────────────────────────────────────── -->
+<section class="proof-sec" id="examples" data-screen-label="proof">
+  <div class="section-head">
+    <span class="eyebrow mono">§04 · see it in action</span>
+    <h2>Seven runnable scripts. Real Claude. Measured savings.</h2>
+    <p class="section-sub">
+      The library ships with seven examples — each runs the same loop <em>twice</em>, once with the universal <span class="code-inline mono">max_iterations=N</span> hack and once with LoopGain, and prints the comparison. Two commands, real Anthropic API calls, the Saved number is what you actually pay.
+    </p>
+  </div>
+
+  <div class="proof-grid">
+    <div class="proof-cmd">
+      <p class="proof-step mono"><span class="proof-step-num">01</span> install with the examples extra</p>
+      <div class="copy-box" data-copy="pip install 'loopgain[examples]'" role="button" tabindex="0">
+        <span class="copy-prompt mono">$</span>
+        <code class="mono">pip install 'loopgain[examples]'</code>
+        <span class="copy-hint mono">copy</span>
+      </div>
+      <p class="proof-step mono"><span class="proof-step-num">02</span> run the diverging-refinement demo</p>
+      <div class="copy-box" data-copy="python examples/06_diverges.py" role="button" tabindex="0">
+        <span class="copy-prompt mono">$</span>
+        <code class="mono">python examples/06_diverges.py</code>
+        <span class="copy-hint mono">copy</span>
+      </div>
+      <p class="proof-desc">
+        Example 06 asks Claude to make a passage shorter, repeatedly. Each pass strips facts — the loop diverges by construction. The baseline keeps the last (worst) iteration. LoopGain catches <span class="mono code-inline">DIVERGING</span> on iter 2 and rolls back. <em>Better output and less spend.</em>
+      </p>
+    </div>
+
+    <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 8 ───</span>
+  iter  1  error=2  (41w, missing 2/8)
+  iter  2  error=3  (37w, missing 3/8)
+  iter  3  error=3  (35w, missing 3/8)
+  …
+  iter  8  error=3  (36w, missing 3/8)
+  → kept LAST output. final error=3
+
+<span class="tk-com">─── WITH LOOPGAIN, max_iterations=8 ───</span>
+  iter  1  error=1.00  state=<span class="tk-good">FAST_CONVERGE</span>
+  iter  2  error=2.00  state=<span class="tk-bad">DIVERGING</span>
+
+┌─ COMPARISON ─────────────────────────────────
+│  Baseline:  8 iters, final error = 3, kept LAST
+│  LoopGain:  2 iters, best  error = 1,
+│             kept best-so-far (iter 1) — diverged
+│  Saved:     6 iterations (<span class="tk-good">75%</span>) of API spend
+└──────────────────────────────────────────────
+
+best_index:     0  (terminal iter was 1)
+rolled_back:    <span class="tk-good">True</span>  ← rescued an earlier iter
+
+telemetry sent: <span class="tk-good">True</span>
+</code></pre>
+  </div>
+
+  <p class="proof-foot mono">
+    <a href="https://github.com/loopgain-ai/loopgain/tree/main/examples" rel="noopener">All seven examples →</a>
+    <span class="dot-sep"></span>
+    covers all five bands: <span class="mono">FAST_CONVERGE · CONVERGING · STALLING · OSCILLATING · DIVERGING</span>
+  </p>
+</section>
+
 <!-- ─── what you get ─────────────────────────────────────────────────── -->
 <section class="feat-sec" data-screen-label="features">
   <div class="section-head">
-    <span class="eyebrow mono">§04 · what you get</span>
+    <span class="eyebrow mono">§05 · what you get</span>
     <h2>A small library that does one thing precisely: replace <span class="mono code-inline">max_iterations</span> with a stop decision.</h2>
   </div>
   <div class="feat-grid">
@@ -400,7 +462,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
 <!-- ─── dashboard ────────────────────────────────────────────────────── -->
 <section class="dash-sec" id="dashboard" data-screen-label="dashboard">
   <div class="section-head">
-    <span class="eyebrow mono">§05 · hosted dashboard</span>
+    <span class="eyebrow mono">§06 · hosted dashboard</span>
     <h2>The same readings, on a screen built for an operations room.</h2>
     <p class="section-sub">
       Six panels over your real fleet. Loop Health Map, Convergence Profiles, Waste Report, Gain Margin Distribution, Rollback Log, ETA Accuracy. Alerts on band transitions. A live demo runs against synthetic traffic so you can poke at it without integrating first.
@@ -523,7 +585,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
 <!-- ─── pricing ──────────────────────────────────────────────────────── -->
 <section class="price-sec" id="pricing" data-screen-label="pricing">
   <div class="section-head">
-    <span class="eyebrow mono">§06 · pricing</span>
+    <span class="eyebrow mono">§07 · pricing</span>
     <h2>Free if you self-host. Paid when you&apos;d rather not.</h2>
     <p class="section-sub">
       Apache-2.0 across the stack — library, receiver, dashboard. Self-host the whole thing if you want; the code is there. The Team and Enterprise tiers are what you buy when you&apos;d rather we run it: history, alerts, per-loop calibration, and the on-call pager.
@@ -601,7 +663,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
 <section class="why-sec" data-screen-label="why">
   <div class="why-grid">
     <div class="why-lineage">
-      <span class="eyebrow mono">§07 · why it works</span>
+      <span class="eyebrow mono">§08 · why it works</span>
       <div class="why-year mono">
         <span class="wy-num">1921</span>
         <span class="wy-name">Heinrich Barkhausen</span>
@@ -610,7 +672,7 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
       <div class="why-arrow mono">↓</div>
       <div class="why-year mono why-year-now">
         <span class="wy-num">2026</span>
-        <span class="wy-name">LoopGain v0.1.7</span>
+        <span class="wy-name">LoopGain v0.1.9</span>
         <span class="wy-where">your agent loop</span>
       </div>
     </div>

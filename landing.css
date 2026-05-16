@@ -804,6 +804,32 @@ section + section {
 .ct-copy.copied { color: var(--band-fast); border-color: color-mix(in oklab, var(--band-fast) 40%, var(--border)); }
 .ct-copy.copied::after { content: ' ✓'; }
 
+/* Mobile: tab strip scrolls horizontally inside itself; COPY stays pinned
+   to the right of the visible scroll viewport via position: sticky so the
+   user can read tab names that slide underneath it. Without this, the four
+   tab labels + COPY overflow a 375px viewport and COPY would either hang
+   off the page or scroll out with the tabs. */
+@media (max-width: 720px) {
+  .code-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;        /* Firefox: hide the horizontal scrollbar */
+  }
+  .code-tabs::-webkit-scrollbar { display: none; }   /* WebKit: hide it too */
+  .ct-tab { flex-shrink: 0; }
+  .ct-spacer { display: none; }
+  .ct-copy {
+    position: sticky;
+    right: 0;                     /* pin to right edge of scroll viewport */
+    margin-left: auto;            /* push to end of flex line when not scrolled */
+    flex-shrink: 0;
+    background: var(--surf-1);    /* covers tabs sliding underneath */
+    /* extend the background to the strip edge so no tab pokes through */
+    box-shadow: -8px 0 8px -4px var(--surf-1);
+    z-index: 1;
+  }
+}
+
 .code-panels {
   background: var(--bg-1);
   border: 1px solid var(--border);
@@ -835,6 +861,96 @@ section + section {
   border-left: 2px solid var(--accent);
   background: color-mix(in oklab, var(--accent) 10%, transparent);
 }
+
+/* ───────────────── proof / examples ───────────────── */
+.proof-grid {
+  display: grid;
+  /* minmax(0, ...) prevents the pre's intrinsic min width from blowing
+     out the column track on narrow viewports. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 28px;
+  align-items: stretch;
+}
+@media (max-width: 920px) {
+  .proof-grid { grid-template-columns: minmax(0, 1fr); }
+}
+.proof-cmd {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+/* Override the hero's inline-flex copy-box so these stretch to the column
+   width and the COPY button stays anchored on the right. The command text
+   in the middle scrolls horizontally inside the box if it doesn't fit. */
+.proof-cmd .copy-box {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+.proof-cmd .copy-box code {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.proof-cmd .copy-box .copy-prompt,
+.proof-cmd .copy-box .copy-hint {
+  flex-shrink: 0;
+}
+.proof-step {
+  margin: 4px 0 -2px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  text-transform: uppercase;
+}
+.proof-step-num {
+  display: inline-block;
+  min-width: 22px;
+  margin-right: 8px;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.proof-desc {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.proof-desc em { color: var(--text-1); font-style: normal; font-weight: 600; }
+.proof-output {
+  margin: 0;
+  padding: 22px 24px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-1);
+  overflow-x: auto;
+  white-space: pre;
+  min-width: 0;            /* let grid item shrink so overflow-x can scroll inside */
+  font-feature-settings: 'zero', 'ss01';
+}
+.proof-output .tk-com  { color: var(--text-3); }
+.proof-output .tk-good { color: var(--band-conv); font-weight: 600; }
+.proof-output .tk-bad  { color: var(--band-div, #d97757); font-weight: 600; }
+.proof-foot {
+  margin: 22px 0 0;
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+}
+.proof-foot a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.proof-foot a:hover { text-decoration: underline; }
 
 /* ───────────────── features ───────────────── */
 .feat-grid {
