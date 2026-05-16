@@ -1005,13 +1005,16 @@ section + section {
 .ww-fill {
   position: absolute; left: 0; top: 0; bottom: 0;
   width: var(--w);
+  min-width: 6px;
   border-radius: 2px;
   animation: ww-grow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 @keyframes ww-grow { from { width: 0; } to { width: var(--w); } }
-.ww-div  { background: var(--band-div); }
-.ww-osc  { background: var(--band-osc); }
-.ww-fast { background: var(--band-fast); }
+.ww-conv  { background: var(--band-conv); }
+.ww-div   { background: var(--band-div); }
+.ww-osc   { background: var(--band-osc); }
+.ww-stall { background: var(--band-stall); }
+.ww-fast  { background: var(--band-fast); }
 .ww-val { text-align: right; color: var(--text-1); font-weight: 500; }
 .ww-row-tot {
   padding-top: 10px;

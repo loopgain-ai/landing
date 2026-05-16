@@ -435,31 +435,36 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
     <figure class="dm dm-waste">
       <header class="dm-head">
         <span class="mono dm-name">Waste Report · 30d</span>
-        <span class="mono dm-meta">$3,847 saved · demo</span>
+        <span class="mono dm-meta">$2,135 saved · demo</span>
       </header>
       <div class="dm-waste-body">
         <div class="ww-row">
-          <span class="mono ww-lab">caught DIVERGING</span>
-          <div class="ww-bar"><span class="ww-fill ww-div" style="--w:78%"></span></div>
-          <span class="mono ww-val">$2,981</span>
+          <span class="mono ww-lab">converged</span>
+          <div class="ww-bar"><span class="ww-fill ww-conv" style="--w:86.5%"></span></div>
+          <span class="mono ww-val">$1,847</span>
         </div>
         <div class="ww-row">
-          <span class="mono ww-lab">caught OSCILLATING</span>
-          <div class="ww-bar"><span class="ww-fill ww-osc" style="--w:42%"></span></div>
-          <span class="mono ww-val">$612</span>
+          <span class="mono ww-lab">diverged</span>
+          <div class="ww-bar"><span class="ww-fill ww-div" style="--w:8%"></span></div>
+          <span class="mono ww-val">$170</span>
         </div>
         <div class="ww-row">
-          <span class="mono ww-lab">rescued from cutoff</span>
-          <div class="ww-bar"><span class="ww-fill ww-fast" style="--w:18%"></span></div>
-          <span class="mono ww-val">$254</span>
+          <span class="mono ww-lab">oscillating</span>
+          <div class="ww-bar"><span class="ww-fill ww-osc" style="--w:4.5%"></span></div>
+          <span class="mono ww-val">$98</span>
+        </div>
+        <div class="ww-row">
+          <span class="mono ww-lab">max_iterations</span>
+          <div class="ww-bar"><span class="ww-fill ww-stall" style="--w:1%"></span></div>
+          <span class="mono ww-val">$21</span>
         </div>
         <div class="ww-row ww-row-tot">
           <span class="mono ww-lab">total saved</span>
           <div class="ww-bar"></div>
-          <span class="mono ww-val ww-val-tot">$3,847</span>
+          <span class="mono ww-val ww-val-tot">$2,135</span>
         </div>
       </div>
-      <footer class="dm-foot mono">vs. fixed max_iterations=5 baseline · gpt-4-class pricing</footer>
+      <footer class="dm-foot mono">vs. fixed max_iterations=20 baseline · $0.08 per iter</footer>
     </figure>
 
     <!-- ETA Accuracy mockup -->
