@@ -49,7 +49,7 @@
     <div class="hero-copy">
       <div class="eyebrow">
         <span class="status-dot"></span>
-        <span>Apache-2.0 · adapters for LangGraph, CrewAI, AutoGen</span>
+        <span>Apache-2.0 · adapters for LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK</span>
       </div>
       <h1>
         Stop guessing<br/>
@@ -304,6 +304,9 @@
     <button class="ct-tab" role="tab" data-tab="langgraph">LangGraph</button>
     <button class="ct-tab" role="tab" data-tab="crewai">CrewAI</button>
     <button class="ct-tab" role="tab" data-tab="autogen">AutoGen</button>
+    <button class="ct-tab" role="tab" data-tab="langchain">LangChain</button>
+    <button class="ct-tab" role="tab" data-tab="openai-agents">OpenAI Agents</button>
+    <button class="ct-tab" role="tab" data-tab="claude-agent-sdk">Claude Agent SDK</button>
     <span class="ct-spacer"></span>
     <button class="ct-copy mono" id="codeCopy" title="Copy snippet">copy</button>
   </div>
@@ -353,6 +356,47 @@ team = RoundRobinGroupChat(participants=[generator, verifier])
     observe_sources={<span class="tk-str">"verifier"</span>},      <span class="tk-com"># only verifier drives observe()</span>
 )</span><span class="tk-add">result = <span class="tk-kw">await</span> adapter.run(team, task=<span class="tk-str">"draft, verify, revise"</span>)</span>
 <span class="tk-com"># Legacy v0.2 ConversableAgent.initiate_chat is not supported.</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="langchain"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[langchain]'</span>
+<span class="tk-kw">from</span> langchain.agents <span class="tk-kw">import</span> create_agent
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> LangChainAdapter</span>
+agent = create_agent(model=<span class="tk-str">"gpt-5-nano"</span>, tools=[get_weather])
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.0</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = LangChainAdapter(
+    lg=lg,
+    error_fn=<span class="tk-kw">lambda</span> chunk: count_unresolved_tool_calls(chunk),
+)</span><span class="tk-add">final = adapter.run(
+    agent,
+    {<span class="tk-str">"messages"</span>: [{<span class="tk-str">"role"</span>: <span class="tk-str">"user"</span>, <span class="tk-str">"content"</span>: prompt}]},
+    stream_mode=<span class="tk-str">"updates"</span>, version=<span class="tk-str">"v2"</span>,
+)</span>
+<span class="tk-com"># Duck-typed: also drives the legacy AgentExecutor.stream() shape.</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="openai-agents"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[openai-agents]'</span>
+<span class="tk-kw">from</span> agents <span class="tk-kw">import</span> Agent
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> OpenAIAgentsAdapter</span>
+agent = Agent(name=<span class="tk-str">"Reviser"</span>, instructions=<span class="tk-str">"..."</span>, tools=[verify_tool])
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.0</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = OpenAIAgentsAdapter(
+    lg=lg,
+    error_fn=<span class="tk-kw">lambda</span> event: parse_verifier_failures(event),
+)</span><span class="tk-add">result = <span class="tk-kw">await</span> adapter.run(agent, input=<span class="tk-str">"Fix the bug."</span>)</span>
+<span class="tk-com"># Defaults to run_item_stream_event; cancels the stream at terminal state.</span>
+<span class="tk-com"># adapter.run_sync(...) wraps the async path with asyncio.run.</span>
+</code></pre>
+
+    <pre class="code-panel mono" data-panel="claude-agent-sdk"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[claude-agent-sdk]'</span>
+<span class="tk-kw">from</span> claude_agent_sdk <span class="tk-kw">import</span> ClaudeAgentOptions, TextBlock
+<span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> ClaudeAgentSDKAdapter</span>
+<span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.0</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = ClaudeAgentSDKAdapter(
+    lg=lg,
+    error_fn=<span class="tk-kw">lambda</span> msg: count_fail_markers(msg),
+)</span><span class="tk-add">result = <span class="tk-kw">await</span> adapter.run(
+    prompt=<span class="tk-str">"Write a haiku about feedback loops."</span>,
+    options=ClaudeAgentOptions(system_prompt=<span class="tk-str">"Self-verify each draft."</span>),
+)</span>
+<span class="tk-com"># Default filter: only AssistantMessage reaches error_fn.</span>
+<span class="tk-com"># Also accepts message_iterator=client.receive_messages() for ClaudeSDKClient.</span>
 </code></pre>
   </div>
 </section>
@@ -444,7 +488,7 @@ telemetry sent: <span class="tk-good">True</span>
     <article class="feat">
       <div class="feat-num mono">04</div>
       <h3>Framework adapters</h3>
-      <p>LangGraph conditional edge. CrewAI callback. AutoGen termination check. Raw <span class="mono code-inline">LoopGain</span> class if you have your own runner. All four wrap the same core.</p>
+      <p>LangGraph conditional edge. CrewAI callback. AutoGen termination check. LangChain <span class="mono code-inline">create_agent</span> / <span class="mono code-inline">AgentExecutor</span> stream. OpenAI Agents SDK <span class="mono code-inline">stream_events()</span>. Claude Agent SDK <span class="mono code-inline">query()</span>. Raw <span class="mono code-inline">LoopGain</span> class if you have your own runner. All seven wrap the same core.</p>
     </article>
     <article class="feat">
       <div class="feat-num mono">05</div>
@@ -454,7 +498,7 @@ telemetry sent: <span class="tk-good">True</span>
     <article class="feat">
       <div class="feat-num mono">06</div>
       <h3>Optional adapter installs</h3>
-      <p>The core wheel has zero runtime deps. Framework adapters are pip extras — <span class="mono code-inline">pip install 'loopgain[langgraph]'</span>, <span class="mono code-inline">[crewai]</span>, <span class="mono code-inline">[autogen]</span>, or <span class="mono code-inline">[all]</span>. Your service tree stays clean.</p>
+      <p>The core wheel has zero runtime deps. Framework adapters are pip extras — <span class="mono code-inline">pip install 'loopgain[langgraph]'</span>, <span class="mono code-inline">[crewai]</span>, <span class="mono code-inline">[autogen]</span>, <span class="mono code-inline">[langchain]</span>, <span class="mono code-inline">[openai-agents]</span>, <span class="mono code-inline">[claude-agent-sdk]</span>, or <span class="mono code-inline">[all]</span>. Your service tree stays clean.</p>
     </article>
   </div>
 </section>
@@ -602,7 +646,7 @@ telemetry sent: <span class="tk-good">True</span>
       </header>
       <ul class="pc-list">
         <li>Full <span class="mono">LoopGain</span> library — zero runtime deps</li>
-        <li>Framework adapters (LangGraph, CrewAI, AutoGen)</li>
+        <li>Framework adapters (LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK)</li>
         <li>Best-so-far buffer + rollback</li>
         <li>Closed-form ETA + first-prediction capture</li>
         <li>Self-host telemetry receiver + dashboard</li>
