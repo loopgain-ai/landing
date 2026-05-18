@@ -314,8 +314,8 @@
   <div class="code-panels">
     <pre class="code-panel is-active mono" data-panel="raw"><code><span class="tk-com"># amber stripe = the lines you add or change. everything else is your existing loop.</span>
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.1</span>, max_iterations=<span class="tk-num">20</span>)</span>
-<span class="tk-add"><span class="tk-kw">while</span> lg.should_continue():</span>    errors = verifier.verify(output)
-<span class="tk-add">    lg.observe(errors, output=output)</span>    output = reviser.revise(output, errors)
+<span class="tk-add"><span class="tk-kw">while</span> lg.should_continue():</span>    errors = your_verifier(output)        <span class="tk-com"># your existing code</span>
+<span class="tk-add">    lg.observe(errors, output=output)</span>    output = your_refiner(output, errors)  <span class="tk-com"># your existing code</span>
 
 <span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "max_iterations"</span>
 <span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span>
