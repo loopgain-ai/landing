@@ -91,19 +91,19 @@
              the trajectory classifier that decides the loop-level state
              reads four features off the full error series. -->
         <div class="band-rail" aria-hidden="true">
-          <div class="band band-div"  data-range="growing"   data-name="DIVERGING"></div>
+          <div class="band band-div"  data-range="runaway"   data-name="DIVERGING"></div>
           <div class="band band-osc"  data-range="thrashing" data-name="OSCILLATING"></div>
           <div class="band band-stall" data-range="flat"     data-name="STALLING"></div>
-          <div class="band band-conv" data-range="shrinking" data-name="CONVERGING"></div>
-          <div class="band band-fast" data-range="collapsed" data-name="FAST_CONVERGE"></div>
+          <div class="band band-conv" data-range="settling" data-name="CONVERGING"></div>
+          <div class="band band-fast" data-range="resolved" data-name="FAST_CONVERGE"></div>
         </div>
         <!-- Axis labels overlaid -->
         <div class="band-labels mono" aria-hidden="true">
-          <span>DIVERGING<i>growing</i></span>
+          <span>DIVERGING<i>runaway</i></span>
           <span>OSCILLATING<i>thrashing</i></span>
           <span>STALLING<i>flat</i></span>
-          <span>CONVERGING<i>shrinking</i></span>
-          <span>FAST_CONVERGE<i>collapsed</i></span>
+          <span>CONVERGING<i>settling</i></span>
+          <span>FAST_CONVERGE<i>resolved</i></span>
         </div>
         <!-- The line -->
         <svg class="hero-chart-svg" viewBox="0 0 600 360" preserveAspectRatio="none" aria-hidden="true">
