@@ -112,6 +112,15 @@ button { font-family: inherit; color: inherit; background: none; border: none; c
   color: var(--text-1);
 }
 .nav-mark { color: var(--text-1); flex-shrink: 0; }
+/* Brand lockup theme switching: dark PNG on dark theme, light PNG on light. */
+.nav-brand .brand-light,
+.foot-brand .brand-light { display: none; }
+.nav-brand .brand-dark,
+.foot-brand .brand-dark { display: inline-block; }
+[data-theme="light"] .nav-brand .brand-dark,
+[data-theme="light"] .foot-brand .brand-dark { display: none; }
+[data-theme="light"] .nav-brand .brand-light,
+[data-theme="light"] .foot-brand .brand-light { display: inline-block; }
 .nav-word {
   font-weight: 600;
   letter-spacing: -0.02em;
