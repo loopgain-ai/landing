@@ -26,7 +26,7 @@
       <line x1="70.8" y1="96.2" x2="80" y2="87" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
     </svg>
     <span class="nav-word"><span>Loop</span><span class="accent">Gain</span></span>
-    <span class="nav-version mono">v0.1.9</span>
+    <span class="nav-version mono">v0.2.0</span>
   </a>
   <nav class="nav-links" aria-label="primary">
     <a href="#bands">bands</a>
@@ -80,7 +80,7 @@
         <span class="dot-sep"></span>
         <span><span class="hm-key">deps</span> 0</span>
         <span class="dot-sep"></span>
-        <span><span class="hm-key">tests</span> 121 passing</span>
+        <span><span class="hm-key">tests</span> 157 passing</span>
       </div>
     </div>
 
@@ -91,21 +91,25 @@
         <span class="mono band-readout" id="bandReadout">FAST_CONVERGE</span>
       </div>
       <div class="hero-chart-stage">
-        <!-- Five-band y-axis backdrop -->
+        <!-- Five-band y-axis backdrop. Per-iteration Aβ is plotted on this
+             axis (the dashboard does the same). Numeric ranges shown here
+             are the per-point band cutoffs used only for chart coloring;
+             the trajectory classifier that decides the loop-level state
+             reads four features off the full error series. -->
         <div class="band-rail" aria-hidden="true">
-          <div class="band band-div"  data-range="> 1.05"   data-name="DIVERGING"></div>
-          <div class="band band-osc"  data-range="0.95–1.05" data-name="OSCILLATING"></div>
-          <div class="band band-stall" data-range="0.85–0.95" data-name="STALLING"></div>
-          <div class="band band-conv" data-range="0.30–0.85" data-name="CONVERGING"></div>
-          <div class="band band-fast" data-range="< 0.30"    data-name="FAST_CONVERGE"></div>
+          <div class="band band-div"  data-range="growing"   data-name="DIVERGING"></div>
+          <div class="band band-osc"  data-range="thrashing" data-name="OSCILLATING"></div>
+          <div class="band band-stall" data-range="flat"     data-name="STALLING"></div>
+          <div class="band band-conv" data-range="shrinking" data-name="CONVERGING"></div>
+          <div class="band band-fast" data-range="collapsed" data-name="FAST_CONVERGE"></div>
         </div>
         <!-- Axis labels overlaid -->
         <div class="band-labels mono" aria-hidden="true">
-          <span>DIVERGING<i>&gt; 1.05</i></span>
-          <span>OSCILLATING<i>0.95–1.05</i></span>
-          <span>STALLING<i>0.85–0.95</i></span>
-          <span>CONVERGING<i>0.30–0.85</i></span>
-          <span>FAST_CONVERGE<i>&lt; 0.30</i></span>
+          <span>DIVERGING<i>growing</i></span>
+          <span>OSCILLATING<i>thrashing</i></span>
+          <span>STALLING<i>flat</i></span>
+          <span>CONVERGING<i>shrinking</i></span>
+          <span>FAST_CONVERGE<i>collapsed</i></span>
         </div>
         <!-- The line -->
         <svg class="hero-chart-svg" viewBox="0 0 600 360" preserveAspectRatio="none" aria-hidden="true">
@@ -196,7 +200,7 @@
         <div class="ps-num num-mono ps-num-fast">03</div>
         <div class="ps-lab"><b>The loop was about to converge — and got cut off.</b> One more iteration would have landed at target. The cap fired anyway.</div>
       </div>
-      <p class="ps-foot mono">three failure modes a static cap can&apos;t tell apart · what Aβ tells you in one number</p>
+      <p class="ps-foot mono">three failure modes a static cap can&apos;t tell apart · what the trajectory classifier resolves in one state</p>
     </div>
   </div>
 </section>
@@ -205,10 +209,9 @@
 <section class="bands-sec" id="bands" data-screen-label="bands">
   <div class="section-head">
     <span class="eyebrow mono">§02 · the fix</span>
-    <h2>Five named bands. One number per iteration. A decision either way.</h2>
+    <h2>Five named states. The trajectory decides. A stop signal either way.</h2>
     <p class="section-sub">
-      Each iteration produces an error signal. The ratio of consecutive errors is the loop gain&nbsp;<span class="mono code-inline">Aβ</span>.
-      Smooth it over a small window and you get a stability reading. Five bands: two say keep going, two say stop, one says watch. The band itself is the decision.
+      Each iteration produces an error signal. LoopGain reads four features off the full error trajectory — cumulative reduction, trend slope, trend significance, and oscillation magnitude — and routes the loop into one of five named states. Two say keep going, three say stop. The state itself is the decision.
     </p>
   </div>
 
@@ -219,8 +222,8 @@
         <span class="bc-dot"></span>
         <span class="bc-name mono">FAST_CONVERGE</span>
       </header>
-      <div class="bc-range mono">Aβ &lt; 0.30</div>
-      <p class="bc-desc">Error is shrinking by more than 3× per iteration. The reviser is operating well inside its competence; the only correct move is to stay out of the way.</p>
+      <div class="bc-range mono">cumulative ≤ 10%</div>
+      <p class="bc-desc">Error has dropped to a tenth of where it started, or better. The reviser is operating well inside its competence; the only correct move is to stay out of the way.</p>
       <div class="bc-spark" data-spark="fast" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>→</span> KEEP GOING</footer>
     </article>
@@ -230,8 +233,8 @@
         <span class="bc-dot"></span>
         <span class="bc-name mono">CONVERGING</span>
       </header>
-      <div class="bc-range mono">0.30 ≤ Aβ &lt; 0.85</div>
-      <p class="bc-desc">Healthy progress. Error contracts by a meaningful fraction every step. Most well-tuned agent loops live here.</p>
+      <div class="bc-range mono">trend &lt; 0, p &lt; 0.05</div>
+      <p class="bc-desc">Healthy progress. A statistically significant downward trend, or at least a halving of cumulative error. Most well-tuned agent loops live here.</p>
       <div class="bc-spark" data-spark="conv" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>→</span> KEEP GOING</footer>
     </article>
@@ -241,10 +244,10 @@
         <span class="bc-dot"></span>
         <span class="bc-name mono">STALLING</span>
       </header>
-      <div class="bc-range mono">0.85 ≤ Aβ &lt; 0.95</div>
-      <p class="bc-desc">The loop is moving, barely — each iteration is shaving fractions off the error. The library keeps running; the dashboard flags it. Repeated STALLING in the same loop type usually means the reviser prompt has hit a plateau and needs tuning.</p>
+      <div class="bc-range mono">no trend, no oscillation</div>
+      <p class="bc-desc">No significant slope and no detectable oscillation — the loop is doing something, but it's not making progress. After two consecutive readings the library stops and returns the best-so-far. Usually a reviser-prompt plateau.</p>
       <div class="bc-spark" data-spark="stall" aria-hidden="true"></div>
-      <footer class="bc-foot mono"><span>⚠</span> WATCH</footer>
+      <footer class="bc-foot mono"><span>⚠</span> WATCH · STOP</footer>
     </article>
 
     <article class="bc bc-osc">
@@ -252,8 +255,8 @@
         <span class="bc-dot"></span>
         <span class="bc-name mono">OSCILLATING</span>
       </header>
-      <div class="bc-range mono">0.95 ≤ Aβ ≤ 1.05</div>
-      <p class="bc-desc">The model is undoing its own last revision. The next iteration is statistically guaranteed to be no better than two ago. <b>Rollback. Stop.</b></p>
+      <div class="bc-range mono">high variance, flat trend</div>
+      <p class="bc-desc">The trajectory's detrended residuals are too large to be noise but the slope is flat — the model is undoing its own last revision. <b>Rollback. Stop.</b></p>
       <div class="bc-spark" data-spark="osc" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>■</span> ROLLBACK · STOP</footer>
     </article>
@@ -263,8 +266,8 @@
         <span class="bc-dot"></span>
         <span class="bc-name mono">DIVERGING</span>
       </header>
-      <div class="bc-range mono">Aβ &gt; 1.05</div>
-      <p class="bc-desc">Each iteration is making the output strictly worse. The longer it runs, the more money you light on fire. <b>Rollback. Stop.</b></p>
+      <div class="bc-range mono">trend &gt; 0, cumulative &gt; 10%</div>
+      <p class="bc-desc">A statistically significant upward trend with at least 10% cumulative growth. Each iteration is making the output strictly worse. The longer it runs, the more money you light on fire. <b>Rollback. Stop.</b></p>
       <div class="bc-spark" data-spark="div" aria-hidden="true"></div>
       <footer class="bc-foot mono"><span>■</span> ROLLBACK · STOP</footer>
     </article>
@@ -272,18 +275,18 @@
   </div>
 
   <div class="bands-formula">
-    <div class="bf-eq mono" aria-label="loop gain formula">
-      <span class="bf-sym">Aβ<sub class="bf-sub">smooth</sub></span>
+    <div class="bf-eq mono" aria-label="trajectory classifier formula">
+      <span class="bf-sym">state</span>
       <span class="bf-eq-sign">=</span>
-      <span class="bf-smooth">EMA(</span>
+      <span class="bf-smooth">classify(</span>
       <span class="bf-frac">
-        <span class="bf-num">‖<b>e</b><sub>n</sub>‖</span>
-        <span class="bf-den">‖<b>e</b><sub>n−1</sub>‖</span>
+        <span class="bf-num">E<sub>ratio</sub> · slope<sub>log</sub></span>
+        <span class="bf-den">slope<sub>p</sub> · osc<sub>std</sub></span>
       </span>
-      <span class="bf-smooth">,&nbsp;<b>w</b>=3&nbsp;)</span>
+      <span class="bf-smooth">)</span>
     </div>
     <p class="bf-note mono">
-      The whole library is a few hundred lines around this ratio. The result is a stop decision your model never had to make.
+      Four trajectory features, one of five named states out. The whole library is a few hundred lines around this classifier. The result is a stop decision your model never had to make.
     </p>
   </div>
 </section>
@@ -317,7 +320,7 @@
 <span class="tk-add"><span class="tk-kw">while</span> lg.should_continue():</span>    errors = your_verifier(output)        <span class="tk-com"># your existing code</span>
 <span class="tk-add">    lg.observe(errors, output=output)</span>    output = your_refiner(output, errors)  <span class="tk-com"># your existing code</span>
 
-<span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "max_iterations"</span>
+<span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "stalled" · "max_iterations"</span>
 <span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span>
 <span class="tk-com"># lg.eta              → log(ε_target / ε) / log(Aβ_smooth) — iterations to ε (live)</span>
 <span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
@@ -472,8 +475,8 @@ telemetry sent: <span class="tk-good">True</span>
   <div class="feat-grid">
     <article class="feat">
       <div class="feat-num mono">01</div>
-      <h3>Five-band decision engine</h3>
-      <p>One smoothed reading per iteration. Three bands say go, two bands say stop. The library never asks you to interpret a number — the band <em>is</em> the decision.</p>
+      <h3>Five-state decision engine</h3>
+      <p>Four trajectory features per loop, one of five named states out. Two say keep going, three say stop. The library never asks you to interpret a number — the state <em>is</em> the decision.</p>
     </article>
     <article class="feat">
       <div class="feat-num mono">02</div>
@@ -534,7 +537,7 @@ telemetry sent: <span class="tk-good">True</span>
         <div class="tile tc" style="--span:3;">policy-rewriter<span class="tile-sub mono">2.0k · 0.68</span></div>
         <div class="tile tf" style="--span:3;">prompt-debugger<span class="tile-sub mono">3.0k · 0.22</span></div>
       </div>
-      <footer class="dm-foot mono">tile size = run volume · tile color = Aβ band</footer>
+      <footer class="dm-foot mono">tile size = run volume · tile color = loop state</footer>
     </figure>
 
     <!-- Waste Report mockup -->
@@ -689,7 +692,7 @@ telemetry sent: <span class="tk-good">True</span>
       <ul class="pc-list">
         <li>Everything in Team</li>
         <li>Unlimited history</li>
-        <li>Custom Aβ thresholds per loop type</li>
+        <li>Custom trajectory thresholds per loop type</li>
         <li>Read &amp; ingest API</li>
         <li>SSO (SAML / OIDC)</li>
         <li>Audit log + evidence pack for SOC 2 prep</li>
@@ -716,7 +719,7 @@ telemetry sent: <span class="tk-good">True</span>
       <div class="why-arrow mono">↓</div>
       <div class="why-year mono why-year-now">
         <span class="wy-num">2026</span>
-        <span class="wy-name">LoopGain v0.1.9</span>
+        <span class="wy-name">LoopGain v0.2.0</span>
         <span class="wy-where">your agent loop</span>
       </div>
     </div>
