@@ -376,7 +376,7 @@ agent = create_agent(model=<span class="tk-str">"gpt-5-nano"</span>, tools=[get_
     <pre class="code-panel mono" data-panel="openai-agents"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[openai-agents]'</span>
 <span class="tk-kw">from</span> agents <span class="tk-kw">import</span> Agent
 <span class="tk-add"><span class="tk-kw">from</span> loopgain <span class="tk-kw">import</span> LoopGain</span><span class="tk-add"><span class="tk-kw">from</span> loopgain.integrations <span class="tk-kw">import</span> OpenAIAgentsAdapter</span>
-agent = Agent(name=<span class="tk-str">"Reviser"</span>, instructions=<span class="tk-str">"..."</span>, tools=[verify_tool])
+agent = Agent(name=<span class="tk-str">"Refiner"</span>, instructions=<span class="tk-str">"..."</span>, tools=[verify_tool])
 <span class="tk-add">lg = LoopGain(target_error=<span class="tk-num">0.0</span>, max_iterations=<span class="tk-num">20</span>)</span><span class="tk-add">adapter = OpenAIAgentsAdapter(
     lg=lg,
     error_fn=<span class="tk-kw">lambda</span> event: parse_verifier_failures(event),
