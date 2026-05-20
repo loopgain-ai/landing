@@ -1,5 +1,5 @@
 /* LoopGain landing — minimal vanilla JS.
-   - theme toggle (manual override of prefers-color-scheme)
+   - theme toggle (dark by default; light only via explicit user click)
    - copy-to-clipboard for inline pip box + code panels
    - tabbed code panels
    - animated hero convergence chart (renders points 1..20 then loops back)
@@ -7,14 +7,16 @@
 
 (() => {
   // ─────────── theme toggle ───────────
+  // Dark is the default for everyone on first visit. We deliberately do NOT
+  // honour prefers-color-scheme — the brand reads better on dark, and tools
+  // that render with light-mode defaults (Google's mobile inspector, Twitter
+  // card preview, etc.) were flipping the page in ways that broke the brand.
+  // Light mode is still available — but only as an explicit user choice via
+  // the in-page theme toggle. That choice persists via localStorage.
   const root = document.documentElement;
   const stored = localStorage.getItem('lg-theme');
   if (stored === 'light' || stored === 'dark') {
     root.setAttribute('data-theme', stored);
-  } else {
-    // honour OS preference on first visit; default to dark
-    const mql = window.matchMedia('(prefers-color-scheme: light)');
-    if (mql.matches) root.setAttribute('data-theme', 'light');
   }
   const themeBtn = document.getElementById('themeToggle');
   if (themeBtn) {

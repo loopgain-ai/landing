@@ -1,7 +1,8 @@
 /* ───────────────────────────────────────────────────────────────────
    LoopGain landing — single-page styles.
    Tokens mirror dashboard/index.html so visual continuity is exact.
-   Default: dark. Light is via [data-theme="light"] OR prefers-color-scheme.
+   Default: dark for all visitors. Light is available only via the in-page
+   theme toggle (which sets [data-theme="light"] + persists via localStorage).
    ─────────────────────────────────────────────────────────────────── */
 
 :root {
