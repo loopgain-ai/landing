@@ -1187,10 +1187,13 @@ section + section {
 /* ───────────────── pricing ───────────────── */
 .price-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
 }
-@media (max-width: 920px) {
+@media (max-width: 1200px) {
+  .price-cards { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
   .price-cards { grid-template-columns: 1fr; }
 }
 .pc {
