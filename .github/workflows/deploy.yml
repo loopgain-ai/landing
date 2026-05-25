@@ -40,4 +40,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Wrangler v4 is required for Workers-with-static-assets projects
+          # (no `main` script). v3 errors with "Missing entry-point".
+          wranglerVersion: "4"
           # Defaults to `wrangler deploy`. Reads wrangler.jsonc + .assetsignore.
