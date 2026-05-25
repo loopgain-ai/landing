@@ -5,6 +5,7 @@
 README.md
 LICENSE
 LANDING_BENCHMARK_KICKOFF.md
+.claude/
 .gitignore
 .gitattributes
 .git/

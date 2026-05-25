@@ -1,0 +1,43 @@
+# Deploy loopgain.ai to Cloudflare Workers on every push to main.
+#
+# Workers-with-static-assets project — no build step; wrangler-action runs
+# `wrangler deploy`, which reads wrangler.jsonc, applies .assetsignore, and
+# uploads the changed files. Same thing Dave runs locally as `npx wrangler
+# deploy`, but triggered by GitHub on each push so we don't have to remember.
+#
+# One-time setup (Settings → Secrets and variables → Actions):
+#   - CLOUDFLARE_API_TOKEN — Workers scripts:edit + Account settings:read.
+#     Create at https://dash.cloudflare.com/profile/api-tokens using the
+#     "Edit Cloudflare Workers" template; restrict to the Fitz account.
+#   - CLOUDFLARE_ACCOUNT_ID — 13c6dbdde53b238edc6e51c5ebc4b5eb
+#
+# Falls back to manual `wrangler deploy` from a checkout if this ever breaks.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: wrangler deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Defaults to `wrangler deploy`. Reads wrangler.jsonc + .assetsignore.
