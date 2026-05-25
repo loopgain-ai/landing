@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LoopGain Benchmark — 2,000 paired real-API trials, methodology pre-registered</title>
+<meta name="description" content="LoopGain benchmark results: 93.5% cost reduction and ~10× wall-clock speedup vs max_iter=20 across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered and locked 2026-05-21 before any confirmatory data was collected." />
+<meta name="theme-color" content="#0A0B0D" />
+<meta name="robots" content="index,follow" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="canonical" href="https://loopgain.ai/benchmarks" />
+<meta property="og:title" content="LoopGain Benchmark — 2,000 paired real-API trials" />
+<meta property="og:description" content="93.5% cost reduction vs max_iter=20. ~10× wall-clock speedup. Output quality preserved on natural-distribution workloads and improved on engineered-failure ones. Pre-registered methodology; six analysis charts and raw data public." />
+<meta property="og:url" content="https://loopgain.ai/benchmarks" />
+<meta property="og:type" content="article" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="landing.css" />
+
+<!-- Structured data — TechArticle (Schema.org) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "LoopGain Benchmark — 2,000 paired real-API trials",
+  "description": "93.5% cost reduction vs max_iter=20 and ~10× wall-clock speedup across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered 2026-05-21.",
+  "datePublished": "2026-05-25",
+  "url": "https://loopgain.ai/benchmarks",
+  "inLanguage": "en",
+  "author": { "@type": "Person", "name": "David Fitzsimmons" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "LoopGain",
+    "url": "https://loopgain.ai",
+    "logo": "https://loopgain.ai/loopgain-lockup-dark.png"
+  },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://loopgain.ai/benchmarks" },
+  "isBasedOn": "https://github.com/loopgain-ai/loopgain-bench"
+}
+</script>
+</head>
+<body>
+
+<!-- ─── nav ──────────────────────────────────────────────────────────── -->
+<header class="nav" data-screen-label="nav">
+  <a class="nav-brand" href="/" aria-label="LoopGain home">
+    <img src="/loopgain-lockup-dark.png" alt="LoopGain" class="brand-dark" style="height:24px; width:auto;" />
+    <img src="/loopgain-lockup-light.png" alt="LoopGain" class="brand-light" style="height:24px; width:auto;" />
+    <span class="nav-version mono">v0.2.0</span>
+  </a>
+  <nav class="nav-links" aria-label="primary">
+    <a href="/#bands">bands</a>
+    <a href="/#install">install</a>
+    <a href="/benchmarks">benchmark</a>
+    <a href="/#dashboard">dashboard</a>
+    <a href="/#pricing">pricing</a>
+    <a href="https://github.com/loopgain-ai" rel="noopener">github ↗</a>
+    <button class="nav-theme" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5v2M8 12.5v2M3.7 3.7l1.4 1.4M10.9 10.9l1.4 1.4M1.5 8h2M12.5 8h2M3.7 12.3l1.4-1.4M10.9 5.1l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+    </button>
+    <a class="nav-cta" href="https://dashboard.loopgain.ai" rel="noopener">open dashboard →</a>
+  </nav>
+</header>
+
+<main>
+<article class="bench-page">
+  <span class="eyebrow mono"><span class="status-dot"></span>&nbsp;bench · locked 2026-05-25</span>
+  <h1>LoopGain Benchmark</h1>
+
+  <p class="bench-lede">
+    <strong>2,000 paired real-API trials. 10 cells across 6 framework adapters. Methodology pre-registered and locked 2026-05-21</strong> — before any of the confirmatory data was collected.
+  </p>
+
+  <figure class="bench-fig">
+    <img
+      src="https://raw.githubusercontent.com/loopgain-ai/loopgain-bench/main/data/results/charts/hero_seed34.png"
+      alt="Side-by-side per-iteration trajectory: max_iter=20 finds the correct answer at iteration 8, keeps iterating, and degrades to broken code by iteration 20. LoopGain detects TARGET_MET at iteration 2 and stops with the working code."
+      loading="lazy" />
+    <figcaption>hero_seed34.png · per-iteration error trajectory · max_iter=20 vs LoopGain · single representative trial from the bench</figcaption>
+  </figure>
+
+  <p class="bench-story">
+    On a single representative trial in the bench, <code class="mono code-inline">max_iter=20</code> found the correct answer at iteration 8, kept iterating, and degraded back to broken code by iteration 20. LoopGain detected <code class="mono code-inline">TARGET_MET</code> at iteration 2 and stopped with the working code. <em>That's the canonical product story: when the model finds the right answer early, naive <code class="mono code-inline">max_iter=N</code> can iterate past success and degrade the output.</em>
+  </p>
+
+  <span id="cost" class="bench-anchor" aria-hidden="true"></span>
+  <span id="latency" class="bench-anchor" aria-hidden="true"></span>
+  <span id="quality" class="bench-anchor" aria-hidden="true"></span>
+  <h2>The numbers</h2>
+
+  <p>
+    Across the full registered run — 10 cells × n=200 paired trials = 8,000 loop runs + 1,800 pairwise judge comparisons:
+  </p>
+
+  <div class="bench-table-wrap">
+    <table class="bench-table">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>max_iter=5</th>
+          <th>max_iter=10</th>
+          <th class="col-emph">max_iter=20</th>
+          <th class="col-lg">LoopGain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Total API spend</td>
+          <td>$7.00</td>
+          <td>$13.97</td>
+          <td class="col-emph">$27.61</td>
+          <td class="col-lg">$1.80</td>
+        </tr>
+        <tr>
+          <td>Median wall-clock per trial</td>
+          <td>26.2s</td>
+          <td>49.1s</td>
+          <td class="col-emph">93.0s</td>
+          <td class="col-lg">9.8s</td>
+        </tr>
+        <tr class="savings-row">
+          <td>Implied savings vs <code class="mono code-inline">max_iter=20</code></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="savings-val">93.5% cost / 89.5% time</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <figure class="bench-fig">
+    <img
+      src="https://raw.githubusercontent.com/loopgain-ai/loopgain-bench/main/data/results/charts/cost_by_condition.png"
+      alt="Bar chart: total API spend by condition. max_iter=5 = $7.00, max_iter=10 = $13.97, max_iter=20 = $27.61, LoopGain = $1.80."
+      loading="lazy" />
+    <figcaption>cost_by_condition.png · total API spend across the bench, by condition</figcaption>
+  </figure>
+
+  <ul>
+    <li><strong>93.5% cost reduction</strong> vs <code class="mono code-inline">max_iter=20</code></li>
+    <li><strong>~10× wall-clock speedup</strong> (93.0s → 9.8s median per trial)</li>
+    <li><strong>Quality preserved</strong> on natural-distribution workloads (W1–W2 judge winrate 0.55–0.62 with CI excluding null on most cells; W3 cells tie-dominated as preservation-by-construction since both LoopGain and <code class="mono code-inline">max_iter=20</code> produce the same correct tool call ~90% of the time)</li>
+    <li><strong>Quality improved</strong> on engineered-failure workloads (W5 winrate 0.88–0.93 across three adapters via best-so-far rollback)</li>
+    <li><strong>Aggregate</strong> weighted-average pairwise preference for LoopGain across 1,800 judge comparisons: <strong>0.681</strong> — over two-thirds</li>
+    <li><strong>Zero of six kill criteria fired</strong></li>
+  </ul>
+
+  <h2>See it live</h2>
+
+  <div class="bench-cta">
+    <a class="bc-link" href="https://dashboard.loopgain.ai/benchmark" rel="noopener">Open the bench data in the LoopGain dashboard →</a>
+    <p>
+      The bench tenant's 2,000 trials are visible in the actual product dashboard — the same UI a paying customer sees, populated with the canonical benchmark data. Read-only public view; sign up free to instrument your own loops.
+    </p>
+  </div>
+
+  <h2>Honest disclosures</h2>
+
+  <p>Two pre-registered floors were missed without firing kill criteria. Both are surfaced in the writeup:</p>
+  <ul>
+    <li><strong>H-EARLYWARN</strong> median lead time: 2 iterations observed vs ≥3 predicted (kill threshold: &lt;1)</li>
+    <li><strong>H-FRAMEWORK-PARITY</strong> W1 spread: 5.8 pp observed vs ≤5 pp predicted (kill threshold: &gt;15 pp)</li>
+  </ul>
+
+  <p>
+    Seven pre-data amendments to the methodology are preserved in <a href="https://github.com/loopgain-ai/loopgain-bench/blob/main/BENCH_PROTOCOL.md" rel="noopener">BENCH_PROTOCOL.md</a> with their full rationale. Predicted floors and kill criteria were never changed once data started landing.
+  </p>
+
+  <p>
+    The bench harness itself had two non-trivial bugs caught and fixed during the run (signal-handling under concurrency; thread-pool shutdown semantics) — both forensics documented honestly in <a href="https://github.com/loopgain-ai/loopgain-bench/blob/main/LESSONS.md" rel="noopener">LESSONS.md</a>. The data here is from the post-fix, n=200, tripwire-clean run.
+  </p>
+
+  <h2>Reproduce it yourself</h2>
+
+  <p>
+    The bench, its methodology, the raw data (9.4 MB of JSONL across 10 cells + 9 judge runs), all six analysis charts, the engineering forensics, and all seven pre-data amendments are public:
+  </p>
+
+  <p>
+    <strong><a href="https://github.com/loopgain-ai/loopgain-bench" rel="noopener">github.com/loopgain-ai/loopgain-bench</a></strong>
+  </p>
+
+  <pre class="bench-code"><span class="tk-com">$</span> git clone https://github.com/loopgain-ai/loopgain-bench
+<span class="tk-com">$</span> cd loopgain-bench
+<span class="tk-com">$</span> make install-dev
+<span class="tk-com">$</span> make bench     <span class="tk-com"># ~$50, ~4-8h on a single Mac</span>
+<span class="tk-com">$</span> make judge     <span class="tk-com"># ~$1-2</span>
+<span class="tk-com">$</span> make analyze   <span class="tk-com"># six tables + six charts</span></pre>
+
+  <section class="bench-try">
+    <h2>Try LoopGain</h2>
+    <p>
+      <code class="mono code-inline">pip install loopgain</code> — or <code class="mono code-inline">pip install 'loopgain[&lt;your framework&gt;]'</code> for adapter extras (LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK).
+    </p>
+    <div class="bench-try-actions">
+      <div class="copy-box" data-copy="pip install loopgain" role="button" tabindex="0">
+        <span class="copy-prompt mono">$</span>
+        <code class="mono">pip install loopgain</code>
+        <span class="copy-hint mono">copy</span>
+      </div>
+      <a class="btn btn-amber" href="https://dashboard.loopgain.ai" rel="noopener">
+        open dashboard
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+    <p class="bench-try-pilot">
+      <strong>3 design-partner slots open for the next 30 days.</strong> Free 30-day pilot, direct founder support. Email <a href="mailto:hello@loopgain.ai?subject=Design-partner%20pilot">hello@loopgain.ai</a>.
+    </p>
+  </section>
+
+  <p class="bench-back">← <a href="/">back to loopgain.ai</a></p>
+</article>
+</main>
+
+<!-- ─── footer ───────────────────────────────────────────────────────── -->
+<footer class="foot" data-screen-label="footer">
+  <div class="foot-row">
+    <a class="foot-brand" href="/" aria-label="LoopGain home">
+      <img src="/loopgain-lockup-dark.png" alt="LoopGain" class="brand-dark" style="height:20px; width:auto;" />
+      <img src="/loopgain-lockup-light.png" alt="LoopGain" class="brand-light" style="height:20px; width:auto;" />
+    </a>
+    <nav class="foot-links mono" aria-label="footer">
+      <a href="https://github.com/loopgain-ai" rel="noopener">github</a>
+      <a href="https://pypi.org/project/loopgain" rel="noopener">pypi</a>
+      <a href="https://dashboard.loopgain.ai" rel="noopener">dashboard</a>
+      <a href="/benchmarks">benchmark</a>
+      <a href="/privacy">privacy</a>
+      <a href="/terms">terms</a>
+      <a href="mailto:hello@loopgain.ai">hello@loopgain.ai</a>
+    </nav>
+  </div>
+  <div class="foot-row foot-row-fine mono">
+    <span>© 2026 LoopGain Technologies Inc. · Apache-2.0</span>
+    <span class="dot-sep"></span>
+    <span>Barkhausen stability monitor for iterative LLM loops</span>
+  </div>
+</footer>
+
+<script src="landing.js"></script>
+</body>
+</html>

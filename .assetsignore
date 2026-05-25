@@ -4,6 +4,7 @@
 # directory as configuration, not as files to serve.
 README.md
 LICENSE
+LANDING_BENCHMARK_KICKOFF.md
 .gitignore
 .gitattributes
 .git/

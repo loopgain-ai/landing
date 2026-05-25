@@ -1416,6 +1416,467 @@ section + section {
   letter-spacing: 0.04em;
 }
 
+/* ───────────────── hero evidence one-liner ───────────────── */
+.hero-evidence {
+  margin: -4px 0 28px;
+  padding: 14px 18px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-2);
+  max-width: 60ch;
+}
+.hero-evidence strong { color: var(--text-1); font-weight: 600; }
+.hero-evidence .evi-stat {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+.hero-evidence .evi-link {
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+  padding-bottom: 1px;
+  transition: border-color 120ms ease;
+}
+.hero-evidence .evi-link:hover { border-bottom-color: var(--accent); }
+.hero-evidence .code-inline { font-size: 0.9em; }
+
+.hero-tertiary {
+  margin: 14px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+}
+.hero-tertiary a {
+  color: var(--text-2);
+  border-bottom: 1px dashed var(--border-2);
+  padding-bottom: 1px;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.hero-tertiary a:hover {
+  color: var(--text-1);
+  border-bottom-color: var(--text-3);
+}
+
+/* ───────────────── trifecta (bench evidence below the fold) ───────────────── */
+.trifecta-sec {
+  padding-top: clamp(56px, 7vw, 96px);
+  padding-bottom: clamp(56px, 7vw, 96px);
+}
+.trifecta-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.trifecta-head .eyebrow { color: var(--text-3); }
+.trifecta-head h2 {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  color: var(--text-1);
+  text-wrap: balance;
+}
+.trifecta-head .tri-foot {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.trifecta-head .tri-foot a { color: var(--accent); border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent); padding-bottom: 1px; }
+.trifecta-head .tri-foot a:hover { color: var(--accent-deep); }
+@media (max-width: 720px) {
+  .trifecta-head .tri-foot { margin-left: 0; }
+}
+
+.trifecta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+@media (max-width: 880px) { .trifecta-grid { grid-template-columns: 1fr; } }
+
+.tri-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 26px 26px 20px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: inherit;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+.tri-card:hover {
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+  background: var(--surf-2);
+  transform: translateY(-2px);
+}
+.tri-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tri-big {
+  font-family: var(--mono);
+  font-size: clamp(42px, 5.4vw, 60px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 2px;
+}
+.tri-label {
+  font-size: 14.5px;
+  color: var(--text-1);
+  line-height: 1.45;
+  font-weight: 500;
+}
+.tri-label .code-inline { font-size: 0.9em; }
+.tri-detail {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-3);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+.tri-link {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  transition: color 120ms ease;
+}
+.tri-card:hover .tri-link { color: var(--accent-deep); }
+
+/* ───────────────── trust strip (open-core credibility) ───────────────── */
+.trust-sec {
+  padding: clamp(28px, 4vw, 44px) var(--gutter);
+  background: var(--bg-1);
+  max-width: none;
+  margin: 0;
+  border-top: 1px solid var(--border);
+}
+.trust-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  justify-content: space-between;
+}
+.trust-items {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+.trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.trust-item::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--band-fast);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--band-fast) 20%, transparent);
+  flex-shrink: 0;
+}
+.trust-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  padding: 8px 14px;
+  border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--border));
+  border-radius: 6px;
+  background: color-mix(in oklab, var(--accent) 6%, transparent);
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  white-space: nowrap;
+}
+.trust-cta:hover {
+  background: color-mix(in oklab, var(--accent) 14%, transparent);
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+/* ───────────────── benchmark page ───────────────── */
+.bench-page {
+  padding: clamp(48px, 6vw, 88px) var(--gutter) clamp(72px, 8vw, 112px);
+  max-width: 920px;
+  margin: 0 auto;
+  color: var(--text-1);
+}
+.bench-page .eyebrow { margin-bottom: 18px; }
+.bench-page h1 {
+  margin: 0 0 18px;
+  font-size: clamp(34px, 4.5vw, 54px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.bench-lede {
+  margin: 0 0 32px;
+  font-size: clamp(15px, 1.4vw, 18px);
+  color: var(--text-2);
+  line-height: 1.6;
+  max-width: 64ch;
+}
+.bench-lede strong { color: var(--text-1); font-weight: 600; }
+
+.bench-fig {
+  margin: 0 0 28px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.bench-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bg-1);
+}
+.bench-fig figcaption {
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-3);
+  letter-spacing: 0.03em;
+  border-top: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+.bench-story {
+  margin: 0 0 48px;
+  padding: 22px 24px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  font-size: 15.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.bench-story em { color: var(--text-1); font-style: italic; }
+.bench-story .code-inline { font-size: 0.92em; }
+
+.bench-page h2 {
+  margin: 56px 0 18px;
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-1);
+  scroll-margin-top: 80px;
+}
+.bench-anchor {
+  display: block;
+  height: 0;
+  scroll-margin-top: 80px;
+  visibility: hidden;
+}
+
+.bench-page p {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+  margin: 0 0 16px;
+}
+.bench-page p strong, .bench-page li strong { color: var(--text-1); font-weight: 600; }
+.bench-page a {
+  color: var(--accent);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+  text-underline-offset: 2px;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+.bench-page a:hover { color: var(--accent-deep); border-bottom-color: var(--accent-deep); }
+.bench-page a.btn { border-bottom: none; padding-bottom: 10px; }
+.bench-page a.btn-amber { color: var(--accent-ink); }
+.bench-page a.btn-amber:hover { color: var(--accent-ink); border-bottom-color: transparent; }
+.bench-page a.btn-ghost { color: var(--text-1); }
+
+.bench-page ul {
+  padding-left: 22px;
+  margin: 12px 0 24px;
+}
+.bench-page li {
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+.bench-page li::marker { color: var(--text-4); }
+
+.bench-table-wrap {
+  margin: 18px 0 28px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow-x: auto;
+  background: var(--surf-1);
+}
+.bench-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-family: var(--sans);
+}
+.bench-table th, .bench-table td {
+  padding: 12px 14px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.bench-table th:first-child, .bench-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-1);
+}
+.bench-table thead th {
+  background: var(--surf-2);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--text-2);
+  text-transform: lowercase;
+  font-family: var(--mono);
+}
+.bench-table thead th.col-emph { color: var(--text-1); }
+.bench-table thead th.col-lg {
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 8%, var(--surf-2));
+}
+.bench-table tbody tr:last-child td { border-bottom: none; }
+.bench-table td.col-emph {
+  color: var(--text-1);
+  font-weight: 600;
+}
+.bench-table td.col-lg {
+  background: color-mix(in oklab, var(--accent) 5%, transparent);
+  color: var(--text-1);
+  font-weight: 600;
+}
+.bench-table .savings-row td {
+  background: var(--surf-2);
+  font-weight: 600;
+  color: var(--text-1);
+  border-top: 1px solid var(--border-2);
+}
+.bench-table .savings-val {
+  color: var(--accent);
+  font-size: 14.5px;
+}
+@media (max-width: 640px) {
+  .bench-table th, .bench-table td { padding: 10px 11px; font-size: 13px; }
+}
+
+.bench-cta {
+  margin: 36px 0 48px;
+  padding: 24px 26px;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, transparent) 0%, transparent 60%),
+    var(--surf-1);
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--border));
+  border-radius: 12px;
+}
+.bench-cta a.bc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16.5px;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
+  padding-bottom: 1px;
+}
+.bench-cta a.bc-link:hover { color: var(--accent-deep); border-bottom-color: var(--accent-deep); }
+.bench-cta p { margin: 12px 0 0; font-size: 14px; color: var(--text-2); }
+
+.bench-code {
+  margin: 16px 0 32px;
+  padding: 20px 22px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-1);
+  overflow-x: auto;
+  white-space: pre;
+}
+.bench-code .tk-com { color: var(--text-3); font-style: italic; }
+
+.bench-try {
+  margin: 56px 0 0;
+  padding: 28px 28px 24px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.bench-try h2 { margin: 0 0 12px; font-size: clamp(20px, 2.4vw, 26px); }
+.bench-try p { margin: 0 0 14px; font-size: 15px; }
+.bench-try-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 16px;
+}
+.bench-try-actions .copy-box { flex: 0 0 auto; }
+.bench-try-actions .btn { flex: 0 0 auto; }
+.bench-try-pilot {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  font-size: 13.5px;
+  color: var(--text-2);
+}
+.bench-try-pilot strong { color: var(--text-1); }
+
+.bench-back {
+  margin: 40px 0 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-3);
+  letter-spacing: 0.04em;
+}
+.bench-back a {
+  color: var(--text-2);
+  border-bottom: 1px dashed var(--border-2);
+}
+.bench-back a:hover { color: var(--text-1); border-bottom-color: var(--text-3); }
+
 /* ───────────────── reduced motion ───────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }

@@ -77,6 +77,7 @@
   <nav class="nav-links" aria-label="primary">
     <a href="#bands">bands</a>
     <a href="#install">install</a>
+    <a href="/benchmarks">benchmark</a>
     <a href="#dashboard">dashboard</a>
     <a href="#pricing">pricing</a>
     <a href="https://github.com/loopgain-ai" rel="noopener">github ↗</a>
@@ -98,13 +99,15 @@
         <span>Apache-2.0 · adapters for LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK</span>
       </div>
       <h1>
-        Stop guessing<br/>
-        <span class="mono code-inline">max_iterations</span>.
+        Replace <span class="mono code-inline">max_iterations=N</span><br/>
+        with a real measurement of convergence.
       </h1>
       <p class="hero-sub">
-        Every agent in production ships with a number somebody made up. LoopGain replaces it with the
-        <em>loop gain&nbsp;Aβ</em> — a real-time Barkhausen-stability measurement — and tells you the
-        iteration to stop on. It's the math from 1921. We're applying it to the loop you wrote last week.
+        A Barkhausen-criterion stability monitor for iterative LLM loops. Catches stalling, oscillating, and diverging loops before they burn your tokens — with <em>best-so-far rollback</em> when the loop walks past its best output.
+      </p>
+
+      <p class="hero-evidence">
+        On <strong>2,000 real-API trials</strong> across 6 framework adapters: <span class="evi-stat">93.5% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code>, <span class="evi-stat">~10× wall-clock speedup</span>, output quality preserved on natural-distribution workloads and improved on engineered-failure ones. <a class="evi-link" href="/benchmarks">See the bench →</a>
       </p>
 
       <div class="hero-actions">
@@ -113,11 +116,15 @@
           <code class="mono">pip install loopgain</code>
           <span class="copy-hint mono">copy</span>
         </div>
-        <a class="btn btn-amber" href="https://dashboard.loopgain.ai" rel="noopener">
-          open dashboard
+        <a class="btn btn-amber" href="mailto:hello@loopgain.ai?subject=Design-partner%20pilot" rel="noopener">
+          apply for a design-partner pilot
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
         </a>
       </div>
+
+      <p class="hero-tertiary mono">
+        <a href="https://github.com/loopgain-ai/loopgain" rel="noopener">Apache-2.0 · GitHub ↗</a>
+      </p>
 
       <div class="hero-meta mono">
         <span><span class="hm-key">v</span> 0.2.0</span>
@@ -209,6 +216,38 @@
         </div>
       </figcaption>
     </figure>
+  </div>
+</section>
+
+<!-- ─── trifecta (bench evidence below the fold) ─────────────────────── -->
+<section class="trifecta-sec" id="bench" data-screen-label="bench-trifecta">
+  <div class="trifecta-head">
+    <span class="eyebrow mono">§00 · bench · 2026-05-25</span>
+    <h2>2,000 paired real-API trials. 10 cells. 6 adapters.</h2>
+    <span class="tri-foot mono">methodology pre-registered → <a href="/benchmarks">/benchmarks</a></span>
+  </div>
+  <div class="trifecta-grid">
+    <a class="tri-card" href="/benchmarks#cost">
+      <span class="tri-tag">01 · cost</span>
+      <span class="tri-big">93.5%</span>
+      <span class="tri-label">less API spend vs <code class="mono code-inline">max_iter=20</code></span>
+      <span class="tri-detail">$27.61 → $1.80 across the bench</span>
+      <span class="tri-link">see the cost breakdown →</span>
+    </a>
+    <a class="tri-card" href="/benchmarks#latency">
+      <span class="tri-tag">02 · latency</span>
+      <span class="tri-big">~10×</span>
+      <span class="tri-label">faster wall-clock per trial</span>
+      <span class="tri-detail">93.0s → 9.8s median across all 10 cells</span>
+      <span class="tri-link">see the latency data →</span>
+    </a>
+    <a class="tri-card" href="/benchmarks#quality">
+      <span class="tri-tag">03 · quality</span>
+      <span class="tri-big">0.681</span>
+      <span class="tri-label">aggregate judge preference for LoopGain vs <code class="mono code-inline">max_iter=20</code></span>
+      <span class="tri-detail">1,800 cross-vendor pairwise comparisons; CIs in writeup</span>
+      <span class="tri-link">see the quality findings →</span>
+    </a>
   </div>
 </section>
 
@@ -334,6 +373,22 @@
     <p class="bf-note mono">
       Four trajectory features, one of five named states out. The whole library is a few hundred lines around this classifier. The result is a stop decision your model never had to make.
     </p>
+  </div>
+</section>
+
+<!-- ─── trust signals (open-core credibility strip) ──────────────────── -->
+<section class="trust-sec" data-screen-label="trust">
+  <div class="trust-inner">
+    <div class="trust-items">
+      <span class="trust-item">pre-registered methodology, locked 2026-05-21</span>
+      <span class="trust-item">7 pre-data amendments preserved</span>
+      <span class="trust-item">2,000 trials of raw data public</span>
+      <span class="trust-item">6 analysis charts in the repo</span>
+      <span class="trust-item">zero kill criteria fired</span>
+    </div>
+    <a class="trust-cta" href="https://github.com/loopgain-ai/loopgain-bench" rel="noopener">
+      reproduce it yourself ↗
+    </a>
   </div>
 </section>
 
