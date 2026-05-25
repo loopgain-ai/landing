@@ -320,25 +320,26 @@ section + section {
 }
 
 .hero-copy h1 {
-  margin: 0 0 24px;
-  font-size: clamp(40px, 5.8vw, 76px);
+  margin: 0 0 22px;
+  font-size: clamp(28px, 3.4vw, 44px);
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.04;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
   text-wrap: balance;
+  max-width: 22ch;
 }
-.hero-copy h1 br + .code-inline { margin-top: 12px; }
+.hero-copy h1 br + .code-inline { margin-top: 6px; }
 .hero-copy h1 .code-inline {
   display: inline-block;
   font-size: 0.78em;
-  padding: 2px 12px;
-  border-radius: 8px;
+  padding: 2px 10px;
+  border-radius: 6px;
   background: var(--surf-2);
   border: 1px solid var(--border-2);
   color: var(--accent);
   font-weight: 500;
   line-height: 1.05;
-  vertical-align: -0.06em;
+  vertical-align: -0.04em;
 }
 
 .hero-sub {
