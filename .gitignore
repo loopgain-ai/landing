@@ -3,3 +3,6 @@
 .claude/
 *.log
 node_modules/
+
+# planning/brainstorm session briefs — never commit
+*KICKOFF.md
