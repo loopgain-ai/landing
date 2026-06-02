@@ -517,39 +517,37 @@ agent = Agent(name=<span class="tk-str">"Refiner"</span>, instructions=<span cla
         <code class="mono">pip install 'loopgain[examples]'</code>
         <span class="copy-hint mono">copy</span>
       </div>
-      <p class="proof-step mono"><span class="proof-step-num">02</span> run the diverging-refinement demo</p>
-      <div class="copy-box" data-copy="python examples/06_diverges.py" role="button" tabindex="0">
+      <p class="proof-step mono"><span class="proof-step-num">02</span> run the code-generation demo</p>
+      <div class="copy-box" data-copy="python examples/01_code_pytest.py" role="button" tabindex="0">
         <span class="copy-prompt mono">$</span>
-        <code class="mono">python examples/06_diverges.py</code>
+        <code class="mono">python examples/01_code_pytest.py</code>
         <span class="copy-hint mono">copy</span>
       </div>
       <p class="proof-desc">
-        Example 06 asks Claude to make a passage shorter, repeatedly. Each pass strips facts — the loop diverges by construction. The baseline keeps the last (worst) iteration. LoopGain catches <span class="mono code-inline">DIVERGING</span> on iter 2 and rolls back. <em>Better output and less spend.</em>
+        Example 01 generates code and checks it with <span class="mono code-inline">pytest</span>. The first draft already passes all 15 tests — but a fixed <span class="mono code-inline">max_iterations=5</span> keeps paying Claude for four more useless passes. LoopGain hits <span class="mono code-inline">TARGET_MET</span> on iter 1 and stops. The chart up top is the dramatic rescue; this is the <em>everyday</em> case — and you run it yourself.
       </p>
     </div>
 
-    <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 8 ───</span>
-  iter  1  error=2  (41w, missing 2/8)
-  iter  2  error=3  (37w, missing 3/8)
-  iter  3  error=3  (35w, missing 3/8)
-  …
-  iter  8  error=3  (36w, missing 3/8)
-  → kept LAST output. final error=3
+    <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 5 ───</span>
+  iter  1  error=0  (always runs to cap)
+  iter  2  error=0  (always runs to cap)
+  iter  3  error=0  (always runs to cap)
+  iter  4  error=0  (always runs to cap)
+  iter  5  error=0  (always runs to cap)
+  → kept LAST output. final error=0
 
-<span class="tk-com">─── WITH LOOPGAIN, max_iterations=8 ───</span>
-  iter  1  error=1.00  state=<span class="tk-good">FAST_CONVERGE</span>
-  iter  2  error=2.00  state=<span class="tk-bad">DIVERGING</span>
+<span class="tk-com">─── WITH LOOPGAIN: target_error=0, max_iterations=5 ───</span>
+  iter  1  error=0.00  state=<span class="tk-good">TARGET_MET</span>
 
 ┌─ COMPARISON ─────────────────────────────────
-│  Baseline:  8 iters, final error = 3, kept LAST
-│  LoopGain:  2 iters, best  error = 1,
-│             kept best-so-far (iter 1) — diverged
-│  Saved:     6 iterations (<span class="tk-good">75%</span>) of API spend
+│  Baseline:  5 iters, final error = 0, kept LAST
+│  LoopGain:  1 iter,  best  error = 0,
+│             stopped on TARGET_MET (iter 1)
+│  Saved:     4 iterations (<span class="tk-good">80%</span>) of API spend
 └──────────────────────────────────────────────
 
-best_index:     0  (terminal iter was 1)
-rolled_back:    <span class="tk-good">True</span>  ← rescued an earlier iter
-
+outcome:        <span class="tk-good">converged</span>
+iterations:     1
 telemetry sent: <span class="tk-good">True</span>
 </code></pre>
   </div>

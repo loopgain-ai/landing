@@ -152,10 +152,12 @@
       el.style.transform = `translate(${tx}, ${opt.below ? '8px' : '-130%'})`;
     };
 
-    // static LoopGain stop/keep marker + chip at (iter 3, err 0)
+    // static LoopGain stop/keep marker + chip at (iter 3, err 0). The dot sits
+    // at the bottom of the plot (err 0), so the chip goes top-right of it —
+    // never below, where it would spill past the chart edge.
     const SX = iterToX(STOP), SY = errToY(0);
     [lgRing, lgGlow].forEach(c => { c.setAttribute('cx', SX); c.setAttribute('cy', SY); });
-    place(lgChip, SX, SY, { anchor: 'right', below: true });
+    place(lgChip, SX, SY, { anchor: 'right' });
 
     // Build a polyline from integer iter `a` to float tip, interpolating the
     // final partial segment. Returns the path and the tip coords/error.
