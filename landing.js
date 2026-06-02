@@ -2,7 +2,8 @@
    - theme toggle (dark by default; light only via explicit user click)
    - copy-to-clipboard for inline pip box + code panels
    - tabbed code panels
-   - animated hero convergence chart (renders points 1..20 then loops back)
+   - animated hero contrast chart: one REAL run (seed 34). LoopGain stops at
+     iter 2 (converged); the max_iter=20 baseline runs all 20 and ends broken.
 */
 
 (() => {
@@ -83,239 +84,155 @@
     });
   }
 
-  // ─────────── hero animated convergence chart ───────────
-  // Y axis maps band ranges into 0..360 (chart svg height) inverted: 0 = top (DIVERGING).
-  // Bands by flex weights in CSS: div=0.9, osc=1, stall=1, conv=1.6, fast=1.6 → total 6.1
-  // So thresholds (from top in chart-space):
-  //  DIVERGING band:    0     ..  53.1
-  //  OSCILLATING band: 53.1   .. 112.1
-  //  STALLING band:   112.1   .. 171.1
-  //  CONVERGING band: 171.1   .. 265.5
-  //  FAST_CONVERGE:   265.5   .. 360
-  // We interpret y purely as a smoothed Aβ value for visual purposes.
-
-  // We pre-script 24 iterations: a healthy convergence that briefly stalls,
-  // recovers, and lands in FAST_CONVERGE. Numbers chosen for narrative.
-  const series = [
-    /* Aβ_smooth,  ε (error 0..1)  */
-    { ab: 0.62, eps: 0.92 },
-    { ab: 0.55, eps: 0.51 },
-    { ab: 0.48, eps: 0.25 },
-    { ab: 0.52, eps: 0.13 },
-    { ab: 0.71, eps: 0.092 },
-    { ab: 0.84, eps: 0.077 },
-    { ab: 0.88, eps: 0.068 },   // brief STALL
-    { ab: 0.81, eps: 0.055 },
-    { ab: 0.62, eps: 0.034 },
-    { ab: 0.45, eps: 0.015 },
-    { ab: 0.28, eps: 0.0042 },  // FAST_CONVERGE landing
-    { ab: 0.21, eps: 0.0009 },
-  ];
-  const N = series.length;
-  const CHART_W = 600, CHART_H = 360;
-  const PADX = 30;
-
-  // Map an Aβ value to a y-coord. Linear mapping from ab=0 (bottom) to
-  // ab=1.20 (top). Band-rail flex weights in CSS are sized to match the
-  // actual Aβ widths of each band, so the data line lands inside its
-  // colored stripe (e.g. ab=0.88 → STALL amber).
+  // ─────────── hero chart: one real run, two stop policies (seed 114) ───────────
+  // REAL trajectory, bench trial `w1-codegen-langgraph-claude-haiku-4-5-seed114`:
+  //   error_history = [10,1,0,11,11,10,2,11,10,2,0,11,10,1,11,11,11,10,11,9]
+  //   The loop reaches the answer (err 0) at iter 3, then keeps revising and
+  //   breaks it back to err 9 by iter 20.
+  // ONE path, two policies — so the difference is the stop rule, not sampling luck:
+  //   • LoopGain stops at iter 3 (TARGET_MET, verified by the real classifier),
+  //     keeps the err-0 output. cost ≈ $0.0081 (3 iters).
+  //   • max_iter=20 runs all 20 and keeps the last (err 9). cost = $0.053865.
+  //   → ~85% less spend AND a better answer this run.
   //
-  // Note: this is intentionally LINEAR for the landing's marketing
-  // chart, while the dashboard's Convergence Profiles panel uses log Y
-  // (because real fleet data spans orders of magnitude). The 12-point
-  // demo trajectory here doesn't have that spread, and log Y compressed
-  // STALL/OSC into unreadable slivers — see the deploy topology memo.
-  function abToY(ab) {
-    const top = 8, bot = CHART_H - 8;
-    const ab_min = 0, ab_max = 1.20;
-    const t = Math.min(1, Math.max(0, (ab - ab_min) / (ab_max - ab_min)));
-    return bot - t * (bot - top);
-  }
-  function idxToX(i) {
-    return PADX + (i / (N - 1)) * (CHART_W - PADX * 2);
-  }
+  // Design/honesty: the RIGHT axis (error) is the only quantitative axis. Iters
+  // 1–3 are green (LoopGain is watching and the loop is converging); iters 3–20
+  // are gray — what the fixed cap keeps doing with no stop signal once the answer
+  // was already found.
+  const ERR = [10, 1, 0, 11, 11, 10, 2, 11, 10, 2, 0, 11, 10, 1, 11, 11, 11, 10, 11, 9];
+  const NB = ERR.length;                 // 20
+  const STOP = 3;                        // LoopGain stops here (TARGET_MET, err 0)
+  const CAP_COST = 0.053865;             // real B20 cost for this trial
+  const PER = CAP_COST / NB;             // per-iteration $ (same path → same per-iter)
+  const LG_COST = PER * STOP;            // ≈ $0.0081
 
-  function bandFor(ab) {
-    if (ab < 0.30) return { id: 'fast',  name: 'FAST_CONVERGE' };
-    if (ab < 0.85) return { id: 'conv',  name: 'CONVERGING'    };
-    if (ab < 0.95) return { id: 'stall', name: 'STALLING'      };
-    if (ab < 1.05) return { id: 'osc',   name: 'OSCILLATING'   };
-    return            { id: 'div',   name: 'DIVERGING'     };
-  }
+  const CHART_W = 600, CHART_H = 360;
+  const PADX = 26, PADTOP = 18, PADBOT = 22;
+  const EMAX = 11;
 
-  const line = document.getElementById('chartLine');
-  const area = document.getElementById('chartArea');
-  const head = document.getElementById('chartHead');
-  const headG = document.getElementById('chartHeadGlow');
-  const iterNum = document.getElementById('iterNum');
-  const abNum   = document.getElementById('abNum');
-  const epsNum  = document.getElementById('epsNum');
-  const etaNum  = document.getElementById('etaNum');
-  const readout = document.getElementById('bandReadout');
+  const iterToX = (i) => PADX + ((i - 1) / (NB - 1)) * (CHART_W - PADX * 2);   // i: 1..20
+  const errToY  = (e) => {
+    const top = PADTOP, bot = CHART_H - PADBOT;
+    return bot - (Math.min(e, EMAX) / EMAX) * (bot - top);
+  };
+  const fmt$ = (v) => '$' + v.toFixed(4);
+  const lerp = (a, b, t) => a + (b - a) * t;
 
-  // Line is drawn as a pool of `<path>` segments inside the line group.
-  // Each data-point pair is split at every band-boundary crossing (0.30 /
-  // 0.85 / 0.95 / 1.05), and each resulting sub-segment is colored by the
-  // band of its midpoint Aβ. The pool grows on demand and unused entries
-  // are cleared each frame.
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  const BAND_BOUNDARIES = [0.30, 0.85, 0.95, 1.05];
-  const segPool = [];
-  function takeSeg(used) {
-    if (used < segPool.length) return segPool[used];
-    const seg = document.createElementNS(SVG_NS, 'path');
-    if (line) line.appendChild(seg);
-    segPool.push(seg);
-    return seg;
-  }
-  function clearSegsFrom(used) {
-    for (let i = used; i < segPool.length; i++) {
-      segPool[i].setAttribute('d', '');
+  const capSeg  = document.getElementById('capSeg');
+  const lgSeg   = document.getElementById('lgSeg');
+  const lgArea  = document.getElementById('lgArea');
+  const head    = document.getElementById('traceHead');
+  const lgRing  = document.getElementById('lgStopRing');
+  const lgGlow  = document.getElementById('lgStopGlow');
+  const grid    = document.getElementById('chartGrid');
+  const lgChip  = document.getElementById('lgChip');
+  const capChip = document.getElementById('capChip');
+  const capIterEl = document.getElementById('capIter');
+  const capCostEl = document.getElementById('capCost');
+  const capVerdict = document.getElementById('capVerdict');
+  const savedPctEl = document.getElementById('savedPct');
+
+  if (capSeg && lgSeg && grid) {
+    // vertical gridlines, one per iteration
+    let gridD = '';
+    for (let i = 1; i <= NB; i++) {
+      const x = iterToX(i).toFixed(1);
+      gridD += `M ${x} ${PADTOP} L ${x} ${CHART_H - PADBOT} `;
     }
-  }
-  // Split a linear segment from (x1, ab1) to (x2, ab2) at every band
-  // boundary it crosses. Returns pieces in order, each {x1, ab1, x2, ab2}.
-  function splitAtBoundaries(x1, ab1, x2, ab2) {
-    if (ab1 === ab2) return [{ x1, ab1, x2, ab2 }];
-    const crossings = [];
-    for (const b of BAND_BOUNDARIES) {
-      const t = (b - ab1) / (ab2 - ab1);
-      if (t > 0 && t < 1) crossings.push({ t, ab: b });
-    }
-    if (crossings.length === 0) return [{ x1, ab1, x2, ab2 }];
-    crossings.sort((a, b) => a.t - b.t);
-    const out = [];
-    let prevT = 0, prevAb = ab1;
-    for (const c of crossings) {
-      out.push({
-        x1: x1 + prevT * (x2 - x1), ab1: prevAb,
-        x2: x1 + c.t   * (x2 - x1), ab2: c.ab,
-      });
-      prevT = c.t; prevAb = c.ab;
-    }
-    out.push({
-      x1: x1 + prevT * (x2 - x1), ab1: prevAb,
-      x2, ab2,
-    });
-    return out;
-  }
-  function drawSegment(used, x1, ab1, x2, ab2) {
-    const y1 = abToY(ab1), y2 = abToY(ab2);
-    const seg = takeSeg(used);
-    seg.setAttribute('d', `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`);
-    const midAb = (ab1 + ab2) / 2;
-    seg.setAttribute('stroke', `var(--band-${bandFor(midAb).id})`);
-    return used + 1;
-  }
+    grid.setAttribute('d', gridD);
 
-  if (line && head && readout) {
-    let progress = 0;   // float 0..N-1 (current "tip" along the series)
-    const speed = 0.018; // iterations per frame at 60fps ≈ 0.5 iter / 28ms-ish
+    // place a chip using svg→% mapping (svg is preserveAspectRatio="none")
+    const place = (el, x, y, opt = {}) => {
+      if (!el) return;
+      el.style.left = (x / CHART_W * 100) + '%';
+      el.style.top  = (y / CHART_H * 100) + '%';
+      const tx = opt.anchor === 'left'  ? 'calc(-100% - 8px)'
+               : opt.anchor === 'right' ? '8px'
+               : '-50%';
+      el.style.transform = `translate(${tx}, ${opt.below ? '8px' : '-130%'})`;
+    };
+
+    // static LoopGain stop/keep marker + chip at (iter 3, err 0)
+    const SX = iterToX(STOP), SY = errToY(0);
+    [lgRing, lgGlow].forEach(c => { c.setAttribute('cx', SX); c.setAttribute('cy', SY); });
+    place(lgChip, SX, SY, { anchor: 'right', below: true });
+
+    // Build a polyline from integer iter `a` to float tip, interpolating the
+    // final partial segment. Returns the path and the tip coords/error.
+    function segTo(a, tip) {
+      const end = Math.floor(tip), f = tip - end;
+      let d = `M ${iterToX(a).toFixed(1)} ${errToY(ERR[a - 1]).toFixed(1)}`;
+      for (let i = a + 1; i <= Math.min(end, NB); i++) {
+        d += ` L ${iterToX(i).toFixed(1)} ${errToY(ERR[i - 1]).toFixed(1)}`;
+      }
+      if (end < NB && f > 0 && tip > a) {
+        const e = lerp(ERR[end - 1], ERR[end], f);
+        const x = iterToX(end + f);
+        d += ` L ${x.toFixed(1)} ${errToY(e).toFixed(1)}`;
+        return { d, x, y: errToY(e), e };
+      }
+      const c = Math.max(a, Math.min(end, NB));
+      return { d, x: iterToX(c), y: errToY(ERR[c - 1]), e: ERR[c - 1] };
+    }
+
+    let progress = 1;          // current iteration tip (float, 1..20)
+    const speed = 0.0030;      // iters per ms → ~6.3s for the full path
     let last = performance.now();
-    let pause = 0;       // frames of pause at the end of run
-
-    function lerp(a, b, t) { return a + (b - a) * t; }
+    let pause = 0;
 
     function tick(now) {
       const dt = Math.min(48, now - last);
       last = now;
+      if (pause > 0) { pause -= dt; if (pause <= 0) { progress = 1; pause = 0; } }
+      else { progress += speed * dt; if (progress >= NB) { progress = NB; pause = 1900; } }
 
-      if (pause > 0) {
-        pause -= dt;
-        if (pause <= 0) {
-          progress = 0;
-          pause = 0;
-        }
+      // green portion: iters 1..min(progress, STOP) — the loop converging
+      const lgTip = Math.min(progress, STOP);
+      const lg = segTo(1, lgTip);
+      lgSeg.setAttribute('d', lg.d);
+      lgArea.setAttribute('d',
+        lg.d + ` L ${lg.x.toFixed(1)} ${CHART_H - PADBOT} L ${iterToX(1).toFixed(1)} ${CHART_H - PADBOT} Z`);
+
+      // gray portion: iters STOP..progress — what the cap keeps doing after
+      if (progress > STOP) {
+        const cap = segTo(STOP, progress);
+        capSeg.setAttribute('d', cap.d);
       } else {
-        progress += speed * (dt / 16.67);
-        if (progress >= N - 1) {
-          progress = N - 1;
-          pause = 1400; // hold at end before restarting
-        }
+        capSeg.setAttribute('d', '');
       }
 
-      // Build path up to current tip (interpolated)
-      const tip = Math.min(progress, N - 1);
-      const iTip = Math.floor(tip);
-      const f = tip - iTip;
+      const stopped = progress >= STOP;
+      // moving head: green while converging, gray once past the stop point
+      const tip = segTo(1, progress);
+      head.setAttribute('cx', tip.x); head.setAttribute('cy', tip.y);
+      head.setAttribute('fill', stopped ? 'var(--text-3)' : 'var(--band-fast)');
+      lgRing.setAttribute('opacity', stopped ? 1 : 0);
+      lgGlow.setAttribute('opacity', stopped ? 1 : 0);
+      lgChip.classList.toggle('is-on', stopped);
 
-      // Interpolate ab/eps between iTip and iTip+1
-      const cur = series[iTip];
-      const nxt = series[Math.min(N - 1, iTip + 1)];
-      const ab = lerp(cur.ab, nxt.ab, f);
-      const eps = Math.max(0, lerp(cur.eps, nxt.eps, f));
-      const x = idxToX(tip);
-      const y = abToY(ab);
-
-      // Walk each data-point segment, split it at any band boundary it
-      // crosses, and draw each piece in its own band color. Pieces are
-      // taken from a pool; unused pool entries get cleared at the end so
-      // there's no stale path from a previous frame.
-      let used = 0;
-      for (let i = 0; i < N - 1; i++) {
-        let segX1, segAb1, segX2, segAb2;
-        if (i < iTip) {
-          segX1 = idxToX(i);     segAb1 = series[i].ab;
-          segX2 = idxToX(i + 1); segAb2 = series[i + 1].ab;
-        } else if (i === iTip) {
-          segX1 = idxToX(i);     segAb1 = series[i].ab;
-          segX2 = x;             segAb2 = ab;
-        } else {
-          break; // nothing more to draw this frame
-        }
-        const pieces = splitAtBoundaries(segX1, segAb1, segX2, segAb2);
-        for (const p of pieces) {
-          used = drawSegment(used, p.x1, p.ab1, p.x2, p.ab2);
-        }
+      // cap chip rides the gray head (only after the stop point)
+      const atEnd = progress >= NB;
+      if (progress > STOP + 0.15) {
+        capChip.style.display = '';
+        const anchor = tip.x > CHART_W * 0.6 ? 'left' : tip.x < CHART_W * 0.14 ? 'right' : 'center';
+        place(capChip, tip.x, tip.y, { anchor, below: true });
+        capChip.textContent = atEnd ? '✗ max_iter=20 keeps err 9' : `err ${Math.round(tip.e)}`;
+        capChip.classList.toggle('is-broken', atEnd);
+      } else {
+        capChip.style.display = 'none';
       }
-      clearSegsFrom(used);
 
-      // area: independent of the line color — a single filled path under
-      // the curve, using the static convFill gradient defined in the SVG.
-      let areaD = `M ${idxToX(0).toFixed(1)} ${abToY(series[0].ab).toFixed(1)}`;
-      for (let i = 1; i <= iTip; i++) {
-        areaD += ` L ${idxToX(i).toFixed(1)} ${abToY(series[i].ab).toFixed(1)}`;
-      }
-      areaD += ` L ${x.toFixed(1)} ${y.toFixed(1)}`;
-      areaD += ` L ${x.toFixed(1)} ${CHART_H} L ${idxToX(0).toFixed(1)} ${CHART_H} Z`;
-      area.setAttribute('d', areaD);
+      // foot numbers
+      const capIterNow = Math.min(NB, Math.max(1, Math.ceil(progress)));
+      capIterEl.textContent = 'iter ' + capIterNow;
+      capCostEl.textContent = fmt$(PER * capIterNow);
+      capVerdict.textContent = atEnd ? '✗ broken' : 'running…';
+      capVerdict.classList.toggle('is-on', atEnd);
 
-      // head
-      head.setAttribute('cx', x);
-      head.setAttribute('cy', y);
-      headG.setAttribute('cx', x);
-      headG.setAttribute('cy', y);
-
-      // readout text
-      const band = bandFor(ab);
-      const bandClass = 'mono band-readout is-' + band.id;
-      if (readout.className !== bandClass) readout.className = bandClass;
-      readout.textContent = band.name;
-
-      // Head dot follows the current tip's band. Line segments are
-      // colored individually in the loop above.
-      head.setAttribute('fill',   `var(--band-${band.id})`);
-      headG.setAttribute('fill',  `var(--band-${band.id})`);
-
-      // Foot numbers
-      iterNum.textContent = String(iTip + 1).padStart(2, '0');
-      abNum.textContent = ab.toFixed(2);
-      // format eps in either fixed or scientific
-      epsNum.textContent = eps >= 0.01 ? eps.toFixed(3) : eps.toExponential(1).replace('+', '');
-      // eta: log(target/eps) / log(ab)  → expressed as iterations to reach 0.001
-      const target = 0.001;
-      let eta = '—';
-      if (ab > 0 && ab < 1 && eps > target) {
-        const e = Math.log(target / eps) / Math.log(ab);
-        if (isFinite(e) && e > 0 && e < 60) eta = e.toFixed(1) + ' iter';
-        else if (isFinite(e) && e <= 0) eta = '✓ at target';
-      } else if (eps <= target) {
-        eta = '✓ at target';
-      }
-      etaNum.textContent = eta;
-      // Highlight the ETA cell when the loop is at target so the
-      // success state pops visually (styled via .is-at-target in CSS).
-      etaNum.classList.toggle('is-at-target', eta === '✓ at target');
+      // savings grows as the cap keeps burning past LoopGain's stop
+      const capCostNow = PER * capIterNow;
+      savedPctEl.textContent = (stopped && capCostNow > LG_COST)
+        ? Math.round((1 - LG_COST / capCostNow) * 100) + '%' : '—';
 
       requestAnimationFrame(tick);
     }

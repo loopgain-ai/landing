@@ -403,6 +403,13 @@ section + section {
   text-transform: uppercase;
   font-size: 10.5px;
 }
+.hc-realtag {
+  font-size: 10px;
+  color: var(--text-3);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.hc-realtag:hover { color: var(--band-fast); border-bottom-color: color-mix(in oklab, var(--band-fast) 40%, transparent); }
 .band-readout {
   font-size: 10.5px;
   font-weight: 600;
@@ -421,6 +428,7 @@ section + section {
 
 .hero-chart-stage {
   position: relative;
+  display: flex;
   aspect-ratio: 600 / 360;
   background: var(--bg-1);
 }
@@ -476,47 +484,199 @@ section + section {
 .band-labels i { color: var(--text-4); font-style: normal; font-weight: 500; opacity: 0.85; }
 [data-theme="light"] .band-labels i { color: var(--text-3); }
 
+/* LEFT: the five states as a color KEY for the line colors — NOT a y-axis.
+   (Error level ≠ loop state, so band height-mapping would lie; see landing.js.) */
+/* horizontal legend under the chart, centered, wraps to 2 rows if needed */
+.band-key {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 7px 18px;
+  margin: 0;
+  padding: 11px 16px;
+  border-top: 1px solid var(--border);
+}
+.band-key .bk {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+  list-style: none;
+}
+.band-key .bk i { width: 9px; height: 9px; border-radius: 2px; flex: 0 0 auto; }
+.bk-div  i { background: var(--band-div); }
+.bk-osc  i { background: var(--band-osc); }
+.bk-stall i { background: var(--band-stall); }
+.bk-conv i { background: var(--band-conv); }
+.bk-fast i { background: var(--band-fast); }
+.bk-fast, .bk-conv { color: var(--text-2); }
+
+.plot-wrap { position: relative; flex: 1; min-width: 0; }
 .hero-chart-svg {
   position: absolute;
   inset: 0;
   width: 100%; height: 100%;
 }
-.hero-chart-svg .grid line {
+.hero-chart-svg .grid {
+  fill: none;
   stroke: var(--border);
   stroke-width: 1;
-  opacity: 0.6;
+  opacity: 0.4;
 }
-[data-theme="light"] .hero-chart-svg .grid line { opacity: 0.5; }
+[data-theme="light"] .hero-chart-svg .grid { opacity: 0.5; }
 
+/* the two trajectories */
+.hc-baseline {
+  stroke: var(--text-3);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+.hc-lgline {
+  stroke: var(--band-fast);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.hc-base-head { fill: var(--text-2); }
+
+/* RIGHT: error axis — the only quantitative axis. Its own column inside the
+   stage so the labels never clip against the card edge. */
+.err-axis {
+  position: relative;
+  flex: 0 0 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 0 20px 6px;
+  font-size: 9px;
+  color: var(--text-4);
+  pointer-events: none;
+}
+.err-axis em {
+  position: absolute;
+  right: 4px; top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: center;
+  font-style: normal;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-3);
+}
+
+/* floating state chips + the band-vocabulary bridge */
+.hc-chip {
+  position: absolute;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hc-chip-lg {
+  color: var(--band-fast);
+  background: color-mix(in oklab, var(--band-fast) 16%, var(--bg-1));
+  border: 1px solid color-mix(in oklab, var(--band-fast) 34%, transparent);
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.hc-chip-lg.is-on { opacity: 1; }
+.hc-chip-base {
+  color: var(--text-3);
+  background: color-mix(in oklab, var(--text-3) 14%, var(--bg-1));
+  border: 1px solid color-mix(in oklab, var(--text-3) 26%, transparent);
+}
+.hc-chip-base.is-broken {
+  color: var(--band-div);
+  background: color-mix(in oklab, var(--band-div) 16%, var(--bg-1));
+  border-color: color-mix(in oklab, var(--band-div) 34%, transparent);
+}
+.hc-anno {
+  position: absolute;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 9px;
+  color: var(--band-osc);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.hc-anno.is-on { opacity: 0.92; }
+
+/* foot: the two runs compared + a savings callout */
 .hero-chart-foot {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.6fr;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
   border-top: 1px solid var(--border);
 }
-.hcf-cell {
-  padding: 10px 14px;
-  display: flex; flex-direction: column; gap: 3px;
+.hcf-line {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  gap: 10px;
+  padding: 9px 14px;
+  font-size: 10px;
   min-width: 0;
+  overflow: hidden;
 }
-.hcf-cell + .hcf-cell { border-left: 1px solid var(--border); }
-.hcf-cell .label {
-  font-size: 9.5px;
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  overflow-wrap: anywhere;
-}
-.hcf-cell .num {
-  font-size: 16px;
+.hcf-line.hcf-base { border-top: 1px solid var(--border); }
+.hcf-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
   color: var(--text-1);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-  transition: color 200ms ease;
+  min-width: 78px;
 }
-/* When the loop reaches its convergence target, flip the ETA cell's
-   number text to the CONVERGING band color so it pops visually. */
-.hcf-cell .num.is-at-target { color: var(--band-conv); }
+.hcf-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.hcf-lg   .hcf-dot { background: var(--band-fast); }
+.hcf-base .hcf-dot { background: var(--text-3); }
+.hcf-base .hcf-name { color: var(--text-2); }
+.hcf-stat { color: var(--text-3); display: inline-flex; gap: 5px; align-items: baseline; }
+.hcf-stat b { color: var(--text-1); font-weight: 600; font-variant-numeric: tabular-nums; }
+.hcf-k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
+.hcf-ok  { color: var(--band-conv); }
+.hcf-bad { color: var(--text-3); }
+.hcf-bad.is-on { color: var(--band-div); }
+.hcf-saved {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 18px;
+  background: color-mix(in oklab, var(--band-fast) 7%, transparent);
+}
+.hcf-saved-num {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--band-fast);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.hcf-saved-lab {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  margin-top: 4px;
+}
 
 /* ───────────────── problem section ───────────────── */
 .prob-grid {
@@ -1431,6 +1591,16 @@ section + section {
   max-width: 60ch;
 }
 .hero-evidence strong { color: var(--text-1); font-weight: 600; }
+.hero-evidence .evi-intro { margin: 0 0 10px; }
+.hero-evidence .evi-list {
+  margin: 0 0 12px;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hero-evidence .evi-list li::marker { color: var(--accent); }
+.hero-evidence .evi-key { color: var(--text-1); font-weight: 600; }
 .hero-evidence .evi-stat {
   color: var(--accent);
   font-weight: 700;

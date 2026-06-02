@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>LoopGain — Barkhausen stability monitor for AI agent loops</title>
-<meta name="description" content="Stop guessing max_iterations. LoopGain measures the loop gain Aβ of your iterative LLM loops in real time — multi-agent pipelines, ReAct, self-refinement, agentic coding — and stops them at the exact iteration the math says to." />
+<title>LoopGain — know when your AI agent loop should stop</title>
+<meta name="description" content="AI agent loops waste time and money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 93.5% less spend, ~10× faster across 2,000 real trials. Open source, Apache-2.0." />
 <meta name="theme-color" content="#0A0B0D" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta property="og:title" content="LoopGain — Barkhausen stability monitor for AI agent loops" />
-<meta property="og:description" content="A real-time Aβ monitor for iterative LLM loops — multi-agent pipelines, ReAct, self-refinement, agentic coding. Catch divergence within two iterations of onset. Stop oscillating loops before they burn another dollar." />
+<meta property="og:title" content="LoopGain — know when your AI agent loop should stop" />
+<meta property="og:description" content="AI agent loops waste time and money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 93.5% less spend, ~10× faster across 2,000 real trials. Open source, Apache-2.0." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -99,15 +99,21 @@
         <span>Apache-2.0 · adapters for LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK</span>
       </div>
       <h1>
-        Replace <span class="mono code-inline">max_iterations=N</span> with a real measurement of convergence.
+        Your AI agent loops don&apos;t know when to stop. <span style="color:var(--accent)">LoopGain does.</span>
       </h1>
       <p class="hero-sub">
-        A Barkhausen-criterion stability monitor for iterative LLM loops. Catches stalling, oscillating, and diverging loops before they burn your tokens — with <em>best-so-far rollback</em> when the loop walks past its best output.
+        When an agent keeps checking and revising its own work, it often spins on a problem it can&apos;t solve — or talks itself into an answer worse than one it already had. LoopGain watches the loop as it runs, stops it at the right iteration, and keeps the <em>best</em> version, not the last.
       </p>
 
-      <p class="hero-evidence">
-        On <strong>2,000 real-API trials</strong> across 6 framework adapters: <span class="evi-stat">93.5% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code>, <span class="evi-stat">~10× wall-clock speedup</span>, output quality preserved on natural-distribution workloads and improved on engineered-failure ones. <a class="evi-link" href="/benchmarks">See the bench →</a>
-      </p>
+      <div class="hero-evidence">
+        <p class="evi-intro">On <strong>2,000 real-API trials</strong> across 6 framework adapters:</p>
+        <ul class="evi-list">
+          <li><span class="evi-key">Cost:</span> <span class="evi-stat">93.5% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code></li>
+          <li><span class="evi-key">Speed:</span> <span class="evi-stat">~10× wall-clock speedup</span></li>
+          <li><span class="evi-key">Quality:</span> output quality preserved on natural-distribution workloads and improved on engineered-failure ones</li>
+        </ul>
+        <a class="evi-link" href="/benchmarks">See the bench →</a>
+      </div>
 
       <div class="hero-actions">
         <div class="copy-box" data-copy="pip install loopgain" role="button" tabindex="0">
@@ -136,82 +142,71 @@
       </div>
     </div>
 
-    <!-- live convergence chart -->
-    <figure class="hero-chart" aria-label="A simulated agent loop converging across the five gain bands">
+    <!-- one real run (bench seed 114), one trajectory, two stop policies.
+         The loop reaches a correct answer (err 0) at iter 3, then keeps revising
+         and breaks it back to err 9 by iter 20. LoopGain stops at iter 3 and keeps
+         the correct output; max_iter=20 runs all 20 and ships the broken result.
+         Same path — so the difference is the stop rule, not luck of the sampling. -->
+    <figure class="hero-chart" aria-label="One real benchmark run. The loop reaches a correct answer at iteration 3, then keeps revising and breaks it by iteration 20. LoopGain stops at iteration 3 and keeps the correct output; the max_iterations=20 cap runs all 20 iterations and ships the broken result, costing about 6x more.">
       <div class="hero-chart-head">
-        <span class="mono label">loop · checkout-rewriter / iter 1–20</span>
-        <span class="mono band-readout" id="bandReadout">FAST_CONVERGE</span>
+        <span class="mono label">loop · codegen · langgraph · haiku-4.5 · seed 114</span>
+        <a class="mono hc-realtag" href="/benchmarks">1 real run ↗</a>
       </div>
       <div class="hero-chart-stage">
-        <!-- Five-band y-axis backdrop. Per-iteration Aβ is plotted on this
-             axis (the dashboard does the same). Numeric ranges shown here
-             are the per-point band cutoffs used only for chart coloring;
-             the trajectory classifier that decides the loop-level state
-             reads four features off the full error series. -->
-        <div class="band-rail" aria-hidden="true">
-          <div class="band band-div"  data-range="runaway"   data-name="DIVERGING"></div>
-          <div class="band band-osc"  data-range="thrashing" data-name="OSCILLATING"></div>
-          <div class="band band-stall" data-range="flat"     data-name="STALLING"></div>
-          <div class="band band-conv" data-range="settling" data-name="CONVERGING"></div>
-          <div class="band band-fast" data-range="resolved" data-name="FAST_CONVERGE"></div>
+        <div class="plot-wrap">
+          <svg class="hero-chart-svg" viewBox="0 0 600 360" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="lgFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--band-fast)" stop-opacity="0.20"/>
+                <stop offset="100%" stop-color="var(--band-fast)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path class="grid" id="chartGrid" d=""></path>
+            <!-- iters 3..20: what the fixed cap keeps doing after the answer was found -->
+            <path id="capSeg" class="hc-baseline" fill="none" d=""></path>
+            <!-- iters 1..3: the loop converging to the answer (LoopGain watching) -->
+            <path id="lgArea" fill="url(#lgFill)" d=""></path>
+            <path id="lgSeg" class="hc-lgline" fill="none" d=""></path>
+            <!-- moving trace head + LoopGain stop/keep marker at iter 3 -->
+            <circle id="lgStopGlow" r="13" fill="var(--band-fast)" fill-opacity="0.16" cx="0" cy="0" opacity="0"/>
+            <circle id="lgStopRing" r="8" fill="none" stroke="var(--band-fast)" stroke-width="2.5" cx="0" cy="0" opacity="0"/>
+            <circle id="traceHead" r="5" fill="var(--band-fast)" cx="0" cy="0"/>
+          </svg>
+          <!-- floating chips -->
+          <span class="hc-chip hc-chip-lg" id="lgChip">✓ LoopGain stops · keeps err 0</span>
+          <span class="hc-chip hc-chip-base" id="capChip">running…</span>
         </div>
-        <!-- Axis labels overlaid -->
-        <div class="band-labels mono" aria-hidden="true">
-          <span>DIVERGING<i>runaway</i></span>
-          <span>OSCILLATING<i>thrashing</i></span>
-          <span>STALLING<i>flat</i></span>
-          <span>CONVERGING<i>settling</i></span>
-          <span>FAST_CONVERGE<i>resolved</i></span>
+        <!-- error axis — the only quantitative axis -->
+        <div class="err-axis mono" aria-hidden="true">
+          <span>11</span><span>8</span><span>4</span><span>0</span>
+          <em>error</em>
         </div>
-        <!-- The line -->
-        <svg class="hero-chart-svg" viewBox="0 0 600 360" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="convFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="var(--band-stall)" stop-opacity="0.18"/>
-              <stop offset="100%" stop-color="var(--band-fast)" stop-opacity="0"/>
-            </linearGradient>
-          </defs>
-          <!-- vertical gridlines (iterations) -->
-          <g class="grid">
-            <line x1="60"  y1="0" x2="60"  y2="360"/>
-            <line x1="120" y1="0" x2="120" y2="360"/>
-            <line x1="180" y1="0" x2="180" y2="360"/>
-            <line x1="240" y1="0" x2="240" y2="360"/>
-            <line x1="300" y1="0" x2="300" y2="360"/>
-            <line x1="360" y1="0" x2="360" y2="360"/>
-            <line x1="420" y1="0" x2="420" y2="360"/>
-            <line x1="480" y1="0" x2="480" y2="360"/>
-            <line x1="540" y1="0" x2="540" y2="360"/>
-          </g>
-          <!-- area under the line -->
-          <path id="chartArea" fill="url(#convFill)" d=""></path>
-          <!-- the line, rendered as N-1 per-band-colored segments -->
-          <g id="chartLine" fill="none" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"></g>
-          <!-- moving head -->
-          <circle id="chartHead" r="5" fill="var(--accent)" cx="0" cy="0"/>
-          <circle id="chartHeadGlow" r="11" fill="var(--accent)" fill-opacity="0.18" cx="0" cy="0"/>
-          <!-- (Removed dashed "target ε = 0.10" line: the chart's y-axis is
-               Aβ_smoothed, not ε, so a ε-target line is geometric nonsense
-               here. The ETA cell still surfaces "at target" when the loop
-               converges below the internal target threshold.) -->
-        </svg>
       </div>
+      <!-- the five states as a COLOR KEY for the line colors (NOT a y-axis;
+           error level ≠ loop state). Horizontal legend, centered under the chart. -->
+      <ul class="band-key mono" aria-hidden="true">
+        <li class="bk bk-fast"><i></i>FAST_CONVERGE</li>
+        <li class="bk bk-conv"><i></i>CONVERGING</li>
+        <li class="bk bk-stall"><i></i>STALLING</li>
+        <li class="bk bk-osc"><i></i>OSCILLATING</li>
+        <li class="bk bk-div"><i></i>DIVERGING</li>
+      </ul>
       <figcaption class="hero-chart-foot mono">
-        <div class="hcf-cell">
-          <span class="label">iter</span>
-          <span class="num" id="iterNum">01</span>
+        <div class="hcf-line hcf-lg">
+          <span class="hcf-name"><i class="hcf-dot"></i>LoopGain</span>
+          <span class="hcf-stat"><span class="hcf-k">stops</span> <b id="lgStopIter">iter 3</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="lgCost">$0.0081</b></span>
+          <span class="hcf-stat hcf-ok">✓ best output</span>
         </div>
-        <div class="hcf-cell">
-          <span class="label">Aβ_smoothed</span>
-          <span class="num" id="abNum">—</span>
+        <div class="hcf-line hcf-base">
+          <span class="hcf-name"><i class="hcf-dot"></i>max_iter=20</span>
+          <span class="hcf-stat"><span class="hcf-k">runs</span> <b id="capIter">iter 1</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="capCost">$0.0027</b></span>
+          <span class="hcf-stat hcf-bad" id="capVerdict">running…</span>
         </div>
-        <div class="hcf-cell">
-          <span class="label">ε</span>
-          <span class="num" id="epsNum">—</span>
-        </div>
-        <div class="hcf-cell">
-          <span class="label">eta</span>
-          <span class="num" id="etaNum">— iter</span>
+        <div class="hcf-saved">
+          <span class="hcf-saved-num" id="savedPct">—</span>
+          <span class="hcf-saved-lab">less spend<br>+ better output</span>
         </div>
       </figcaption>
     </figure>
@@ -293,7 +288,7 @@
 <section class="bands-sec" id="bands" data-screen-label="bands">
   <div class="section-head">
     <span class="eyebrow mono">§02 · the fix</span>
-    <h2>Five named states. The trajectory decides. A stop signal either way.</h2>
+    <h2>Replace <span class="mono code-inline">max_iterations=N</span> with a real measurement of convergence.</h2>
     <p class="section-sub">
       Each iteration produces an error signal. LoopGain reads four features off the full error trajectory — cumulative reduction, trend slope, trend significance, and oscillation magnitude — and routes the loop into one of five named states. Two say keep going, three say stop. The state itself is the decision.
     </p>
