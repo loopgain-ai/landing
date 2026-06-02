@@ -1111,10 +1111,11 @@ section + section {
 .proof-output .tk-good { color: var(--band-conv); font-weight: 600; }
 .proof-output .tk-bad  { color: var(--band-div, #d97757); font-weight: 600; }
 .proof-foot {
-  margin: 22px 0 0;
+  margin: 20px 0 0;
   font-size: 13px;
   color: var(--text-3);
-  text-align: center;
+  text-align: left;
+  line-height: 1.7;
 }
 .proof-foot a {
   color: var(--accent);

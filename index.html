@@ -526,6 +526,11 @@ agent = Agent(name=<span class="tk-str">"Refiner"</span>, instructions=<span cla
       <p class="proof-desc">
         Example 01 generates code and checks it with <span class="mono code-inline">pytest</span>. The first draft already passes all 15 tests — but a fixed <span class="mono code-inline">max_iterations=5</span> keeps paying Claude for four more useless passes. LoopGain hits <span class="mono code-inline">TARGET_MET</span> on iter 1 and stops. The chart up top is the dramatic rescue; this is the <em>everyday</em> case — and you run it yourself.
       </p>
+      <p class="proof-foot mono">
+        <a href="https://github.com/loopgain-ai/loopgain/tree/main/examples" rel="noopener">All seven examples →</a>
+        <span class="dot-sep"></span>
+        covers all five bands: <span class="mono">FAST_CONVERGE · CONVERGING · STALLING · OSCILLATING · DIVERGING</span>
+      </p>
     </div>
 
     <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 5 ───</span>
@@ -552,11 +557,6 @@ telemetry sent: <span class="tk-good">True</span>
 </code></pre>
   </div>
 
-  <p class="proof-foot mono">
-    <a href="https://github.com/loopgain-ai/loopgain/tree/main/examples" rel="noopener">All seven examples →</a>
-    <span class="dot-sep"></span>
-    covers all five bands: <span class="mono">FAST_CONVERGE · CONVERGING · STALLING · OSCILLATING · DIVERGING</span>
-  </p>
 </section>
 
 <!-- ─── what you get ─────────────────────────────────────────────────── -->
