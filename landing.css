@@ -1830,7 +1830,6 @@ section + section {
   font-size: clamp(15px, 1.4vw, 18px);
   color: var(--text-2);
   line-height: 1.6;
-  max-width: 64ch;
 }
 .bench-lede strong { color: var(--text-1); font-weight: 600; }
 .bench-note {
@@ -1838,7 +1837,6 @@ section + section {
   font-size: 12px;
   color: var(--text-3);
   line-height: 1.5;
-  max-width: 64ch;
 }
 
 .bench-fig {
