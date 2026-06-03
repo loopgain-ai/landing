@@ -131,6 +131,9 @@
   const capCostEl = document.getElementById('capCost');
   const capVerdict = document.getElementById('capVerdict');
   const savedPctEl = document.getElementById('savedPct');
+  const lgStopIterEl = document.getElementById('lgStopIter');
+  const lgCostEl = document.getElementById('lgCost');
+  const lgVerdictEl = document.getElementById('lgVerdict');
 
   if (capSeg && lgSeg && grid) {
     // vertical gridlines, one per iteration
@@ -230,6 +233,16 @@
       capCostEl.textContent = fmt$(PER * capIterNow);
       capVerdict.textContent = atEnd ? '✗ broken' : 'running…';
       capVerdict.classList.toggle('is-on', atEnd);
+
+      // LoopGain foot numbers ride the green converging tip (iters 1..STOP),
+      // then hold at the stop point while the cap keeps burning.
+      const lgIterNow = Math.min(STOP, Math.max(1, Math.ceil(lgTip)));
+      lgStopIterEl.textContent = 'iter ' + lgIterNow;
+      lgCostEl.textContent = fmt$(PER * lgIterNow);
+      // verdict stays "running…" until LoopGain actually stops at iter 3,
+      // mirroring the cap row's "running…" → "✗ broken" reveal.
+      lgVerdictEl.textContent = stopped ? '✓ best output' : 'running…';
+      lgVerdictEl.classList.toggle('is-on', stopped);
 
       // savings grows as the cap keeps burning past LoopGain's stop
       const capCostNow = PER * capIterNow;

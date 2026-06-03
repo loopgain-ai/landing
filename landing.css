@@ -647,7 +647,8 @@ section + section {
 .hcf-stat { color: var(--text-3); display: inline-flex; gap: 5px; align-items: baseline; }
 .hcf-stat b { color: var(--text-1); font-weight: 600; font-variant-numeric: tabular-nums; }
 .hcf-k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); }
-.hcf-ok  { color: var(--band-conv); }
+.hcf-ok  { color: var(--text-3); }
+.hcf-ok.is-on  { color: var(--band-conv); }
 .hcf-bad { color: var(--text-3); }
 .hcf-bad.is-on { color: var(--band-div); }
 .hcf-saved {
