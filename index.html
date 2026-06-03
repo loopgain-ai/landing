@@ -517,43 +517,41 @@ agent = Agent(name=<span class="tk-str">"Refiner"</span>, instructions=<span cla
         <code class="mono">pip install 'loopgain[examples]'</code>
         <span class="copy-hint mono">copy</span>
       </div>
-      <p class="proof-step mono"><span class="proof-step-num">02</span> run the code-generation demo</p>
-      <div class="copy-box" data-copy="python examples/01_code_pytest.py" role="button" tabindex="0">
+      <p class="proof-step mono"><span class="proof-step-num">02</span> run the stuck-loop demo</p>
+      <div class="copy-box" data-copy="python examples/05_unsolvable_stalls.py" role="button" tabindex="0">
         <span class="copy-prompt mono">$</span>
-        <code class="mono">python examples/01_code_pytest.py</code>
+        <code class="mono">python examples/05_unsolvable_stalls.py</code>
         <span class="copy-hint mono">copy</span>
       </div>
       <p class="proof-desc">
-        Example 01 generates code and checks it with <span class="mono code-inline">pytest</span>. The first draft already passes all 15 tests — but a fixed <span class="mono code-inline">max_iterations=5</span> keeps paying Claude for four more useless passes. LoopGain hits <span class="mono code-inline">TARGET_MET</span> on iter 1 and stops. The chart up top is the dramatic rescue; this is the <em>everyday</em> case — and you run it yourself.
+        Example 05 hands Claude a spec that's <em>impossible by construction</em>, so the error never reaches 0 — the loop makes no progress, attempt after attempt. A fixed <span class="mono code-inline">max_iterations=10</span> keeps paying for all ten, and a naive <span class="mono code-inline">if error == 0: break</span> would never fire. LoopGain reads the flat trajectory as <span class="mono code-inline">STALLING</span> and stops at iter 3 — <strong>70% less spend</strong> on a loop that was never going to win. The chart up top catches a loop going <em>wrong</em>; this catches one going <em>nowhere</em>.
       </p>
       <p class="proof-foot mono">
         <a href="https://github.com/loopgain-ai/loopgain/tree/main/examples" rel="noopener">All seven examples →</a>
         <span class="dot-sep"></span>
-        covers all five bands: <span class="mono">FAST_CONVERGE · CONVERGING · STALLING · OSCILLATING · DIVERGING</span>
+        real Claude loops · verified output across <span class="mono">TARGET_MET · STALLING · DIVERGING</span>
       </p>
     </div>
 
-    <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 5 ───</span>
-  iter  1  error=0  (always runs to cap)
-  iter  2  error=0  (always runs to cap)
-  iter  3  error=0  (always runs to cap)
-  iter  4  error=0  (always runs to cap)
-  iter  5  error=0  (always runs to cap)
-  → kept LAST output. final error=0
+    <pre class="proof-output mono"><code><span class="tk-com">─── BASELINE: no LoopGain, fixed cap = 10 ───</span>
+  iter  1  error=1  (forbidden tokens used)
+  iter  2  error=1  (forbidden tokens used)
+  …
+  iter 10  error=1  (no coroutine driver)
+  → kept LAST output (error=1).
 
-<span class="tk-com">─── WITH LOOPGAIN: target_error=0, max_iterations=5 ───</span>
-  iter  1  error=0.00  state=<span class="tk-good">TARGET_MET</span>
+<span class="tk-com">─── WITH LOOPGAIN: target_error=None, max_iterations=10 ───</span>
+  iter  1  error=1.00  state=<span class="tk-good">FAST_CONVERGE</span>
+  iter  2  error=1.00  state=<span class="tk-stall">STALLING</span>
+  iter  3  error=1.00  state=<span class="tk-stall">STALLING</span>   → stop
 
 ┌─ COMPARISON ─────────────────────────────────
-│  Baseline:  5 iters, final error = 0, kept LAST
-│  LoopGain:  1 iter,  best  error = 0,
-│             stopped on TARGET_MET (iter 1)
-│  Saved:     4 iterations (<span class="tk-good">80%</span>) of API spend
+│  Baseline:  10 iters, error 1, kept LAST
+│  LoopGain:   3 iters, error 1, stopped on STALLING
+│  Saved:      7 iterations (<span class="tk-good">70%</span>) of API spend
 └──────────────────────────────────────────────
 
-outcome:        <span class="tk-good">converged</span>
-iterations:     1
-telemetry sent: <span class="tk-good">True</span>
+outcome:        <span class="tk-stall">stalled</span>
 </code></pre>
   </div>
 

@@ -1110,6 +1110,7 @@ section + section {
 .proof-output .tk-com  { color: var(--text-3); }
 .proof-output .tk-good { color: var(--band-conv); font-weight: 600; }
 .proof-output .tk-bad  { color: var(--band-div, #d97757); font-weight: 600; }
+.proof-output .tk-stall { color: var(--band-stall); font-weight: 600; }
 .proof-foot {
   margin: 20px 0 0;
   font-size: 13px;
