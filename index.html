@@ -109,7 +109,7 @@
         <p class="evi-intro">On <strong>2,000 real-API trials</strong> across 6 framework adapters:</p>
         <ul class="evi-list">
           <li><span class="evi-key">Cost:</span> <span class="evi-stat">92.8% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code></li>
-          <li><span class="evi-key">Speed:</span> <span class="evi-stat">~15× wall-clock speedup</span></li>
+          <li><span class="evi-key">Latency:</span> <span class="evi-stat">~15× wall-clock speedup</span></li>
           <li><span class="evi-key">Quality:</span> output quality preserved on natural-distribution workloads and improved on engineered-failure ones</li>
         </ul>
         <a class="evi-link" href="/benchmarks">See the bench →</a>
@@ -272,8 +272,8 @@
         <div class="ps-lab"><b>The loop hits the ceiling without converging.</b> Two iterations short of target. You ship iteration 5 and call it a feature.</div>
       </div>
       <div class="ps-row">
-        <div class="ps-num num-mono ps-num-osc">02</div>
-        <div class="ps-lab"><b>The loop is oscillating by iteration 3.</b> The reviser is undoing what it just wrote. Every later token is waste, and a fixed cap can&apos;t see it.</div>
+        <div class="ps-num num-mono ps-num-stall">02</div>
+        <div class="ps-lab"><b>The loop is stalling by iteration 3.</b> The reviser keeps changing the draft, but the error stops moving — pinned, going nowhere. Every later token is waste, and a fixed cap can&apos;t see it.</div>
       </div>
       <div class="ps-row">
         <div class="ps-num num-mono ps-num-fast">03</div>

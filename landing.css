@@ -764,7 +764,8 @@ section + section {
   font-variant-numeric: tabular-nums;
 }
 .ps-num-osc { color: var(--band-osc); }
-.ps-num-fast { color: var(--band-stall); }
+.ps-num-stall { color: var(--band-stall); }
+.ps-num-fast { color: var(--band-fast); }
 .ps-row:first-child .ps-num { color: var(--band-div); }
 .ps-lab {
   font-size: 14px;
