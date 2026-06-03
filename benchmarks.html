@@ -4,13 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>LoopGain Benchmark — 2,000 paired real-API trials, methodology pre-registered</title>
-<meta name="description" content="LoopGain benchmark results: 93.5% cost reduction and ~10× wall-clock speedup vs max_iter=20 across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered and locked 2026-05-21 before any confirmatory data was collected." />
+<meta name="description" content="LoopGain benchmark results: 92.8% cost reduction and ~15× wall-clock speedup vs max_iter=20 across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered and locked 2026-05-21 before any confirmatory data was collected." />
 <meta name="theme-color" content="#0A0B0D" />
 <meta name="robots" content="index,follow" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="canonical" href="https://loopgain.ai/benchmarks" />
 <meta property="og:title" content="LoopGain Benchmark — 2,000 paired real-API trials" />
-<meta property="og:description" content="93.5% cost reduction vs max_iter=20. ~10× wall-clock speedup. Output quality preserved on natural-distribution workloads and improved on engineered-failure ones. Pre-registered methodology; six analysis charts and raw data public." />
+<meta property="og:description" content="92.8% cost reduction vs max_iter=20. ~15× wall-clock speedup. Output quality preserved on natural-distribution workloads and improved on engineered-failure ones. Pre-registered methodology; six analysis charts and raw data public." />
 <meta property="og:url" content="https://loopgain.ai/benchmarks" />
 <meta property="og:type" content="article" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,7 +24,7 @@
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "LoopGain Benchmark — 2,000 paired real-API trials",
-  "description": "93.5% cost reduction vs max_iter=20 and ~10× wall-clock speedup across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered 2026-05-21.",
+  "description": "92.8% cost reduction vs max_iter=20 and ~15× wall-clock speedup across 2,000 paired real-API trials. 10 cells, 6 framework adapters, 3 LLMs. Methodology pre-registered 2026-05-21.",
   "datePublished": "2026-05-25",
   "url": "https://loopgain.ai/benchmarks",
   "inLanguage": "en",
@@ -71,7 +71,7 @@
   <p class="bench-lede">
     <strong>2,000 paired real-API trials. 10 cells across 6 framework adapters. Methodology pre-registered and locked 2026-05-21</strong> — before any of the confirmatory data was collected.
   </p>
-  <p class="bench-note mono">Benchmarked on loopgain v0.2.0. Cost, latency, and quality results carry forward to the current release; a re-run on the shipping version is in progress.</p>
+  <p class="bench-note mono">Re-validated on loopgain v0.4.0 (the shipping release); results landed 2026-06-03. The v0.4.0 classifier corrects a trajectory-label bug — a stuck loop now reads as STALLING, not OSCILLATING — and the corrected verdict terminates one iteration later, so the cost headline moved 93.5%→92.8%. Full re-validation note in the bench RESULTS.md.</p>
 
   <figure class="bench-fig">
     <img
@@ -108,43 +108,45 @@
       <tbody>
         <tr>
           <td>Total API spend</td>
-          <td>$7.00</td>
-          <td>$13.97</td>
-          <td class="col-emph">$27.61</td>
-          <td class="col-lg">$1.80</td>
+          <td>$6.83</td>
+          <td>$13.65</td>
+          <td class="col-emph">$27.05</td>
+          <td class="col-lg">$1.94</td>
         </tr>
         <tr>
           <td>Median wall-clock per trial</td>
-          <td>26.2s</td>
-          <td>49.1s</td>
-          <td class="col-emph">93.0s</td>
-          <td class="col-lg">9.8s</td>
+          <td>7.2s</td>
+          <td>14.8s</td>
+          <td class="col-emph">30.9s</td>
+          <td class="col-lg">2.1s</td>
         </tr>
         <tr class="savings-row">
           <td>Implied savings vs <code class="mono code-inline">max_iter=20</code></td>
           <td>—</td>
           <td>—</td>
           <td>—</td>
-          <td class="savings-val">93.5% cost / 89.5% time</td>
+          <td class="savings-val">92.8% cost / 93.3% time</td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <p class="bench-note mono">Absolute wall-clock is environment- and concurrency-dependent and isn't a headline metric — this re-run ran on a less-contended machine than the 0.2.0 run, so the seconds are lower. The ~15× LG-vs-<code class="mono code-inline">max_iter=20</code> <em>ratio</em> is the stable claim; cost ratios are stable to ~1 pp run-to-run.</p>
+
   <figure class="bench-fig">
     <img
       src="https://raw.githubusercontent.com/loopgain-ai/loopgain-bench/main/data/results/charts/cost_by_condition.png"
-      alt="Bar chart: total API spend by condition. max_iter=5 = $7.00, max_iter=10 = $13.97, max_iter=20 = $27.61, LoopGain = $1.80."
+      alt="Bar chart: total API spend by condition. max_iter=5 = $6.83, max_iter=10 = $13.65, max_iter=20 = $27.05, LoopGain = $1.94."
       loading="lazy" />
     <figcaption>cost_by_condition.png · total API spend across the bench, by condition</figcaption>
   </figure>
 
   <ul>
-    <li><strong>93.5% cost reduction</strong> vs <code class="mono code-inline">max_iter=20</code></li>
-    <li><strong>~10× wall-clock speedup</strong> (93.0s → 9.8s median per trial)</li>
-    <li><strong>Quality preserved</strong> on natural-distribution workloads (W1–W2 judge winrate 0.55–0.62 with CI excluding null on most cells; W3 cells tie-dominated as preservation-by-construction since both LoopGain and <code class="mono code-inline">max_iter=20</code> produce the same correct tool call ~90% of the time)</li>
-    <li><strong>Quality improved</strong> on engineered-failure workloads (W5 winrate 0.88–0.93 across three adapters via best-so-far rollback)</li>
-    <li><strong>Aggregate</strong> weighted-average pairwise preference for LoopGain across 1,800 judge comparisons: <strong>0.681</strong> — over two-thirds</li>
+    <li><strong>92.8% cost reduction</strong> vs <code class="mono code-inline">max_iter=20</code></li>
+    <li><strong>~15× wall-clock speedup</strong> (30.9s → 2.1s median per trial)</li>
+    <li><strong>Quality preserved</strong> on natural-distribution workloads (W1–W2 judge winrate 0.55–0.63 with CI excluding null on most cells; W3 cells tie-dominated as preservation-by-construction since both LoopGain and <code class="mono code-inline">max_iter=20</code> produce the same correct tool call ~90% of the time)</li>
+    <li><strong>Quality improved</strong> on engineered-failure workloads (W5 winrate 0.92–0.95 across three adapters via best-so-far rollback)</li>
+    <li><strong>Aggregate</strong> weighted-average pairwise preference for LoopGain across 1,800 judge comparisons: <strong>0.678</strong> — over two-thirds</li>
     <li><strong>Zero of six kill criteria fired</strong></li>
   </ul>
 
@@ -159,11 +161,11 @@
 
   <h2>Honest disclosures</h2>
 
-  <p>Two pre-registered floors were missed without firing kill criteria. Both are surfaced in the writeup:</p>
+  <p>One pre-registered floor was missed without firing a kill criterion. It's surfaced in the writeup:</p>
   <ul>
-    <li><strong>H-EARLYWARN</strong> median lead time: 2 iterations observed vs ≥3 predicted (kill threshold: &lt;1)</li>
-    <li><strong>H-FRAMEWORK-PARITY</strong> W1 spread: 5.8 pp observed vs ≤5 pp predicted (kill threshold: &gt;15 pp)</li>
+    <li><strong>H-FRAMEWORK-PARITY</strong> W2 spread: 5.5 pp observed vs ≤5 pp predicted (kill threshold: &gt;15 pp)</li>
   </ul>
+  <p class="bench-note mono">Under the original 0.2.0 run, H-EARLYWARN missed at 2 iterations and the widest parity spread was W1 at 5.8 pp; the corrected 0.4.0 classifier flags STALLING earlier, so median lead time now meets the ≥3-iteration floor and the widest spread moved to W2 at 5.5 pp.</p>
 
   <p>
     Seven pre-data amendments to the methodology are preserved in <a href="https://github.com/loopgain-ai/loopgain-bench/blob/main/BENCH_PROTOCOL.md" rel="noopener">BENCH_PROTOCOL.md</a> with their full rationale. Predicted floors and kill criteria were never changed once data started landing.

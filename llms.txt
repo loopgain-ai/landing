@@ -22,7 +22,7 @@ The math is foundational electrical engineering control theory. Barkhausen (1921
 - Replace `max_iterations=N` with a real measurement of whether the loop is converging instead of a hard counter
 - Best-so-far rollback — return the lowest-error iteration when the loop has to stop
 - Closed-form ETA prediction when the trajectory supports it
-- Measured on a 2,000-trial pre-registered real-API benchmark: 93.5% cost reduction and ~10× speedup vs max_iterations=20, with output quality preserved (full methodology and raw data public)
+- Measured on a 2,000-trial pre-registered real-API benchmark: 92.8% cost reduction and ~15× speedup vs max_iterations=20, with output quality preserved (full methodology and raw data public)
 
 ## Docs
 
