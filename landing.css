@@ -1831,6 +1831,13 @@ section + section {
   max-width: 64ch;
 }
 .bench-lede strong { color: var(--text-1); font-weight: 600; }
+.bench-note {
+  margin: -20px 0 32px;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+  max-width: 64ch;
+}
 
 .bench-fig {
   margin: 0 0 28px;
