@@ -1,8 +1,8 @@
 # LoopGain
 
-> Real-time loop-gain (Aβ) stability monitor for iterative LLM loops — multi-agent pipelines, ReAct, self-refinement, and agentic coding. Built on the Barkhausen criterion from 1921. Replaces the universal max_iterations=N hack with a multi-feature trajectory classifier.
+> Open-source cost control for AI agent loops. Stops each verify-revise loop once it has converged and rolls back before it degrades, instead of running to a fixed max_iterations=N cap — so you stop paying to iterate past a good answer. A Barkhausen-criterion (Aβ) trajectory classifier under the hood; framework- and model-agnostic.
 
-LoopGain measures the loop gain Aβ of an iterative LLM loop in real time and classifies the loop's trajectory into one of five named states: FAST_CONVERGE, CONVERGING, STALLING, OSCILLATING, DIVERGING. The v0.2.0 classifier uses four trajectory features together — Aβ, statistical slope of the error trajectory, slope significance, and oscillation magnitude — and achieves 98.8% macro accuracy on a 1,000-trajectory deterministic-mock benchmark. The library is Python, Apache-2.0, zero-dependency until a framework adapter is installed.
+LoopGain measures the loop gain Aβ of an iterative LLM loop in real time and classifies the loop's trajectory into one of five named states: FAST_CONVERGE, CONVERGING, STALLING, OSCILLATING, DIVERGING. The v0.3.0 classifier uses four trajectory features together — Aβ, statistical slope of the error trajectory, slope significance, and oscillation magnitude — and achieves 98.8% macro accuracy on a 1,000-trajectory deterministic-mock benchmark. The library is Python, Apache-2.0, zero-dependency until a framework adapter is installed.
 
 The math is foundational electrical engineering control theory. Barkhausen (1921) established that a feedback loop's stability is entirely determined by its loop gain Aβ: if Aβ < 1 the loop converges, if Aβ > 1 the loop oscillates or diverges. An AI agent verify-revise loop is a feedback loop in the strict mathematical sense, so the same criterion applies. LoopGain is the first product extracted from a broader framework called ComponentAlgebra, which establishes a structural algebra between AI agent orchestration and electrical circuit design (36 EE-derived primitives, with a formal Turing-completeness proof on five of them).
 
@@ -22,6 +22,7 @@ The math is foundational electrical engineering control theory. Barkhausen (1921
 - Replace `max_iterations=N` with a real measurement of whether the loop is converging instead of a hard counter
 - Best-so-far rollback — return the lowest-error iteration when the loop has to stop
 - Closed-form ETA prediction when the trajectory supports it
+- Measured on a 2,000-trial pre-registered real-API benchmark: 93.5% cost reduction and ~10× speedup vs max_iterations=20, with output quality preserved (full methodology and raw data public)
 
 ## Docs
 
@@ -39,6 +40,6 @@ The math is foundational electrical engineering control theory. Barkhausen (1921
 
 ## Optional
 
-- [v0.2.0 classifier protocol](https://github.com/loopgain-ai/loopgain/blob/main/PROTOCOL_v2_classifier.md) — pre-registered four-feature trajectory classifier design with explicit thresholds and falsification criteria
-- [v0.2.0 validation results](https://github.com/loopgain-ai/loopgain/blob/main/RESULTS_v2_classifier.md) — 98.8% macro accuracy on N=1000 deterministic-mock benchmark with per-regime breakdown
+- [v2 classifier protocol](https://github.com/loopgain-ai/loopgain/blob/main/PROTOCOL_v2_classifier.md) — pre-registered four-feature trajectory classifier design with explicit thresholds and falsification criteria
+- [v2 classifier validation results](https://github.com/loopgain-ai/loopgain/blob/main/RESULTS_v2_classifier.md) — 98.8% macro accuracy on N=1000 deterministic-mock benchmark with per-regime breakdown
 - [README](https://github.com/loopgain-ai/loopgain/blob/main/README.md) — installation, quickstart, framework adapter examples
