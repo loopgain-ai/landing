@@ -76,13 +76,13 @@
   <figure class="bench-fig">
     <img
       src="https://raw.githubusercontent.com/loopgain-ai/loopgain-bench/main/data/results/charts/hero_seed34.png"
-      alt="Side-by-side per-iteration trajectory: max_iter=20 finds the correct answer at iteration 8, keeps iterating, and degrades to broken code by iteration 20. LoopGain detects TARGET_MET at iteration 2 and stops with the working code."
+      alt="Side-by-side per-iteration trajectory: max_iter=20 first finds the correct answer at iteration 3, keeps iterating, and degrades to broken code by iteration 20. LoopGain detects TARGET_MET at iteration 2 and stops with the working code."
       loading="lazy" />
     <figcaption>hero_seed34.png · per-iteration error trajectory · max_iter=20 vs LoopGain · single representative trial from the bench</figcaption>
   </figure>
 
   <p class="bench-story">
-    On a single representative trial in the bench, <code class="mono code-inline">max_iter=20</code> found the correct answer at iteration 8, kept iterating, and degraded back to broken code by iteration 20. LoopGain detected <code class="mono code-inline">TARGET_MET</code> at iteration 2 and stopped with the working code. <em>That's the canonical product story: when the model finds the right answer early, naive <code class="mono code-inline">max_iter=N</code> can iterate past success and degrade the output.</em>
+    On a single representative trial in the bench, <code class="mono code-inline">max_iter=20</code> first found the correct answer at iteration 3, kept iterating, and degraded back to broken code by iteration 20. LoopGain detected <code class="mono code-inline">TARGET_MET</code> at iteration 2 and stopped with the working code. <em>That's the canonical product story: when the model finds the right answer early, naive <code class="mono code-inline">max_iter=N</code> can iterate past success and degrade the output.</em>
   </p>
 
   <span id="cost" class="bench-anchor" aria-hidden="true"></span>
