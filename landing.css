@@ -1172,7 +1172,7 @@ section + section {
 /* ───────────────── dashboard mocks ───────────────── */
 .dash-mocks {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1fr;
   gap: 14px;
   margin-bottom: 36px;
 }
@@ -1312,30 +1312,6 @@ section + section {
   border-top: 1px solid var(--border);
 }
 .ww-val-tot { color: var(--accent); font-weight: 600; font-size: 12px; }
-
-/* eta */
-.dm-eta-body {
-  padding: 16px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.dm-eta-svg {
-  width: 100%; height: auto;
-  aspect-ratio: 320/180;
-}
-.dm-eta-legend {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: 0.04em;
-}
-.dm-eta-legend span { display: inline-flex; align-items: center; gap: 5px; text-transform: lowercase; }
-.ld { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
-.ld-fast { background: var(--band-fast); }
-.ld-conv { background: var(--band-conv); }
-.ld-stall { background: var(--band-stall); }
 
 .dash-cta {
   display: flex;
@@ -1580,76 +1556,6 @@ section + section {
   color: var(--text-3);
   letter-spacing: 0.04em;
 }
-
-/* ───────────────── hero evidence one-liner ───────────────── */
-.hero-evidence {
-  margin: -4px 0 28px;
-  padding: 14px 18px;
-  background: var(--surf-1);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 8px 8px 0;
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--text-2);
-  max-width: 60ch;
-}
-/* Full-width evidence strip below the hero grid — spans both columns,
-   horizontal layout, sits above the divider into the bench section. */
-.hero-evidence--full {
-  position: relative;
-  z-index: 1;
-  max-width: none;
-  margin: clamp(36px, 5vw, 56px) 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 30px;
-  row-gap: 10px;
-}
-.hero-evidence--full .evi-intro { margin: 0; white-space: nowrap; }
-.hero-evidence--full .evi-list {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: baseline;
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-  column-gap: 30px;
-  row-gap: 8px;
-}
-.hero-evidence--full .evi-list li::marker { content: none; }
-.hero-evidence--full .evi-link { margin-left: auto; align-self: center; }
-@media (max-width: 880px) {
-  .hero-evidence--full { column-gap: 18px; }
-  .hero-evidence--full .evi-link { margin-left: 0; }
-}
-.hero-evidence strong { color: var(--text-1); font-weight: 600; }
-.hero-evidence .evi-intro { margin: 0 0 10px; }
-.hero-evidence .evi-list {
-  margin: 0 0 12px;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.hero-evidence .evi-list li::marker { color: var(--accent); }
-.hero-evidence .evi-key { color: var(--text-1); font-weight: 600; }
-.hero-evidence .evi-stat {
-  color: var(--accent);
-  font-weight: 700;
-  letter-spacing: -0.005em;
-}
-.hero-evidence .evi-link {
-  color: var(--accent);
-  font-weight: 600;
-  white-space: nowrap;
-  border-bottom: 1px solid color-mix(in oklab, var(--accent) 35%, transparent);
-  padding-bottom: 1px;
-  transition: border-color 120ms ease;
-}
-.hero-evidence .evi-link:hover { border-bottom-color: var(--accent); }
-.hero-evidence .code-inline { font-size: 0.9em; }
 
 .hero-tertiary {
   margin: 14px 0 0;
