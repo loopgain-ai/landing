@@ -142,15 +142,16 @@
       </div>
     </div>
 
-    <!-- one real run (bench seed 114), one trajectory, two stop policies.
-         The loop reaches a correct answer (err 0) at iter 3, then keeps revising
-         and breaks it back to err 9 by iter 20. LoopGain stops at iter 3 and keeps
-         the correct output; max_iter=20 runs all 20 and ships the broken result.
-         Same path — so the difference is the stop rule, not luck of the sampling. -->
-    <figure class="hero-chart" aria-label="One real benchmark run. The loop reaches a correct answer at iteration 3, then keeps revising and breaks it by iteration 20. LoopGain stops at iteration 3 and keeps the correct output; the max_iterations=20 cap runs all 20 iterations and ships the broken result, costing about 6x more.">
+    <!-- two real benchmark runs of the same task (bench seed 34, langgraph · haiku-4.5),
+         drawn as two separate lines. LoopGain reaches the correct answer (err 0) at
+         iter 2, fires TARGET_MET, and stops — keeping the working output for $0.0050.
+         The max_iter=20 baseline runs all 20 iterations, bounces between correct and
+         broken, and ships err 11 (broken) at iter 20 for $0.0583. Same task, two runs —
+         the difference is the stop rule. Costs are the real measured cost_usd. -->
+    <figure class="hero-chart" aria-label="Two real benchmark runs of the same task. LoopGain detects the correct answer (error 0) at iteration 2 and stops, keeping the working output for $0.0050. The max_iterations=20 baseline runs all 20 iterations, bounces between correct and broken, and ships broken code (error 11) at iteration 20 for $0.0583 — about 12 times the spend for a worse result.">
       <div class="hero-chart-head">
-        <span class="mono label">loop · codegen · langgraph · haiku-4.5 · seed 114</span>
-        <a class="mono hc-realtag" href="/benchmarks">1 real run ↗</a>
+        <span class="mono label">loop · codegen · langgraph · haiku-4.5 · seed 34</span>
+        <a class="mono hc-realtag" href="/benchmarks">2 real runs ↗</a>
       </div>
       <div class="hero-chart-stage">
         <div class="plot-wrap">
@@ -162,15 +163,17 @@
               </linearGradient>
             </defs>
             <path class="grid" id="chartGrid" d=""></path>
-            <!-- iters 3..20: what the fixed cap keeps doing after the answer was found -->
+            <!-- max_iter=20 run: its real per-iteration error, all 20 iters, ends broken -->
             <path id="capSeg" class="hc-baseline" fill="none" d=""></path>
-            <!-- iters 1..3: the loop converging to the answer (LoopGain watching) -->
+            <!-- LoopGain run: its real trajectory, converges to err 0 at iter 2 and stops -->
             <path id="lgArea" fill="url(#lgFill)" d=""></path>
             <path id="lgSeg" class="hc-lgline" fill="none" d=""></path>
-            <!-- moving trace head + LoopGain stop/keep marker at iter 3 -->
+            <!-- LoopGain stop/keep marker at iter 2, err 0 -->
             <circle id="lgStopGlow" r="13" fill="var(--band-fast)" fill-opacity="0.16" cx="0" cy="0" opacity="0"/>
             <circle id="lgStopRing" r="8" fill="none" stroke="var(--band-fast)" stroke-width="2.5" cx="0" cy="0" opacity="0"/>
-            <circle id="traceHead" r="5" fill="var(--band-fast)" cx="0" cy="0"/>
+            <!-- moving heads: green = LoopGain run, gray = max_iter=20 run -->
+            <circle id="lgHead" r="5" fill="var(--band-fast)" cx="0" cy="0" opacity="0"/>
+            <circle id="traceHead" r="5" fill="var(--text-3)" cx="0" cy="0"/>
           </svg>
           <!-- floating chips -->
           <span class="hc-chip hc-chip-lg" id="lgChip">✓ LoopGain stops · keeps err 0</span>
@@ -194,18 +197,18 @@
       <figcaption class="hero-chart-foot mono">
         <div class="hcf-line hcf-lg">
           <span class="hcf-name"><i class="hcf-dot"></i>LoopGain</span>
-          <span class="hcf-stat"><span class="hcf-k">stops</span> <b id="lgStopIter">iter 3</b></span>
-          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="lgCost">$0.0081</b></span>
+          <span class="hcf-stat"><span class="hcf-k">stops</span> <b id="lgStopIter">iter 2</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="lgCost">$0.0050</b></span>
           <span class="hcf-stat hcf-ok" id="lgVerdict">running…</span>
         </div>
         <div class="hcf-line hcf-base">
           <span class="hcf-name"><i class="hcf-dot"></i>max_iter=20</span>
-          <span class="hcf-stat"><span class="hcf-k">runs</span> <b id="capIter">iter 1</b></span>
-          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="capCost">$0.0027</b></span>
+          <span class="hcf-stat"><span class="hcf-k">runs</span> <b id="capIter">iter 20</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="capCost">$0.0583</b></span>
           <span class="hcf-stat hcf-bad" id="capVerdict">running…</span>
         </div>
         <div class="hcf-saved">
-          <span class="hcf-saved-num" id="savedPct">—</span>
+          <span class="hcf-saved-num" id="savedPct">91%</span>
           <span class="hcf-saved-lab">less spend<br>+ better output</span>
         </div>
       </figcaption>
