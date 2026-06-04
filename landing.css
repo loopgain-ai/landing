@@ -1172,7 +1172,7 @@ section + section {
 /* ───────────────── dashboard mocks ───────────────── */
 .dash-mocks {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.4fr 1fr 1fr;
   gap: 14px;
   margin-bottom: 36px;
 }
@@ -1276,7 +1276,7 @@ section + section {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .ww-row {
   display: grid;
@@ -1312,6 +1312,22 @@ section + section {
   border-top: 1px solid var(--border);
 }
 .ww-val-tot { color: var(--accent); font-weight: 600; font-size: 12px; }
+.dw-hero { padding-bottom: 2px; }
+.dw-hero-num {
+  display: block;
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--band-fast);
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+}
+.dw-hero-lab { display: block; font-size: 9px; color: var(--text-3); margin-top: 5px; letter-spacing: 0.02em; }
+
+/* convergence profiles */
+.dm-conv-body { padding: 12px 14px; flex: 1; display: flex; flex-direction: column; }
+.dm-conv-svg { width: 100%; height: auto; aspect-ratio: 320/200; }
+.dm-conv-tick { fill: var(--text-3); font-size: 7px; font-family: var(--mono); }
+.dm-conv-blab { font-size: 7px; font-family: var(--mono); letter-spacing: 0.04em; opacity: 0.8; }
 
 .dash-cta {
   display: flex;
