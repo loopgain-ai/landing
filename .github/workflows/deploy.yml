@@ -35,6 +35,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Regenerate the hardcoded version fallbacks from the live PyPI version so
+      # the shipped HTML is always current (the git copy is just last-known).
+      # Mutates the checkout in place; not committed back. version-sync.js also
+      # refreshes them at runtime from PyPI — this covers no-JS / crawler reads.
+      - name: Sync version fallbacks from PyPI
+        run: node scripts/sync-version.mjs
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
