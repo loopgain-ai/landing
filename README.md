@@ -1,6 +1,6 @@
 # LoopGain landing page
 
-Source for `https://loopgain.ai/` — the marketing landing for [`loopgain`](https://github.com/loopgain-ai/loopgain) (the Barkhausen stability monitor for AI agent loops).
+Source for `https://loopgain.ai/` — the marketing landing for [`loopgain`](https://github.com/loopgain-ai/loopgain) (an open-source cost controller for AI agent loops).
 
 Static single-page site. No build step: `index.html` pulls in `landing.css` and `landing.js` directly. Deployed as a Cloudflare Worker with static assets (`wrangler.jsonc`); `_headers` configures the response-header set (CSP, HSTS, X-Frame-Options, etc.).
 

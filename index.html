@@ -30,7 +30,7 @@
   "downloadUrl": "https://pypi.org/project/loopgain/",
   "codeRepository": "https://github.com/loopgain-ai/loopgain",
   "programmingLanguage": "Python",
-  "keywords": "AI agent cost control, agent loop cost, token cost reduction, AI agent loops, Barkhausen criterion, loop gain, Aβ, stability monitor, LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK, ReAct, self-refinement, agentic coding, max_iterations, agent reliability, LLM observability",
+  "keywords": "AI agent cost control, agent loop cost, token cost reduction, AI agent loops, Barkhausen criterion, loop gain, Aβ, cost controller, LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK, ReAct, self-refinement, agentic coding, max_iterations, agent reliability, LLM observability",
   "offers": {
     "@type": "Offer",
     "price": "0",
@@ -52,7 +52,7 @@
   "name": "LoopGain",
   "url": "https://loopgain.ai",
   "logo": "https://loopgain.ai/loopgain-lockup-dark.png",
-  "description": "Open-source cost control for AI agent loops — a loop-gain (Aβ) stability monitor under the hood.",
+  "description": "Open-source cost control for AI agent loops — a loop-gain (Aβ) trajectory classifier under the hood.",
   "email": "hello@loopgain.ai",
   "founder": {
     "@type": "Person",
@@ -104,16 +104,6 @@
       <p class="hero-sub">
         When an agent keeps checking and revising its own work, it often spins on a problem it can&apos;t solve — or talks itself into an answer worse than one it already had. LoopGain watches the loop as it runs, stops it at the right iteration, and keeps the <em>best</em> version, not the last.
       </p>
-
-      <div class="hero-evidence">
-        <p class="evi-intro">On <strong>2,000 real-API trials</strong> across 6 framework adapters:</p>
-        <ul class="evi-list">
-          <li><span class="evi-key">Cost:</span> <span class="evi-stat">92.8% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code></li>
-          <li><span class="evi-key">Latency:</span> <span class="evi-stat">~15× wall-clock speedup</span></li>
-          <li><span class="evi-key">Quality:</span> output quality preserved on natural-distribution workloads and improved on engineered-failure ones</li>
-        </ul>
-        <a class="evi-link" href="/benchmarks">See the bench →</a>
-      </div>
 
       <div class="hero-actions">
         <div class="copy-box" data-copy="pip install loopgain" role="button" tabindex="0">
@@ -213,6 +203,16 @@
         </div>
       </figcaption>
     </figure>
+  </div>
+
+  <div class="hero-evidence hero-evidence--full">
+    <p class="evi-intro">On <strong>2,000 real-API trials</strong> across 6 framework adapters:</p>
+    <ul class="evi-list">
+      <li><span class="evi-key">Cost:</span> <span class="evi-stat">92.8% cost reduction</span> vs <code class="mono code-inline">max_iter=20</code></li>
+      <li><span class="evi-key">Latency:</span> <span class="evi-stat">~15× wall-clock speedup</span></li>
+      <li><span class="evi-key">Quality:</span> output quality preserved on natural-distribution workloads and improved on engineered-failure ones</li>
+    </ul>
+    <a class="evi-link" href="/benchmarks">See the bench →</a>
   </div>
 </section>
 
@@ -419,9 +419,7 @@
 <span class="tk-add">    lg.observe(errors, output=output)</span>    output = your_refiner(output, errors)  <span class="tk-com"># your existing code</span>
 
 <span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "stalled" · "max_iterations"</span>
-<span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span>
-<span class="tk-com"># lg.eta              → log(ε_target / ε) / log(Aβ_smooth) — iterations to ε (live)</span>
-<span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
+<span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span><span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
 </code></pre>
 
     <pre class="code-panel mono" data-panel="langgraph"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[langgraph]'</span>
@@ -579,8 +577,8 @@ outcome:        <span class="tk-stall">stalled</span>
     </article>
     <article class="feat">
       <div class="feat-num mono">03</div>
-      <h3>Closed-form ETA</h3>
-      <p>If you're CONVERGING and the gain is stable, the number of iterations to your target ε is a logarithm, not a guess. <span class="mono code-inline">log(ε_target / ε) / log(Aβ_smooth)</span>. Computed live, exposed as <span class="mono code-inline">lg.eta</span>.</p>
+      <h3>Savings you can see</h3>
+      <p>Every run reports <span class="mono code-inline">savings_vs_fixed_cap</span> — the iterations, and the spend, you didn't burn versus a fixed cap. The dashboard rolls those up into a fleet-wide Waste Report, so the cost the loops stopped wasting becomes a dollar number.</p>
     </article>
     <article class="feat">
       <div class="feat-num mono">04</div>
@@ -745,7 +743,7 @@ outcome:        <span class="tk-stall">stalled</span>
         <li>Full <span class="mono">LoopGain</span> library — zero runtime deps</li>
         <li>Framework adapters (LangGraph, CrewAI, AutoGen, LangChain, OpenAI Agents SDK, Claude Agent SDK)</li>
         <li>Best-so-far buffer + rollback</li>
-        <li>Closed-form ETA + first-prediction capture</li>
+        <li>Per-run savings accounting vs a fixed <span class="mono">max_iterations</span> cap</li>
         <li>Self-host telemetry receiver + dashboard</li>
       </ul>
       <div class="pc-cta">

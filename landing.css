@@ -1594,6 +1594,36 @@ section + section {
   color: var(--text-2);
   max-width: 60ch;
 }
+/* Full-width evidence strip below the hero grid — spans both columns,
+   horizontal layout, sits above the divider into the bench section. */
+.hero-evidence--full {
+  position: relative;
+  z-index: 1;
+  max-width: none;
+  margin: clamp(36px, 5vw, 56px) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 30px;
+  row-gap: 10px;
+}
+.hero-evidence--full .evi-intro { margin: 0; white-space: nowrap; }
+.hero-evidence--full .evi-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  column-gap: 30px;
+  row-gap: 8px;
+}
+.hero-evidence--full .evi-list li::marker { content: none; }
+.hero-evidence--full .evi-link { margin-left: auto; align-self: center; }
+@media (max-width: 880px) {
+  .hero-evidence--full { column-gap: 18px; }
+  .hero-evidence--full .evi-link { margin-left: 0; }
+}
 .hero-evidence strong { color: var(--text-1); font-weight: 600; }
 .hero-evidence .evi-intro { margin: 0 0 10px; }
 .hero-evidence .evi-list {

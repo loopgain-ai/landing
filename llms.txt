@@ -21,7 +21,7 @@ The math is foundational electrical engineering control theory. Barkhausen (1921
 - Three failure modes the classifier catches — STALLING (loop iterates but no longer makes progress, the most common silent waste), OSCILLATING (loop alternates between two states without converging), DIVERGING (each iteration is worse than the last, the rarest failure mode in practice)
 - Replace `max_iterations=N` with a real measurement of whether the loop is converging instead of a hard counter
 - Best-so-far rollback — return the lowest-error iteration when the loop has to stop
-- Closed-form ETA prediction when the trajectory supports it
+- Per-run savings accounting — the iterations, and the spend, avoided versus a fixed `max_iterations` cap
 - Measured on a 2,000-trial pre-registered real-API benchmark: 92.8% cost reduction and ~15× speedup vs max_iterations=20, with output quality preserved (full methodology and raw data public)
 
 ## Docs
