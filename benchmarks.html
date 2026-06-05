@@ -74,17 +74,55 @@
   </p>
   <p class="bench-note mono">Re-validated on loopgain v0.4.0 (carried unchanged into the current 0.4.1 release); results landed 2026-06-03. The v0.4.0 classifier corrects a trajectory-label bug — a stuck loop now reads as STALLING, not OSCILLATING — and the corrected verdict terminates one iteration later, so the cost headline moved 93.5%→92.8%. Full re-validation note in the bench RESULTS.md.</p>
 
-  <figure class="bench-fig">
-    <img
-      src="https://raw.githubusercontent.com/loopgain-ai/loopgain-bench/main/data/results/charts/hero_seed34.png"
-      alt="Side-by-side per-iteration trajectory: max_iter=20 first finds the correct answer at iteration 3, keeps iterating, and degrades to broken code by iteration 20. LoopGain detects TARGET_MET at iteration 2 and stops with the working code."
-      loading="lazy" />
-    <figcaption>hero_seed34.png · per-iteration error trajectory · max_iter=20 vs LoopGain · single representative trial from the bench</figcaption>
+  <!-- Aggregate hero (provenance: aggregate · all 2,000 trials). Replaced the
+       single-trial seed-34 two-run figure 2026-06-05: a single trial shown as two
+       independent runs can't isolate the stop rule from rollout variance (see
+       daves-kb/claim-provenance-public-vs-benchmark). The honest benchmark lead is
+       the aggregate distribution. Numbers pinned by loopgain-verify pub.bestdist_aggregate. -->
+  <figure class="bench-fig bench-bestdist"
+    aria-label="Across all 2,000 fixed-cap (max_iter=20) trials, 91.2% of loops reach their best output on the first iteration, but 8.8% land later — spread all the way out to iteration 20. No single static cap is both cheap and safe. LoopGain stops each loop at its own best: it keeps the best the loop reached on 97.2% of trajectories (2.8% false-stop) at a mean of 1.6 iterations, eliminating 97.2% of the wasted iterations at 92.8% lower cost.">
+    <div style="border:1px solid var(--border); border-radius:12px; padding:22px; background:var(--surf-1);">
+      <div class="mono" style="font-size:11px; color:var(--text-3); letter-spacing:0.04em; margin-bottom:18px;">
+        WHERE THE BEST OUTPUT LANDS · max_iter=20 · all 2,000 trials
+      </div>
+      <div style="display:grid; grid-template-columns:minmax(180px,0.7fr) 1.3fr; gap:32px; align-items:center;">
+        <div>
+          <div class="mono" style="font-size:52px; font-weight:600; line-height:1; letter-spacing:-0.03em; color:var(--band-conv);">91.2%</div>
+          <div style="font-size:13px; color:var(--text-2); margin-top:10px; line-height:1.45;">of loops hit their best output on the <strong>first</strong> iteration</div>
+        </div>
+        <div>
+          <div class="mono" style="font-size:11px; color:var(--text-3); margin-bottom:12px;">the other <span style="color:var(--text-1)">8.8% (176 loops)</span> land later — out to iteration 20:</div>
+          <div style="display:flex; flex-direction:column; gap:9px;">
+            <!-- 4 tail buckets, bar widths normalised among the tail (max=121) so they're visible -->
+            <div style="display:grid; grid-template-columns:70px 1fr 64px; gap:10px; align-items:center; font-size:11.5px;">
+              <span class="mono" style="color:var(--text-2)">iter 2–3</span>
+              <span style="height:11px; background:var(--surf-3); border-radius:2px; position:relative;"><span style="position:absolute; inset:0; width:100%; background:var(--band-stall); opacity:0.85; border-radius:2px;"></span></span>
+              <span class="mono" style="color:var(--text-1); text-align:right;">121</span>
+            </div>
+            <div style="display:grid; grid-template-columns:70px 1fr 64px; gap:10px; align-items:center; font-size:11.5px;">
+              <span class="mono" style="color:var(--text-2)">iter 4–5</span>
+              <span style="height:11px; background:var(--surf-3); border-radius:2px; position:relative;"><span style="position:absolute; inset:0; width:18.2%; background:var(--band-stall); opacity:0.85; border-radius:2px;"></span></span>
+              <span class="mono" style="color:var(--text-1); text-align:right;">22</span>
+            </div>
+            <div style="display:grid; grid-template-columns:70px 1fr 64px; gap:10px; align-items:center; font-size:11.5px;">
+              <span class="mono" style="color:var(--text-2)">iter 6–10</span>
+              <span style="height:11px; background:var(--surf-3); border-radius:2px; position:relative;"><span style="position:absolute; inset:0; width:16.5%; background:var(--band-stall); opacity:0.85; border-radius:2px;"></span></span>
+              <span class="mono" style="color:var(--text-1); text-align:right;">20</span>
+            </div>
+            <div style="display:grid; grid-template-columns:70px 1fr 64px; gap:10px; align-items:center; font-size:11.5px;">
+              <span class="mono" style="color:var(--text-2)">iter 11–20</span>
+              <span style="height:11px; background:var(--surf-3); border-radius:2px; position:relative;"><span style="position:absolute; inset:0; width:10.7%; background:var(--band-div); opacity:0.85; border-radius:2px;"></span></span>
+              <span class="mono" style="color:var(--text-1); text-align:right;">13</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:20px; padding-top:18px; border-top:1px solid var(--border); font-size:12.5px; color:var(--text-2); line-height:1.55;">
+        <strong>No static cap is both cheap and safe.</strong> A low cap clips the late-converging tail; a high cap grinds past best — and ships a measurably worse answer than the best it already had <strong>35.3%</strong> of the time. LoopGain stops each loop at its own best: it <strong style="color:var(--band-conv)">keeps the best on 97.2% of trajectories</strong> (2.8% false-stop), mean <strong>1.6 iterations</strong>, at <strong>92.8% less spend</strong>.
+      </div>
+    </div>
+    <figcaption>aggregate · iteration at which the best output appears · max_iter=20 condition · all 2,000 paired trials</figcaption>
   </figure>
-
-  <p class="bench-story">
-    On a single representative trial in the bench, <code class="mono code-inline">max_iter=20</code> first found the correct answer at iteration 3, kept iterating, and degraded back to broken code by iteration 20. LoopGain detected <code class="mono code-inline">TARGET_MET</code> at iteration 2 and stopped with the working code. <em>When the model finds the right answer early, naive <code class="mono code-inline">max_iter=N</code> can iterate past success and degrade the output.</em>
-  </p>
 
   <span id="cost" class="bench-anchor" aria-hidden="true"></span>
   <span id="latency" class="bench-anchor" aria-hidden="true"></span>
