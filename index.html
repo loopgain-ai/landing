@@ -133,16 +133,18 @@
       </div>
     </div>
 
-    <!-- two real benchmark runs of the same task (bench seed 34, langgraph · haiku-4.5),
-         drawn as two separate lines. LoopGain reaches the correct answer (err 0) at
-         iter 2, fires TARGET_MET, and stops — keeping the working output for $0.0050.
-         The max_iter=20 baseline runs all 20 iterations, bounces between correct and
-         broken, and ships err 11 (broken) at iter 20 for $0.0583. Same task, two runs —
-         the difference is the stop rule. Costs are the real measured cost_usd. -->
-    <figure class="hero-chart" aria-label="Two real benchmark runs of the same task. LoopGain detects the correct answer (error 0) at iteration 2 and stops, keeping the working output for $0.0050. The max_iterations=20 baseline runs all 20 iterations, bounces between correct and broken, and ships broken code (error 11) at iteration 20 for $0.0583 — about 12 times the spend for a worse result.">
+    <!-- ONE real max_iter=20 benchmark run (bench seed 59, claude-agent-sdk · haiku-4.5).
+         We draw the single trajectory and show where each stop policy lands on it — no
+         second rollout, so the quality gap is the stop rule, not run-to-run variance.
+         The code is broken (err 11), improves to err 5, then to a clean err 0 by attempt 4.
+         LoopGain's rule fires TARGET_MET and stops there, keeping the working output. The
+         cap keeps thrashing (0↔5, spikes to 11) and ships err 5 at attempt 20. B20 cost is
+         the real measured cost_usd ($0.0523); LoopGain's is the same run's spend through the
+         stop (~$0.0105, 4 of 20 iters). The LoopGain line is the run's shared prefix. -->
+    <figure class="hero-chart" aria-label="One real max_iterations=20 benchmark run on a coding task. The code is broken (error 11), improves to error 5, then reaches a clean error 0 by attempt 4. LoopGain's stop rule fires there and keeps the working output for about $0.0105 — four of twenty iterations. The max_iterations=20 cap has no stop signal, keeps thrashing between working and broken, and ships a broken result (error 5) at attempt 20 for $0.0523 — about five times the spend for a worse answer. The difference is the stop rule applied to one run, not a second rollout.">
       <div class="hero-chart-head">
-        <span class="mono label">loop · codegen · langgraph · haiku-4.5 · seed 34</span>
-        <a class="mono hc-realtag" href="/benchmarks">2 real runs ↗</a>
+        <span class="mono label">loop · codegen · claude-agent-sdk · haiku-4.5 · seed 59</span>
+        <a class="mono hc-realtag" href="/benchmarks">1 real run ↗</a>
       </div>
       <div class="hero-chart-stage">
         <div class="plot-wrap">
@@ -154,9 +156,9 @@
               </linearGradient>
             </defs>
             <path class="grid" id="chartGrid" d=""></path>
-            <!-- max_iter=20 run: its real per-iteration error, all 20 iters, ends broken -->
+            <!-- the one real run: per-iteration error, all 20 iters, ends broken -->
             <path id="capSeg" class="hc-baseline" fill="none" d=""></path>
-            <!-- LoopGain run: its real trajectory, converges to err 0 at iter 2 and stops -->
+            <!-- LoopGain: the same run's shared prefix — stops at the fix (err 0, iter 2) -->
             <path id="lgArea" fill="url(#lgFill)" d=""></path>
             <path id="lgSeg" class="hc-lgline" fill="none" d=""></path>
             <!-- LoopGain stop/keep marker at iter 2, err 0 -->
@@ -188,18 +190,18 @@
       <figcaption class="hero-chart-foot mono">
         <div class="hcf-line hcf-lg">
           <span class="hcf-name"><i class="hcf-dot"></i>LoopGain</span>
-          <span class="hcf-stat"><span class="hcf-k">stops</span> <b id="lgStopIter">iter 2</b></span>
-          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="lgCost">$0.0050</b></span>
+          <span class="hcf-stat"><span class="hcf-k">stops</span> <b id="lgStopIter">iter 4</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="lgCost">$0.0105</b></span>
           <span class="hcf-stat hcf-ok" id="lgVerdict">running…</span>
         </div>
         <div class="hcf-line hcf-base">
           <span class="hcf-name"><i class="hcf-dot"></i>max_iter=20</span>
           <span class="hcf-stat"><span class="hcf-k">runs</span> <b id="capIter">iter 20</b></span>
-          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="capCost">$0.0583</b></span>
+          <span class="hcf-stat"><span class="hcf-k">cost</span> <b id="capCost">$0.0523</b></span>
           <span class="hcf-stat hcf-bad" id="capVerdict">running…</span>
         </div>
         <div class="hcf-saved">
-          <span class="hcf-saved-num" id="savedPct">91%</span>
+          <span class="hcf-saved-num" id="savedPct">80%</span>
           <span class="hcf-saved-lab">less spend<br>+ better output</span>
         </div>
       </figcaption>

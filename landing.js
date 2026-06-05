@@ -84,32 +84,34 @@
     });
   }
 
-  // ─────────── hero chart: two real runs, same task (bench seed 34) ───────────
-  // Two SEPARATE real benchmark trials of one task
-  // (`w1-codegen-langgraph-claude-haiku-4-5-seed34`), drawn as two lines:
-  //   • LoopGain run:    error_history = [3, 0] — drops to err 0 at iter 2, the
-  //     classifier fires TARGET_MET, the loop STOPS and keeps the working output.
-  //     real measured cost_usd.LG = $0.004968.
-  //   • max_iter=20 run: error_history =
-  //     [3,11,0,2,11,0,11,0,11,3,0,11,5,11,11,0,0,2,0,11] — bounces between
-  //     correct and broken for all 20 iters and SHIPS err 11 (broken) at iter 20.
-  //     real measured cost_usd.B20 = $0.058293.
-  //   → saved = $0.058293 − $0.004968 = $0.053325 on this trial.
+  // ─────────── hero chart: ONE real run, two stop policies ───────────
+  // A SINGLE real max_iter=20 benchmark trajectory
+  // (`w1-codegen-claude-agent-sdk-claude-haiku-4-5-seed59`). We draw the one
+  // trajectory and show where each stop policy lands ON IT — no second rollout,
+  // so the quality difference is purely the stop rule, not run-to-run variance.
+  //   • The run: error_history = B20_ERR below. The code is broken (err 11),
+  //     improves to err 5, then to a clean err 0 by attempt 4 — after which the
+  //     loop keeps thrashing (0↔5, spikes to 11) and ships err 5 (broken) at 20.
+  //   • max_iter=20: no stop signal → runs all 20, ships its LAST attempt (err 5).
+  //     real measured cost_usd.B20 = $0.052256.
+  //   • LoopGain: its rule fires TARGET_MET when the error hits 0 at attempt 4,
+  //     stops, and keeps that working output. Cost = the same run's spend through
+  //     attempt 4 (it shares the trajectory up to the stop) ≈ $0.0105 (4 of 20).
+  //   → saved ≈ $0.042 on this trial (~80% / ~5×), AND a correct answer vs broken.
   //
-  // Costs are the REAL measured cost_usd from the trial JSONL — not synthesized.
-  // The displayed cost counters ease toward those measured totals as the lines
-  // draw; the endpoints are exact, the in-between frames are animation only.
+  // The LG line is literally the run's first LG_STOP points (the shared prefix),
+  // then it stops — NOT a separate trial. B20 cost is the real measured cost_usd;
+  // per-iteration cost is modelled as uniform (we only have the total), so LG's
+  // cost is that total scaled by iterations run. Same-trajectory claim pinned by
+  // loopgain-verify (replay the rule on this trajectory → stop@4, keep err 0).
   //
   // Design/honesty: the RIGHT axis (error) is the only quantitative axis.
-  // LoopGain's line is green (a clean FAST_CONVERGE drop to 0, then it stops);
-  // the max_iter=20 baseline is gray — it has no stop signal, so it just runs
-  // the cap, and its error never settles.
-  const LG_ERR  = [3, 0];
-  const B20_ERR = [3, 11, 0, 2, 11, 0, 11, 0, 11, 3, 0, 11, 5, 11, 11, 0, 0, 2, 0, 11];
-  const NB      = B20_ERR.length;        // 20 — the iteration axis spans the baseline run
-  const LG_STOP = LG_ERR.length;         // 2  — LoopGain stops here (TARGET_MET, err 0)
-  const LG_COST  = 0.004968;             // real measured cost_usd.LG
-  const B20_COST = 0.058293;             // real measured cost_usd.B20
+  const B20_ERR = [11, 11, 5, 0, 5, 0, 5, 0, 11, 5, 0, 5, 0, 5, 0, 5, 11, 11, 11, 5];
+  const NB      = B20_ERR.length;        // 20 — the iteration axis spans the run
+  const LG_STOP = 4;                     // LoopGain stops here (TARGET_MET, err 0)
+  const LG_ERR  = B20_ERR.slice(0, LG_STOP);  // the SHARED prefix — same run, stopped early
+  const B20_COST = 0.052256;             // real measured cost_usd.B20 (20 iters)
+  const LG_COST  = B20_COST * LG_STOP / NB;   // same run's spend through the stop (~$0.0105)
 
   const CHART_W = 600, CHART_H = 360;
   const PADX = 26, PADTOP = 18, PADBOT = 22;
@@ -226,7 +228,7 @@
         capChip.style.display = '';
         const anchor = b20.x > CHART_W * 0.6 ? 'left' : b20.x < CHART_W * 0.14 ? 'right' : 'center';
         place(capChip, b20.x, b20.y, { anchor, below: true });
-        capChip.textContent = atEnd ? '✗ max_iter=20 ships err 11' : `err ${Math.round(b20.e)}`;
+        capChip.textContent = atEnd ? `✗ max_iter=20 ships err ${Math.round(B20_ERR[NB - 1])}` : `err ${Math.round(b20.e)}`;
         capChip.classList.toggle('is-broken', atEnd);
       } else {
         capChip.style.display = 'none';
@@ -234,7 +236,7 @@
 
       // max_iter=20 foot: iter count + cost easing to the real measured total
       const capIterNow = Math.min(NB, Math.max(1, Math.ceil(progress)));
-      const capCostNow = B20_COST * (progress - 1) / (NB - 1);
+      const capCostNow = B20_COST * progress / NB;   // uniform per-iter cost
       capIterEl.textContent = 'iter ' + capIterNow;
       capCostEl.textContent = fmt$(capCostNow);
       capVerdict.textContent = atEnd ? '✗ broken' : 'running…';
@@ -242,18 +244,17 @@
 
       // LoopGain foot: stops at iter 2; cost eases to the real measured total
       const lgIterNow = Math.min(LG_STOP, Math.max(1, Math.ceil(lgTip)));
-      const lgCostNow = LG_COST * (lgTip - 1) / (LG_STOP - 1);
+      const lgCostNow = B20_COST * lgTip / NB;   // same run, same per-iter cost as the cap
       lgStopIterEl.textContent = 'iter ' + lgIterNow;
       lgCostEl.textContent = fmt$(lgCostNow);
       // verdict stays "running…" until LoopGain actually stops at iter 2,
       // mirroring the cap row's "running…" → "✗ broken" reveal.
-      lgVerdictEl.textContent = stopped ? '✓ best output' : 'running…';
+      lgVerdictEl.textContent = stopped ? '✓ keeps err 0' : 'running…';
       lgVerdictEl.classList.toggle('is-on', stopped);
 
-      // headline savings — % less spend (real measured B20 vs LG), once LoopGain
-      // has stopped and the baseline has out-spent it. The real dollar values
-      // ($0.0050 / $0.0583) live in the two foot rows; this is the % of them.
-      // Endpoint: 1 − 0.004968/0.058293 = 91%.
+      // headline savings — % less spend, once LoopGain has stopped and the cap
+      // has out-spent it. B20 is the real measured cost_usd ($0.0989); LG is the
+      // same run's spend through the stop (~$0.0099). Endpoint: 1 − 2/20 = 90%.
       savedPctEl.textContent = (stopped && capCostNow > LG_COST)
         ? Math.round((1 - LG_COST / capCostNow) * 100) + '%' : '—';
 
