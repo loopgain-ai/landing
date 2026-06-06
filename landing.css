@@ -641,7 +641,7 @@ section + section {
   min-width: 78px;
 }
 .hcf-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
-.hcf-lg   .hcf-dot { background: var(--band-fast); }
+.hcf-lg   .hcf-dot { background: var(--accent); }
 .hcf-base .hcf-dot { background: var(--text-3); }
 .hcf-base .hcf-name { color: var(--text-2); }
 .hcf-stat { color: var(--text-3); display: inline-flex; gap: 5px; align-items: baseline; }

@@ -2,8 +2,9 @@
    - theme toggle (dark by default; light only via explicit user click)
    - copy-to-clipboard for inline pip box + code panels
    - tabbed code panels
-   - animated hero contrast chart: one REAL run (seed 34). LoopGain stops at
-     iter 2 (converged); the max_iter=20 baseline runs all 20 and ends broken.
+   - animated hero contrast chart: one REAL run (seed 114) illustrating rollback.
+     LoopGain runs 3 attempts, sees the loop degrade, and rolls back to the best
+     it saw (err 1); the max_iter=20 baseline runs all 20 and ships broken (err 11).
 */
 
 (() => {
@@ -84,34 +85,37 @@
     });
   }
 
-  // ─────────── hero chart: ONE real run, two stop policies ───────────
+  // ─────────── hero chart: ONE real run, rollback in action ───────────
   // A SINGLE real max_iter=20 benchmark trajectory
-  // (`w1-codegen-claude-agent-sdk-claude-haiku-4-5-seed59`). We draw the one
+  // (`w1-codegen-claude-agent-sdk-claude-haiku-4-5-seed114`). We draw the one
   // trajectory and show where each stop policy lands ON IT — no second rollout,
   // so the quality difference is purely the stop rule, not run-to-run variance.
-  //   • The run: error_history = B20_ERR below. The code is broken (err 11),
-  //     improves to err 5, then to a clean err 0 by attempt 4 — after which the
-  //     loop keeps thrashing (0↔5, spikes to 11) and ships err 5 (broken) at 20.
-  //   • max_iter=20: no stop signal → runs all 20, ships its LAST attempt (err 5).
-  //     real measured cost_usd.B20 = $0.052256.
-  //   • LoopGain: its rule fires TARGET_MET when the error hits 0 at attempt 4,
-  //     stops, and keeps that working output. Cost = the same run's spend through
-  //     attempt 4 (it shares the trajectory up to the stop) ≈ $0.0105 (4 of 20).
-  //   → saved ≈ $0.042 on this trial (~80% / ~5×), AND a correct answer vs broken.
+  // This trial SHOWS THE MECHANISM (rollback) and refutes "why not just cap at 1?":
+  //   • The run: error_history = B20_ERR below. Attempt 1 is BROKEN (err 11) — a
+  //     cap-at-1 ships that. Attempt 2 is nearly right (err 1). Attempt 3 breaks
+  //     again (err 11). The loop keeps oscillating and ships err 11 at attempt 20.
+  //   • max_iter=20: runs all 20, ships its LAST attempt (err 11, broken).
+  //     real measured cost_usd.B20 = $0.051159.
+  //   • LoopGain: runs 3 attempts, sees the loop OSCILLATE (11→1→11), stops, and
+  //     ROLLS BACK to the best it saw (err 1 at attempt 2) — an answer the loop had
+  //     already thrown away. Cost = the same run's spend through attempt 3 ≈
+  //     $0.0077 (3 of 20).
+  //   → saved ≈ $0.043 on this trial (~85% / ~7×), AND recovers a working answer.
   //
-  // The LG line is literally the run's first LG_STOP points (the shared prefix),
-  // then it stops — NOT a separate trial. B20 cost is the real measured cost_usd;
-  // per-iteration cost is modelled as uniform (we only have the total), so LG's
-  // cost is that total scaled by iterations run. Same-trajectory claim pinned by
-  // loopgain-verify (replay the rule on this trajectory → stop@4, keep err 0).
+  // The green line is the run's observed prefix (the SHARED trajectory up to the
+  // stop); the dashed segment is the rollback — LoopGain returning to the best,
+  // not the last (which is what a fixed cap ships). Same-trajectory claim pinned by
+  // loopgain-verify (replay the rule on this trajectory → stop@3, roll back to err 1).
   //
   // Design/honesty: the RIGHT axis (error) is the only quantitative axis.
-  const B20_ERR = [11, 11, 5, 0, 5, 0, 5, 0, 11, 5, 0, 5, 0, 5, 0, 5, 11, 11, 11, 5];
+  const B20_ERR = [11, 1, 11, 11, 1, 11, 11, 1, 11, 11, 1, 0, 11, 11, 0, 10, 11, 11, 1, 11];
   const NB      = B20_ERR.length;        // 20 — the iteration axis spans the run
-  const LG_STOP = 4;                     // LoopGain stops here (TARGET_MET, err 0)
-  const LG_ERR  = B20_ERR.slice(0, LG_STOP);  // the SHARED prefix — same run, stopped early
-  const B20_COST = 0.052256;             // real measured cost_usd.B20 (20 iters)
-  const LG_COST  = B20_COST * LG_STOP / NB;   // same run's spend through the stop (~$0.0105)
+  const LG_STOP = 3;                     // attempts LoopGain ran before stopping (OSCILLATING)
+  const LG_BEST_I   = 2;                  // attempt it rolls back to (1-based)
+  const LG_BEST_ERR = 1;                  // the error it keeps (best-so-far)
+  const LG_ERR  = B20_ERR.slice(0, LG_STOP);  // the SHARED prefix it observed: [11, 1, 11]
+  const B20_COST = 0.051159;             // real measured cost_usd.B20 (20 iters)
+  const LG_COST  = B20_COST * LG_STOP / NB;   // same run's spend through the stop (~$0.0077)
 
   const CHART_W = 600, CHART_H = 360;
   const PADX = 26, PADTOP = 18, PADBOT = 22;
@@ -127,11 +131,13 @@
 
   const capSeg  = document.getElementById('capSeg');
   const lgSeg   = document.getElementById('lgSeg');
+  const lgOvershoot = document.getElementById('lgOvershoot'); // desaturated rejected attempt
   const lgArea  = document.getElementById('lgArea');
   const head    = document.getElementById('traceHead');   // gray — max_iter=20 head
   const lgHead  = document.getElementById('lgHead');       // green — LoopGain head
   const lgRing  = document.getElementById('lgStopRing');
   const lgGlow  = document.getElementById('lgStopGlow');
+  const lgRollback = document.getElementById('lgRollback'); // dashed snap-back to best
   const grid    = document.getElementById('chartGrid');
   const lgChip  = document.getElementById('lgChip');
   const capChip = document.getElementById('capChip');
@@ -163,12 +169,26 @@
       el.style.transform = `translate(${tx}, ${opt.below ? '8px' : '-130%'})`;
     };
 
-    // static LoopGain stop/keep marker + chip at (iter 2, err 0). The dot sits
-    // at the bottom of the plot (err 0), so the chip goes top-right of it —
-    // never below, where it would spill past the chart edge.
-    const SX = iterToX(LG_STOP), SY = errToY(0);
+    // Static LoopGain keep marker + chip at the BEST attempt LoopGain rolls back
+    // to (iter LG_BEST_I, err LG_BEST_ERR) — NOT the stop iteration. The rollback
+    // is the point: it keeps the best it saw, not the last.
+    const SX = iterToX(LG_BEST_I), SY = errToY(LG_BEST_ERR);
     [lgRing, lgGlow].forEach(c => { c.setAttribute('cx', SX); c.setAttribute('cy', SY); });
     place(lgChip, SX, SY, { anchor: 'right' });
+    // The rollback connector: a dashed ARC from where LoopGain stopped (iter
+    // LG_STOP, its then-current error) back to the best it keeps. Bowed out to
+    // the right so it reads as a "return" rather than retracing the solid line.
+    const RBX = iterToX(LG_STOP), RBY = errToY(B20_ERR[LG_STOP - 1]);
+    const CPX = Math.max(RBX, SX) + 38, CPY = (RBY + SY) / 2;
+    if (lgRollback) lgRollback.setAttribute('d',
+      `M ${RBX.toFixed(1)} ${RBY.toFixed(1)} Q ${CPX.toFixed(1)} ${CPY.toFixed(1)} ${SX.toFixed(1)} ${SY.toFixed(1)}`);
+    // point along the rollback arc at param t (0 = stop point, 1 = best) — the
+    // head travels this each cycle to animate "rolling back to the best".
+    const bez = (t) => {
+      const u = 1 - t;
+      return { x: u * u * RBX + 2 * u * t * CPX + t * t * SX,
+               y: u * u * RBY + 2 * u * t * CPY + t * t * SY };
+    };
 
     // Build a polyline from integer iter `a` to float tip along the given error
     // array, interpolating the final partial segment. Returns path + tip coords.
@@ -190,6 +210,7 @@
     }
 
     let progress = 1;          // current iteration tip (float, 1..20)
+    let rbT = 0;               // rollback-arc animation param (0→1), once stopped
     const speed = 0.0030;      // iters per ms → ~6.3s for the full baseline run
     let last = performance.now();
     let pause = 0;
@@ -203,24 +224,31 @@
       const stopped = progress >= LG_STOP;
       const atEnd   = progress >= NB;
 
-      // LoopGain line: iters 1..min(progress, LG_STOP), green, with fill under it
+      // LoopGain line, split: BOLD descent (→ best) + DESATURATED overshoot
+      // (the loop's rejected next attempt). No area fill — it obscures the shape.
       const lgTip = Math.min(progress, LG_STOP);
-      const lg = segTo(LG_ERR, 1, lgTip);
-      lgSeg.setAttribute('d', lg.d);
-      lgArea.setAttribute('d',
-        lg.d + ` L ${lg.x.toFixed(1)} ${CHART_H - PADBOT} L ${iterToX(1).toFixed(1)} ${CHART_H - PADBOT} Z`);
+      lgSeg.setAttribute('d', segTo(LG_ERR, 1, Math.min(lgTip, LG_BEST_I)).d);
+      if (lgOvershoot)
+        lgOvershoot.setAttribute('d', lgTip > LG_BEST_I ? segTo(LG_ERR, LG_BEST_I, lgTip).d : '');
+      lgArea.setAttribute('d', '');
 
       // max_iter=20 line: iters 1..progress, gray, never settles
       const b20 = segTo(B20_ERR, 1, progress);
       capSeg.setAttribute('d', b20.d);
 
-      // LoopGain head (green) rides its line until it stops, then the keep marker
-      // takes over at (iter 2, err 0)
-      lgHead.setAttribute('cx', lg.x); lgHead.setAttribute('cy', lg.y);
-      lgHead.setAttribute('opacity', stopped ? 0 : 1);
-      lgRing.setAttribute('opacity', stopped ? 1 : 0);
-      lgGlow.setAttribute('opacity', stopped ? 1 : 0);
-      lgChip.classList.toggle('is-on', stopped);
+      // Rollback: once stopped, animate the head BACK along the dashed arc to the
+      // best (rbT 0→1 over ~550ms); the dashed arc shows while it travels, and the
+      // keep marker pops once it arrives. Resets each loop cycle.
+      rbT = stopped ? Math.min(1, rbT + dt / 550) : 0;
+      const arrived = rbT >= 1;
+      if (lgRollback) lgRollback.setAttribute('opacity', stopped ? 1 : 0);
+
+      const hPos = stopped ? bez(rbT) : segTo(LG_ERR, 1, lgTip);
+      lgHead.setAttribute('cx', hPos.x); lgHead.setAttribute('cy', hPos.y);
+      lgHead.setAttribute('opacity', arrived ? 0 : 1);
+      lgRing.setAttribute('opacity', arrived ? 1 : 0);
+      lgGlow.setAttribute('opacity', arrived ? 1 : 0);
+      lgChip.classList.toggle('is-on', arrived);
 
       // max_iter=20 head (gray) rides its line; its chip trails just below
       head.setAttribute('cx', b20.x); head.setAttribute('cy', b20.y);
@@ -242,19 +270,18 @@
       capVerdict.textContent = atEnd ? '✗ broken' : 'running…';
       capVerdict.classList.toggle('is-on', atEnd);
 
-      // LoopGain foot: stops at iter 2; cost eases to the real measured total
+      // LoopGain foot: ran LG_STOP attempts, then rolled back to its best.
       const lgIterNow = Math.min(LG_STOP, Math.max(1, Math.ceil(lgTip)));
       const lgCostNow = B20_COST * lgTip / NB;   // same run, same per-iter cost as the cap
       lgStopIterEl.textContent = 'iter ' + lgIterNow;
       lgCostEl.textContent = fmt$(lgCostNow);
-      // verdict stays "running…" until LoopGain actually stops at iter 2,
-      // mirroring the cap row's "running…" → "✗ broken" reveal.
-      lgVerdictEl.textContent = stopped ? '✓ keeps err 0' : 'running…';
+      // verdict flips to the rollback result once LoopGain has stopped.
+      lgVerdictEl.textContent = stopped ? '✓ rolls back' : 'running…';
       lgVerdictEl.classList.toggle('is-on', stopped);
 
       // headline savings — % less spend, once LoopGain has stopped and the cap
-      // has out-spent it. B20 is the real measured cost_usd ($0.0989); LG is the
-      // same run's spend through the stop (~$0.0099). Endpoint: 1 − 2/20 = 90%.
+      // has out-spent it. B20 is the real measured cost_usd; LG is the same run's
+      // spend through the stop (LG_STOP of 20 iters). Endpoint: 1 − 3/20 = 85%.
       savedPctEl.textContent = (stopped && capCostNow > LG_COST)
         ? Math.round((1 - LG_COST / capCostNow) * 100) + '%' : '—';
 
