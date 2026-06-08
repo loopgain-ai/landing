@@ -112,7 +112,7 @@
           <code class="mono">pip install loopgain</code>
           <span class="copy-hint mono">copy</span>
         </div>
-        <a class="btn btn-amber" href="mailto:hello@loopgain.ai?subject=Design-partner%20pilot" rel="noopener">
+        <a class="btn btn-amber" href="mailto:hello@loopgain.ai?subject=Design-partner%20pilot" rel="noopener" data-capture="pilot">
           apply for a design-partner pilot
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
         </a>
@@ -815,7 +815,7 @@ outcome:        <span class="tk-stall">stalled</span>
       </ul>
       <div class="pc-cta">
         <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
-        <p class="pc-cta-note mono">paid plans launching soon — <a href="mailto:hello@loopgain.ai?subject=Team-tier%20waitlist">join the waitlist</a></p>
+        <p class="pc-cta-note mono">paid plans launching soon — <a href="mailto:hello@loopgain.ai?subject=Team-tier%20waitlist" data-capture="team">join the waitlist</a></p>
       </div>
     </article>
 
@@ -837,7 +837,7 @@ outcome:        <span class="tk-stall">stalled</span>
       </ul>
       <div class="pc-cta">
         <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
-        <p class="pc-cta-note mono">paid plans launching soon — <a href="mailto:hello@loopgain.ai?subject=Pro-tier%20waitlist">join the waitlist</a></p>
+        <p class="pc-cta-note mono">paid plans launching soon — <a href="mailto:hello@loopgain.ai?subject=Pro-tier%20waitlist" data-capture="pro">join the waitlist</a></p>
       </div>
     </article>
 
@@ -856,7 +856,7 @@ outcome:        <span class="tk-stall">stalled</span>
         <li>Custom MSA + dedicated CSM</li>
       </ul>
       <div class="pc-cta">
-        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=LoopGain%20Enterprise">email hello@loopgain.ai</a>
+        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=LoopGain%20Enterprise" data-capture="enterprise">talk to us →</a>
       </div>
     </article>
 
@@ -911,12 +911,41 @@ outcome:        <span class="tk-stall">stalled</span>
       <a href="mailto:hello@loopgain.ai">hello@loopgain.ai</a>
     </nav>
   </div>
+  <div class="foot-row foot-news">
+    <form id="newsletterForm" class="news-form">
+      <label for="newsEmail" class="news-label">New posts by email</label>
+      <div class="news-row">
+        <input id="newsEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="news-input" />
+        <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button type="submit" class="btn btn-amber news-btn">Subscribe</button>
+      </div>
+      <p class="news-status mono" id="newsStatus" role="status" aria-live="polite"></p>
+    </form>
+  </div>
   <div class="foot-row foot-row-fine mono">
     <span>© 2026 LoopGain Technologies Inc. · Apache-2.0</span>
     <span class="dot-sep"></span>
     <span>Cost control for AI agent loops</span>
   </div>
 </footer>
+
+<!-- ─── waitlist / contact capture dialog ──────────────────────────────
+     Progressive enhancement: the CTAs above keep a mailto: fallback; landing.js
+     intercepts them and opens this dialog instead (POST → loopgain.ai/api/*). -->
+<dialog id="waitlistDialog" class="wl-dialog" aria-labelledby="wlTitle">
+  <form id="waitlistForm" class="wl-form">
+    <button type="button" class="wl-close" id="wlClose" aria-label="Close">×</button>
+    <h3 id="wlTitle" class="wl-title">Join the waitlist</h3>
+    <p id="wlSub" class="wl-sub">Paid plans launch soon. Leave your email and we'll tell you the moment it's live.</p>
+    <label for="wlEmail" class="wl-label mono">email</label>
+    <input id="wlEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="wl-input" />
+    <!-- honeypot: invisible to people, irresistible to bots -->
+    <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <button type="submit" class="btn btn-amber btn-block wl-submit">Join the waitlist</button>
+    <p class="wl-fine mono">By joining you agree to be contacted by LoopGain about this. Unsubscribe any time.</p>
+    <p class="wl-status mono" id="wlStatus" role="status" aria-live="polite"></p>
+  </form>
+</dialog>
 
 <script src="landing.js"></script>
 <script src="version-sync.js"></script>

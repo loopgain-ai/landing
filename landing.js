@@ -290,3 +290,108 @@
     requestAnimationFrame((t) => { last = t; tick(t); });
   }
 })();
+
+/* ─────────── waitlist + newsletter capture ───────────
+   Posts to the first-party capture Worker at loopgain.ai/api/* (same-origin).
+   The paid-tier CTAs keep a mailto: fallback in the HTML; this upgrades them
+   to an inline dialog. The footer form subscribes to the blog newsletter. */
+(() => {
+  const API = '/api/subscribe';
+  const dialog = document.getElementById('waitlistDialog');
+  const form = document.getElementById('waitlistForm');
+  const titleEl = document.getElementById('wlTitle');
+  const subEl = document.getElementById('wlSub');
+  const statusEl = document.getElementById('wlStatus');
+  const emailEl = document.getElementById('wlEmail');
+  const submitBtn = form && form.querySelector('.wl-submit');
+  let currentList = 'team';
+
+  const COPY = {
+    team: { title: 'Join the Team waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Team is live.", cta: 'Join the waitlist' },
+    pro: { title: 'Join the Pro waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Pro is live.", cta: 'Join the waitlist' },
+    enterprise: { title: 'Talk to us about Enterprise', sub: "SLA, data residency, dedicated infrastructure. Leave your email and we'll set up a conversation.", cta: 'Request a conversation' },
+    pilot: { title: 'Apply for a design-partner pilot', sub: "We're onboarding a small group of design partners. Leave your email and we'll be in touch about a pilot.", cta: 'Apply for a pilot' },
+  };
+
+  async function submitCapture(payload, node, btn, btnLabel) {
+    node.className = 'wl-status';
+    node.textContent = 'Sending…';
+    if (btn) btn.disabled = true;
+    try {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        node.className = 'wl-status is-ok';
+        node.textContent = data.message || "You're on the list.";
+        if (btn) btn.textContent = 'Done ✓';
+        return true;
+      }
+      node.className = 'wl-status is-err';
+      node.textContent = (data && data.error) || 'Something went wrong — try again, or email hello@loopgain.ai.';
+    } catch {
+      node.className = 'wl-status is-err';
+      node.textContent = 'Network error — try again, or email hello@loopgain.ai.';
+    }
+    if (btn) { btn.disabled = false; if (btnLabel) btn.textContent = btnLabel; }
+    return false;
+  }
+
+  if (dialog && form && typeof dialog.showModal === 'function') {
+    const open = (list) => {
+      currentList = list;
+      const c = COPY[list] || COPY.team;
+      if (titleEl) titleEl.textContent = c.title;
+      if (subEl) subEl.textContent = c.sub;
+      if (submitBtn) { submitBtn.textContent = c.cta; submitBtn.disabled = false; }
+      if (statusEl) { statusEl.textContent = ''; statusEl.className = 'wl-status'; }
+      if (emailEl) emailEl.value = '';
+      dialog.showModal();
+      setTimeout(() => emailEl && emailEl.focus(), 50);
+    };
+
+    document.querySelectorAll('[data-capture]').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();             // suppress the mailto fallback
+        open(el.getAttribute('data-capture'));
+      });
+    });
+
+    const closeBtn = document.getElementById('wlClose');
+    if (closeBtn) closeBtn.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      if (fd.get('company_website')) { dialog.close(); return; }  // honeypot tripped
+      const email = (fd.get('email') || '').toString().trim();
+      if (!email) return;
+      await submitCapture(
+        { email, list: currentList, source: 'landing:' + currentList, consent: true, company_website: '' },
+        statusEl, submitBtn, (COPY[currentList] || COPY.team).cta,
+      );
+    });
+  }
+
+  // Footer newsletter (blog list, double-opt-in handled server-side).
+  const newsForm = document.getElementById('newsletterForm');
+  const newsStatus = document.getElementById('newsStatus');
+  if (newsForm && newsStatus) {
+    newsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(newsForm);
+      if (fd.get('company_website')) return;  // honeypot
+      const email = (fd.get('email') || '').toString().trim();
+      if (!email) return;
+      const btn = newsForm.querySelector('button[type=submit]');
+      await submitCapture(
+        { email, list: 'blog', source: 'landing:footer', consent: true, company_website: '' },
+        newsStatus, btn, 'Subscribe',
+      );
+    });
+  }
+})();
