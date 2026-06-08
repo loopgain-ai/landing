@@ -1,0 +1,48 @@
+<!doctype html>
+<!--
+  Open Graph / Twitter card for the loopgain.ai LANDING page (1200×630).
+  Adapted from loopgain-blog/.og/card-default-cost.html — same visual system,
+  retargeted to the apex (footer = loopgain.ai) with a proof-stat row.
+  Render to ../og.png with headless Chrome:
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+      --headless --screenshot=../og.png --window-size=1200,630 \
+      --hide-scrollbars --force-device-scale-factor=1 \
+      "file://$(pwd)/card-landing-cost.html"
+-->
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=JetBrains+Mono:wght@500;600&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1200px;height:630px}
+  body{font-family:'Inter',sans-serif;background:#0A0B0D;color:#E6E8EC;position:relative;overflow:hidden}
+  .bg{position:absolute;inset:0;background-image:url('raw/default-decay.png');background-size:cover;background-position:center right}
+  .scrim{position:absolute;inset:0;background:linear-gradient(90deg,#0A0B0D 30%,rgba(10,11,13,0.82) 46%,rgba(10,11,13,0) 66%)}
+  .wm{position:absolute;right:0;bottom:0;width:240px;height:160px;background:radial-gradient(170px 120px at 100% 100%,#0A0B0D 0%,#0A0B0D 66%,transparent 100%)}
+  .frame{position:relative;height:100%;padding:72px 76px;display:flex;flex-direction:column;justify-content:space-between}
+  .top{display:flex;align-items:center;gap:14px}
+  .lockup{height:46px;width:auto;display:block}
+  .hero{display:flex;flex-direction:column;gap:20px;max-width:700px}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:18px;letter-spacing:0.18em;text-transform:uppercase;color:#F5C451}
+  h1{font-size:82px;font-weight:800;letter-spacing:-0.035em;line-height:0.98}
+  h1 .ctrl{color:#F5C451}
+  .sub{font-size:24px;line-height:1.45;color:#A4A9B4;max-width:600px}
+  .foot{display:flex;align-items:baseline;justify-content:space-between}
+  .stats{display:flex;gap:26px;font-family:'JetBrains Mono',monospace;font-size:21px;color:#E6E8EC}
+  .stats b{color:#F5C451;font-weight:600}
+  .stats .sep{color:#3A3E47}
+  .url{font-family:'JetBrains Mono',monospace;font-size:22px;color:#F5C451;letter-spacing:0.02em}
+</style></head><body>
+  <div class="bg"></div><div class="scrim"></div><div class="wm"></div>
+  <div class="frame">
+    <div class="top"><img class="lockup" src="loopgain-lockup-dark.png" alt="LoopGain"></div>
+    <div class="hero">
+      <div class="eyebrow">Cost control for AI agent loops</div>
+      <h1>Stop paying to<br><span class="ctrl">over-iterate</span></h1>
+      <div class="sub">Measure the loop in real time, stop at convergence, and roll back before it degrades — instead of running to a fixed max_iterations cap.</div>
+    </div>
+    <div class="foot">
+      <div class="stats"><span><b>92.8%</b> less spend</span><span class="sep">·</span><span><b>~15×</b> faster</span><span class="sep">·</span><span>2,000 real trials</span></div>
+      <div class="url">loopgain.ai</div>
+    </div>
+  </div>
+</body></html>
