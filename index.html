@@ -256,6 +256,11 @@
       <span class="tri-link">see the quality findings →</span>
     </a>
   </div>
+  <a class="tri-writeup" href="/blog/posts/2000-agent-loop-trials-what-surprised-us/">
+    <span class="tw-k mono">the writeup</span>
+    <span class="tw-t">We ran 2,000 paired trials and wrote up the five findings that complicate the headline — where the savings shrink, when stopping early costs quality, and what the judge actually preferred.</span>
+    <span class="tw-link mono">read what surprised us →</span>
+  </a>
 </section>
 
 <!-- ─── the problem ──────────────────────────────────────────────────── -->
@@ -608,10 +613,87 @@ outcome:        <span class="tk-stall">stalled</span>
   </div>
 </section>
 
+<!-- ─── how it's different (vs observability) ──────────────────────────── -->
+<section class="cmp-sec" id="compare" data-screen-label="compare">
+  <div class="section-head">
+    <span class="eyebrow mono">§06 · how it's different</span>
+    <h2>The observability tools watch the loop. LoopGain stops it.</h2>
+    <p class="section-sub">
+      LangSmith, Langfuse, Helicone and Phoenix are tracing and evaluation tools — they record what your agent did so you can read it back later. That work is genuinely useful, and LoopGain runs happily alongside any of them. But none of them sits inside the running loop and decides when it's done. That is the gap LoopGain fills: it reads the error trajectory in real time and returns a stop-or-rollback decision while the loop is still running.
+    </p>
+  </div>
+
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th scope="col">Tool</th>
+          <th scope="col">Operates at</th>
+          <th scope="col">License</th>
+          <th scope="col">Framework-agnostic</th>
+          <th scope="col">Real-time loop control</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cmp-self">
+          <th scope="row">LoopGain</th>
+          <td>the loop — convergence state</td>
+          <td>Apache-2.0 (OSI)</td>
+          <td>yes · 6 adapters + raw API</td>
+          <td class="cmp-yes">stops &amp; rolls back to best-so-far</td>
+        </tr>
+        <tr>
+          <th scope="row">LangSmith</th>
+          <td>requests &amp; traces</td>
+          <td>closed · self-host on Enterprise only</td>
+          <td>SDKs, but LangChain / LangGraph-first</td>
+          <td class="cmp-no">observe only</td>
+        </tr>
+        <tr>
+          <th scope="row">Langfuse</th>
+          <td>requests &amp; traces</td>
+          <td>MIT (OSI)</td>
+          <td>yes</td>
+          <td class="cmp-no">observe only</td>
+        </tr>
+        <tr>
+          <th scope="row">Helicone</th>
+          <td>requests · proxy</td>
+          <td>Apache-2.0 (OSI)</td>
+          <td>yes</td>
+          <td class="cmp-no">observe only</td>
+        </tr>
+        <tr>
+          <th scope="row">Arize Phoenix</th>
+          <td>requests &amp; traces</td>
+          <td>Elastic v2 · source-available, not OSI</td>
+          <td>yes · OpenTelemetry</td>
+          <td class="cmp-no">observe only</td>
+        </tr>
+        <tr>
+          <th scope="row">Braintrust</th>
+          <td>offline evals &amp; experiments</td>
+          <td>closed · proxy is OSS, platform isn't</td>
+          <td>yes</td>
+          <td class="cmp-no">observe only</td>
+        </tr>
+        <tr class="cmp-baseline">
+          <th scope="row"><code class="mono code-inline">max_iter=N</code></th>
+          <td>the loop — fixed cap</td>
+          <td>—</td>
+          <td>yes</td>
+          <td class="cmp-warn">static guess · no measurement</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="cmp-foot mono">A fast-moving category — competitor facts verified June 2026. LoopGain is control, not tracing: run it next to whichever observability tool you already use.</p>
+</section>
+
 <!-- ─── dashboard ────────────────────────────────────────────────────── -->
 <section class="dash-sec" id="dashboard" data-screen-label="dashboard">
   <div class="section-head">
-    <span class="eyebrow mono">§06 · hosted dashboard</span>
+    <span class="eyebrow mono">§07 · hosted dashboard</span>
     <h2>The same readings, on a screen built for an operations room.</h2>
     <p class="section-sub">
       Five panels over your real fleet. Overview, Loop Health Map, Convergence, Waste Report, Rollback Log. Alerts on band transitions. The panels below are illustrative at mid-market scale (~1M loop events/month); the live demo projects the public benchmark data to a fleet of <em>your</em> size, so you can poke at every panel without integrating first.
@@ -783,7 +865,7 @@ outcome:        <span class="tk-stall">stalled</span>
 <!-- ─── pricing ──────────────────────────────────────────────────────── -->
 <section class="price-sec" id="pricing" data-screen-label="pricing">
   <div class="section-head">
-    <span class="eyebrow mono">§07 · pricing</span>
+    <span class="eyebrow mono">§08 · pricing</span>
     <h2>Free if you self-host. Paid when you&apos;d rather not.</h2>
     <p class="section-sub">
       Apache-2.0 across the stack — library, receiver, dashboard. Self-host the whole thing if you want; the code is there. The Team, Pro, and Enterprise tiers are what you buy when you&apos;d rather we run it — each tier going further on retention, alerting, security, and compliance.
@@ -882,7 +964,7 @@ outcome:        <span class="tk-stall">stalled</span>
 <section class="why-sec" data-screen-label="why">
   <div class="why-grid">
     <div class="why-lineage">
-      <span class="eyebrow mono">§08 · why it works</span>
+      <span class="eyebrow mono">§09 · why it works</span>
       <div class="why-year mono">
         <span class="wy-num">1921</span>
         <span class="wy-name">Heinrich Barkhausen</span>

@@ -2067,3 +2067,68 @@ section + section {
 .news-status.is-ok { color: var(--band-conv); }
 .news-status.is-err { color: var(--band-osc); }
 @media (max-width: 480px) { .news-row { flex-direction: column; } }
+
+/* ───────────────── benchmark writeup band (under §00 trifecta) ───────────────── */
+.tri-writeup {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: var(--surf-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color .15s ease, background .15s ease;
+}
+.tri-writeup:hover { border-color: var(--border-2); background: var(--surf-2); }
+.tri-writeup .tw-k {
+  flex: none;
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.tri-writeup .tw-t { flex: 1 1 320px; color: var(--text-2); font-size: 14px; line-height: 1.55; }
+.tri-writeup .tw-link { flex: none; color: var(--accent); font-size: 13px; white-space: nowrap; }
+.tri-writeup:hover .tw-link { color: var(--accent-deep); }
+
+/* ───────────────── comparison (§06 · how it's different) ───────────────── */
+.cmp-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.cmp {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.cmp th, .cmp td {
+  text-align: left;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.cmp thead th {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  font-weight: 600;
+  background: var(--surf-2);
+}
+.cmp tbody th[scope="row"] { color: var(--text-1); font-weight: 600; white-space: nowrap; }
+.cmp td { color: var(--text-2); line-height: 1.5; }
+.cmp tbody tr:last-child td, .cmp tbody tr:last-child th { border-bottom: none; }
+.cmp-self th[scope="row"] { color: var(--accent); }
+.cmp-self td, .cmp-self th { background: color-mix(in oklab, var(--accent) 7%, transparent); }
+.cmp td.cmp-yes { color: var(--band-fast); font-weight: 500; }
+.cmp td.cmp-no { color: var(--text-3); }
+.cmp td.cmp-warn { color: var(--band-stall); }
+.cmp-baseline th[scope="row"], .cmp-baseline td { color: var(--text-3); }
+.cmp-foot { margin-top: 14px; font-size: 12px; color: var(--text-3); }
+@media (max-width: 600px) { .cmp-foot { font-size: 11px; } }
