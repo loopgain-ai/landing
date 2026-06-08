@@ -1420,23 +1420,25 @@ section + section {
   flex: 1;
 }
 .pc-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  /* hanging indent, NOT flex: a flex li turns an inline <span class="mono">
+     into its own flex item, splitting the line into gapped columns. Normal
+     inline flow lets the text + inline code wrap as one run. */
+  position: relative;
+  padding-left: 19px;        /* dot 9px + former 10px gap */
   line-height: 1.5;
 }
 .pc-list li::before {
   content: '';
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  /* dot center on the first text line: line box ≈ 13.5px × 1.5 ≈ 20.25px;
+     dot outer height with border ≈ 12px → top ≈ 4px. */
+  top: 4px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   border: 1.5px solid var(--accent);
   background: color-mix(in oklab, var(--accent) 18%, transparent);
-  /* align the dot center to the first text line center.
-     line-height 1.5 × 13.5px ≈ 20.25px → center ≈ 10.1px.
-     dot outer height with border ≈ 12px → top offset ≈ 4.1px. */
-  margin-top: 4px;
 }
 .pc-list li .mono { color: var(--text-1); }
 .pc-list li:first-child { color: var(--text-1); font-weight: 500; }
