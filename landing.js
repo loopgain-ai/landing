@@ -310,7 +310,7 @@
     team: { title: 'Join the Team waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Team is live.", cta: 'Join the waitlist' },
     pro: { title: 'Join the Pro waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Pro is live.", cta: 'Join the waitlist' },
     enterprise: { title: 'Talk to us about Enterprise', sub: "SLA, data residency, dedicated infrastructure. Leave your email and we'll set up a conversation.", cta: 'Request a conversation' },
-    pilot: { title: "Run LoopGain on your stack", sub: "Put LoopGain into your own agent loops and we'll help you wire it in — adapter setup, thresholds, and reading the dashboard on your real workloads. Leave your email and we'll get you going.", cta: 'Get started' },
+    pilot: { title: 'Apply for a design-partner pilot', sub: "We're onboarding a small group of design partners. Leave your email and we'll be in touch about a pilot.", cta: 'Apply for a pilot' },
   };
 
   async function submitCapture(payload, node, btn, btnLabel) {
