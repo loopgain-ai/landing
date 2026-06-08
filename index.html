@@ -696,162 +696,18 @@ outcome:        <span class="tk-stall">stalled</span>
     <span class="eyebrow mono">§07 · hosted dashboard</span>
     <h2>The same readings, on a screen built for an operations room.</h2>
     <p class="section-sub">
-      Five panels over your real fleet. Overview, Loop Health Map, Convergence, Waste Report, Rollback Log. Alerts on band transitions. The panels below are illustrative at mid-market scale (~1M loop events/month); the live demo projects the public benchmark data to a fleet of <em>your</em> size, so you can poke at every panel without integrating first.
+      Five panels over your real fleet. Overview, Loop Health Map, Convergence, Waste Report, Rollback Log. Alerts on band transitions. Below is the live demo itself at mid-market scale (~1M loop events/month) — the public benchmark data projected to a fleet of <em>your</em> size. Open it and poke at every panel without integrating first.
     </p>
   </div>
 
-  <div class="dash-mocks">
-
-    <!-- Loop Health Map mockup -->
-    <figure class="dm dm-health">
-      <header class="dm-head">
-        <span class="mono dm-name">Loop Health Map</span>
-        <span class="mono dm-meta">38 loops · illustrative</span>
-      </header>
-      <div class="dm-tilebox">
-        <!-- treemap-ish tiles -->
-        <div class="tile tf" style="--span:7;">checkout-rewriter<span class="tile-sub mono">248k · 0.42</span></div>
-        <div class="tile tc" style="--span:5;">sql-resolver<span class="tile-sub mono">162k · 0.61</span></div>
-        <div class="tile tc" style="--span:4;">spec-extractor<span class="tile-sub mono">78k · 0.58</span></div>
-        <div class="tile ts" style="--span:3;">draft-emailer<span class="tile-sub mono">24k · 0.90</span></div>
-        <div class="tile tf" style="--span:4;">faq-router<span class="tile-sub mono">128k · 0.18</span></div>
-        <div class="tile tc" style="--span:3;">copy-revise<span class="tile-sub mono">54k · 0.74</span></div>
-        <div class="tile td" style="--span:2;">incident-sum<span class="tile-sub mono">4.8k · 1.18</span></div>
-        <div class="tile ts" style="--span:2;">memo-loop<span class="tile-sub mono">8.2k · 0.90</span></div>
-        <div class="tile tc" style="--span:3;">policy-rewriter<span class="tile-sub mono">40k · 0.68</span></div>
-      </div>
-      <footer class="dm-foot mono">tile size = run volume · tile color = loop state</footer>
-    </figure>
-
-    <!-- Waste Report mockup -->
-    <figure class="dm dm-waste">
-      <header class="dm-head">
-        <span class="mono dm-name">Waste Report · 30d</span>
-        <span class="mono dm-meta">illustrative</span>
-      </header>
-      <div class="dm-waste-body">
-        <div class="dw-hero">
-          <span class="dw-hero-num mono">$828k</span>
-          <span class="dw-hero-lab mono">saved · 30d · would've spent $900k → spent $72k</span>
-        </div>
-        <div class="ww-row">
-          <span class="mono ww-lab">converged</span>
-          <div class="ww-bar"><span class="ww-fill ww-conv" style="--w:100%"></span></div>
-          <span class="mono ww-val">$554k</span>
-        </div>
-        <div class="ww-row">
-          <span class="mono ww-lab">diverged</span>
-          <div class="ww-bar"><span class="ww-fill ww-div" style="--w:27%"></span></div>
-          <span class="mono ww-val">$147k</span>
-        </div>
-        <div class="ww-row">
-          <span class="mono ww-lab">stalled</span>
-          <div class="ww-bar"><span class="ww-fill ww-stall" style="--w:23%"></span></div>
-          <span class="mono ww-val">$127k</span>
-        </div>
-      </div>
-      <footer class="dm-foot mono">saved · by outcome · mid-market ~1M events/mo · vs max_iter=20</footer>
-    </figure>
-
-    <!-- Convergence Profiles mockup -->
-    <figure class="dm dm-conv">
-      <header class="dm-head">
-        <span class="mono dm-name">Convergence Profiles</span>
-        <span class="mono dm-meta">illustrative</span>
-      </header>
-      <div class="dm-conv-body">
-        <svg viewBox="0 0 320 200" preserveAspectRatio="none" class="dm-conv-svg" aria-hidden="true">
-          <!-- band zones (log Aβ axis: 0.08 bottom → 1.6 top; high bands compress) -->
-          <rect x="34" y="12"  width="274" height="24" fill="var(--band-div)"   fill-opacity="0.10"/>
-          <rect x="34" y="36"  width="274" height="5"  fill="var(--band-osc)"   fill-opacity="0.10"/>
-          <rect x="34" y="41"  width="274" height="6"  fill="var(--band-stall)" fill-opacity="0.13"/>
-          <rect x="34" y="47"  width="274" height="59" fill="var(--band-conv)"  fill-opacity="0.08"/>
-          <rect x="34" y="106" width="274" height="74" fill="var(--band-fast)"  fill-opacity="0.08"/>
-          <!-- faint neutral gridlines at band boundaries (not data) -->
-          <line x1="34" x2="308" y1="36"  y2="36"  stroke="var(--border)" stroke-width="0.6" stroke-opacity="0.55" stroke-dasharray="2 3"/>
-          <line x1="34" x2="308" y1="47"  y2="47"  stroke="var(--border)" stroke-width="0.6" stroke-opacity="0.55" stroke-dasharray="2 3"/>
-          <line x1="34" x2="308" y1="106" y2="106" stroke="var(--border)" stroke-width="0.6" stroke-opacity="0.55" stroke-dasharray="2 3"/>
-          <!-- y ticks -->
-          <text x="30" y="39"  text-anchor="end" class="dm-conv-tick">1.05</text>
-          <text x="30" y="50"  text-anchor="end" class="dm-conv-tick">0.85</text>
-          <text x="30" y="109" text-anchor="end" class="dm-conv-tick">0.30</text>
-          <!-- band labels -->
-          <text x="305" y="26"  text-anchor="end" fill="var(--band-div)"  class="dm-conv-blab">DIV</text>
-          <text x="305" y="80"  text-anchor="end" fill="var(--band-conv)" class="dm-conv-blab">CONV</text>
-          <text x="305" y="150" text-anchor="end" fill="var(--band-fast)" class="dm-conv-blab">FAST</text>
-          <!-- rolling-median trend (sits flat in the healthy bands) -->
-          <path d="M 40 136 L 92 132 L 144 134 L 196 130 L 248 133 L 300 131" fill="none" stroke="var(--accent)" stroke-opacity="0.35" stroke-width="1.5" stroke-linecap="round"/>
-          <!-- per-loop points, colored by band (representative ~60-pt slice of a much denser cloud) -->
-          <g>
-            <!-- FAST_CONVERGE band (lower) -->
-            <circle cx="44"  cy="150" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="55"  cy="138" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="66"  cy="162" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="77"  cy="144" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="88"  cy="128" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="99"  cy="156" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="110" cy="134" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="121" cy="148" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="132" cy="118" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="143" cy="160" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="154" cy="140" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="165" cy="126" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="176" cy="152" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="187" cy="132" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="198" cy="146" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="209" cy="158" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="220" cy="122" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="231" cy="144" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="242" cy="136" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="253" cy="154" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="264" cy="130" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="275" cy="148" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="286" cy="120" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="297" cy="142" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <circle cx="306" cy="156" r="2.2" fill="var(--band-fast)" fill-opacity="0.6"/>
-            <!-- CONVERGING band (upper layer) -->
-            <circle cx="50"  cy="98"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="66"  cy="90"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="82"  cy="102" r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="98"  cy="88"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="114" cy="96"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="130" cy="92"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="146" cy="100" r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="162" cy="86"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="178" cy="94"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="194" cy="104" r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="210" cy="90"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="226" cy="98"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="242" cy="88"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="258" cy="96"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="274" cy="92"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="290" cy="100" r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <circle cx="304" cy="94"  r="2.2" fill="var(--band-conv)" fill-opacity="0.6"/>
-            <!-- STALLING band -->
-            <circle cx="60"  cy="45"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="96"  cy="43"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="128" cy="46"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="160" cy="44"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="192" cy="42"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="224" cy="45"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="256" cy="43"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <circle cx="292" cy="46"  r="2.2" fill="var(--band-stall)" fill-opacity="0.85"/>
-            <!-- DIVERGING band (upper) -->
-            <circle cx="72"  cy="28"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="108" cy="22"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="144" cy="32"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="180" cy="18"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="216" cy="30"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="248" cy="24"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="284" cy="34"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-            <circle cx="302" cy="20"  r="2.2" fill="var(--band-div)" fill-opacity="0.85"/>
-          </g>
-        </svg>
-      </div>
-      <footer class="dm-foot mono">per-loop Aβ median over time · band thresholds</footer>
-    </figure>
-
-  </div>
+  <figure class="dash-shot">
+    <img
+      src="/dashboard-demo.png"
+      width="1440" height="900"
+      alt="LoopGain hosted dashboard in demo mode: the fleet Overview with a converged-rate gauge at 65.1%, $828.2k saved by LoopGain over 30 days, a 24-hour fleet pulse chart, and the latest run trajectory."
+      loading="lazy" decoding="async"
+    />
+  </figure>
 
   <div class="dash-cta">
     <a class="btn btn-amber" href="https://dashboard.loopgain.ai" rel="noopener">
