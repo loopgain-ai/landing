@@ -434,7 +434,7 @@
 <span class="tk-add">    lg.observe(errors, output=output)</span>    output = your_refiner(output, errors)  <span class="tk-com"># your existing code</span>
 
 <span class="tk-add">result = lg.result</span><span class="tk-com"># result.outcome      → "converged" · "oscillating" · "diverged" · "stalled" · "max_iterations"</span>
-<span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span><span class="tk-com"># result.gain_margin  → 1 / max(Aβ_smooth) — > 1 means stable headroom</span>
+<span class="tk-com"># result.best_output  → argmin(E(n)) — the actual best draft, not the last</span><span class="tk-com"># result.savings_vs_fixed_cap → iterations you didn't burn vs a fixed cap</span>
 </code></pre>
 
     <pre class="code-panel mono" data-panel="langgraph"><code><span class="tk-com"># amber stripe = the lines you add or change. pip install 'loopgain[langgraph]'</span>
@@ -696,7 +696,7 @@ outcome:        <span class="tk-stall">stalled</span>
     <span class="eyebrow mono">§07 · hosted dashboard</span>
     <h2>The same readings, on a screen built for an operations room.</h2>
     <p class="section-sub">
-      Five panels over your real fleet. Overview, Loop Health Map, Convergence, Waste Report, Rollback Log. Alerts on band transitions. Below is the live demo itself at mid-market scale (~1M loop events/month) — the public benchmark data projected to a fleet of <em>your</em> size. Open it and poke at every panel without integrating first.
+      Six panels over your real fleet: Overview, Loop Health Map, Convergence, Waste Report, Rollback Log, and Alerts on band transitions. Below is the live demo itself at mid-market scale (~1M loop events/month) — the public benchmark data projected to a fleet of <em>your</em> size. Open it and poke at every panel without integrating first.
     </p>
   </div>
 
