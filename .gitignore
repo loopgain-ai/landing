@@ -6,3 +6,8 @@ node_modules/
 
 # planning/brainstorm session briefs — never commit
 *KICKOFF.md
+
+# env files — never commit
+.env
+.env.*
+.dev.vars

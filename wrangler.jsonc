@@ -3,7 +3,8 @@
   //
   // Deployed as a Workers-with-static-assets project: no Worker script,
   // just the directory of static files. `_headers` (security headers)
-  // and `_redirects` (none yet) are honored the same way Pages does.
+  // and `_redirects` (/benchmark → /benchmarks) are honored the same way
+  // Pages does. 404s serve the branded /404.html via not_found_handling.
   //
   // The .assetsignore file excludes repo-management files (README,
   // LICENSE, .git, etc.) from being uploaded as servable assets.
@@ -11,6 +12,7 @@
   "name": "loopgain-landing",
   "compatibility_date": "2026-05-15",
   "assets": {
-    "directory": "./"
+    "directory": "./",
+    "not_found_handling": "404-page"
   }
 }
