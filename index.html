@@ -874,6 +874,7 @@ outcome:        <span class="tk-stall">stalled</span>
         <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" class="btn btn-amber news-btn">Subscribe</button>
       </div>
+      <div id="newsTurnstile"></div>
       <p class="news-status mono" id="newsStatus" role="status" aria-live="polite"></p>
     </form>
   </div>
@@ -896,6 +897,7 @@ outcome:        <span class="tk-stall">stalled</span>
     <input id="wlEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="wl-input" />
     <!-- honeypot: invisible to people, irresistible to bots -->
     <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div id="wlTurnstile"></div>
     <button type="submit" class="btn btn-amber btn-block wl-submit">Join the waitlist</button>
     <p class="wl-fine mono">By joining you agree to be contacted by LoopGain about this. Unsubscribe any time.</p>
     <p class="wl-status mono" id="wlStatus" role="status" aria-live="polite"></p>
@@ -904,5 +906,10 @@ outcome:        <span class="tk-stall">stalled</span>
 
 <script src="landing.js"></script>
 <script src="version-sync.js"></script>
+<!-- Turnstile bot-check for the capture forms. Explicit render: landing.js
+     (loaded synchronously above) defines onloadTurnstileCallback before this
+     async script runs. interaction-only appearance = invisible unless a
+     challenge is actually required. -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit" async defer></script>
 </body>
 </html>

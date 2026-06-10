@@ -297,6 +297,7 @@
    to an inline dialog. The footer form subscribes to the blog newsletter. */
 (() => {
   const API = '/api/subscribe';
+  const TURNSTILE_SITEKEY = '0x4AAAAAADiBMO_v3Ti_3EcA';
   const dialog = document.getElementById('waitlistDialog');
   const form = document.getElementById('waitlistForm');
   const titleEl = document.getElementById('wlTitle');
@@ -312,6 +313,43 @@
     enterprise: { title: 'Talk to us about Enterprise', sub: "SLA, data residency, dedicated infrastructure. Leave your email and we'll set up a conversation.", cta: 'Request a conversation' },
     pilot: { title: 'Apply for a design-partner pilot', sub: "We're onboarding a small group of design partners. Leave your email and we'll be in touch about a pilot.", cta: 'Apply for a pilot' },
   };
+
+  /* Turnstile — explicit render (the api.js tag in index.html loads with
+     render=explicit and calls onloadTurnstileCallback). The footer widget
+     renders immediately; the dialog widget renders lazily on first open
+     (rendering inside a closed <dialog> — display:none — is unreliable).
+     interaction-only keeps both invisible unless a challenge is required.
+     Tokens are single-use: reset the widget after every submit attempt. */
+  let wlWidget = null;
+  let newsWidget = null;
+
+  window.onloadTurnstileCallback = () => {
+    const slot = document.getElementById('newsTurnstile');
+    if (slot) {
+      newsWidget = turnstile.render(slot, {
+        sitekey: TURNSTILE_SITEKEY, appearance: 'interaction-only', theme: 'auto',
+      });
+    }
+    if (dialog && dialog.open) renderDialogWidget();
+  };
+
+  function renderDialogWidget() {
+    const slot = document.getElementById('wlTurnstile');
+    if (!slot || wlWidget !== null || !window.turnstile) return;
+    wlWidget = turnstile.render(slot, {
+      sitekey: TURNSTILE_SITEKEY, appearance: 'interaction-only', theme: 'auto',
+    });
+  }
+
+  function turnstileToken(widget) {
+    if (!window.turnstile || widget === null) return '';
+    try { return turnstile.getResponse(widget) || ''; } catch { return ''; }
+  }
+
+  function turnstileReset(widget) {
+    if (!window.turnstile || widget === null) return;
+    try { turnstile.reset(widget); } catch { /* widget gone — ignore */ }
+  }
 
   async function submitCapture(payload, node, btn, btnLabel) {
     node.className = 'wl-status';
@@ -350,6 +388,8 @@
       if (statusEl) { statusEl.textContent = ''; statusEl.className = 'wl-status'; }
       if (emailEl) emailEl.value = '';
       dialog.showModal();
+      if (wlWidget === null) renderDialogWidget();
+      else turnstileReset(wlWidget);  // stale/used token from a previous open
       setTimeout(() => emailEl && emailEl.focus(), 50);
     };
 
@@ -370,10 +410,11 @@
       if (fd.get('company_website')) { dialog.close(); return; }  // honeypot tripped
       const email = (fd.get('email') || '').toString().trim();
       if (!email) return;
-      await submitCapture(
-        { email, list: currentList, source: 'landing:' + currentList, consent: true, company_website: '' },
+      const ok = await submitCapture(
+        { email, list: currentList, source: 'landing:' + currentList, consent: true, company_website: '', cf_turnstile_response: turnstileToken(wlWidget) },
         statusEl, submitBtn, (COPY[currentList] || COPY.team).cta,
       );
+      if (!ok) turnstileReset(wlWidget);  // token is single-use; allow retry
     });
   }
 
@@ -388,10 +429,11 @@
       const email = (fd.get('email') || '').toString().trim();
       if (!email) return;
       const btn = newsForm.querySelector('button[type=submit]');
-      await submitCapture(
-        { email, list: 'blog', source: 'landing:footer', consent: true, company_website: '' },
+      const ok = await submitCapture(
+        { email, list: 'blog', source: 'landing:footer', consent: true, company_website: '', cf_turnstile_response: turnstileToken(newsWidget) },
         newsStatus, btn, 'Subscribe',
       );
+      if (!ok) turnstileReset(newsWidget);  // token is single-use; allow retry
     });
   }
 })();
