@@ -4,14 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>LoopGain — cost control for AI agent loops</title>
-<meta name="description" content="AI agent loops waste time and money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 92.8% less spend, ~15× faster across 2,000 real trials. Open source, Apache-2.0." />
+<meta name="description" content="AI agent loops waste money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 92.8% less spend, ~15× faster across 2,000 real trials. Open source, Apache-2.0." />
 <meta name="theme-color" content="#0A0B0D" />
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://loopgain.ai/" />
 <meta property="og:site_name" content="LoopGain" />
 <meta property="og:title" content="LoopGain — cost control for AI agent loops" />
-<meta property="og:description" content="AI agent loops waste time and money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 92.8% less spend, ~15× faster across 2,000 real trials. Open source, Apache-2.0." />
+<meta property="og:description" content="AI agent loops waste money when they don't know when to stop. LoopGain measures the loop in real time and stops it at the right moment — 92.8% less spend, ~15× faster across 2,000 real trials. Open source, Apache-2.0." />
 <meta property="og:image" content="https://loopgain.ai/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
@@ -26,7 +28,9 @@
 <meta name="twitter:image:alt" content="LoopGain — cost control for AI agent loops." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" data-font-css />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
+<script src="/fonts.js" defer></script>
 <link rel="stylesheet" href="landing.css" />
 
 <!-- Structured data — SoftwareApplication (Schema.org) -->
@@ -68,7 +72,6 @@
   "url": "https://loopgain.ai",
   "logo": "https://loopgain.ai/loopgain-lockup-dark.png",
   "description": "Open-source cost control for AI agent loops — a loop-gain (Aβ) trajectory classifier under the hood.",
-  "email": "hello@loopgain.ai",
   "founder": {
     "@type": "Person",
     "name": "David Fitzsimmons"
@@ -85,8 +88,8 @@
 <!-- ─── nav ──────────────────────────────────────────────────────────── -->
 <header class="nav" data-screen-label="nav">
   <a class="nav-brand" href="#top" aria-label="LoopGain home">
-    <img src="/loopgain-lockup-dark.png" alt="LoopGain" class="brand-dark" style="height:24px; width:auto;" />
-    <img src="/loopgain-lockup-light.png" alt="LoopGain" class="brand-light" style="height:24px; width:auto;" />
+    <img src="/loopgain-lockup-dark-sm.png" alt="LoopGain" class="brand-dark" style="height:24px; width:auto;" />
+    <img src="/loopgain-lockup-light-sm.png" alt="LoopGain" class="brand-light" style="height:24px; width:auto;" />
     <span class="nav-version mono" data-lg-version>v0.5.2</span>
   </a>
   <nav class="nav-links" aria-label="primary">
@@ -127,7 +130,7 @@
           <code class="mono">pip install loopgain</code>
           <span class="copy-hint mono">copy</span>
         </div>
-        <a class="btn btn-amber" href="mailto:hello@loopgain.ai?subject=Design-partner%20pilot" rel="noopener" data-capture="pilot">
+        <a class="btn btn-amber" href="mailto:hello&#64;loopgain&#46;ai?subject=Design-partner%20pilot" rel="noopener" data-capture="pilot">
           apply for a design-partner pilot
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
         </a>
@@ -702,7 +705,8 @@ outcome:        <span class="tk-stall">stalled</span>
 
   <figure class="dash-shot">
     <img
-      src="/dashboard-demo.png"
+      src="/dashboard-demo-1440.png"
+      srcset="/dashboard-demo-1440.png 1x, /dashboard-demo.png 2x"
       width="1440" height="900"
       alt="LoopGain hosted dashboard in demo mode: the fleet Overview with a converged-rate gauge at 65.1%, $828.2k saved by LoopGain over 30 days, a 24-hour fleet pulse chart, and the latest run trajectory."
       loading="lazy" decoding="async"
@@ -768,7 +772,7 @@ outcome:        <span class="tk-stall">stalled</span>
       </ul>
       <div class="pc-cta">
         <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
-        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=Team-tier%20waitlist" data-capture="team">join the waitlist →</a>
+        <a class="btn btn-ghost btn-block" href="mailto:hello&#64;loopgain&#46;ai?subject=Team-tier%20waitlist" data-capture="team">join the waitlist →</a>
         <p class="pc-cta-note mono">early teams lock founding pricing</p>
       </div>
     </article>
@@ -791,7 +795,7 @@ outcome:        <span class="tk-stall">stalled</span>
       </ul>
       <div class="pc-cta">
         <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
-        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=Pro-tier%20waitlist" data-capture="pro">join the waitlist →</a>
+        <a class="btn btn-ghost btn-block" href="mailto:hello&#64;loopgain&#46;ai?subject=Pro-tier%20waitlist" data-capture="pro">join the waitlist →</a>
         <p class="pc-cta-note mono">early teams lock founding pricing</p>
       </div>
     </article>
@@ -811,7 +815,7 @@ outcome:        <span class="tk-stall">stalled</span>
         <li>Custom MSA + dedicated CSM</li>
       </ul>
       <div class="pc-cta">
-        <a class="btn btn-ghost btn-block" href="mailto:hello@loopgain.ai?subject=LoopGain%20Enterprise" data-capture="enterprise">talk to us →</a>
+        <a class="btn btn-ghost btn-block" href="mailto:hello&#64;loopgain&#46;ai?subject=LoopGain%20Enterprise" data-capture="enterprise">talk to us →</a>
       </div>
     </article>
 
@@ -853,8 +857,8 @@ outcome:        <span class="tk-stall">stalled</span>
 <footer class="foot" data-screen-label="footer">
   <div class="foot-row">
     <a class="foot-brand" href="#top" aria-label="LoopGain home">
-      <img src="/loopgain-lockup-dark.png" alt="LoopGain" class="brand-dark" style="height:20px; width:auto;" />
-      <img src="/loopgain-lockup-light.png" alt="LoopGain" class="brand-light" style="height:20px; width:auto;" />
+      <img src="/loopgain-lockup-dark-sm.png" alt="LoopGain" class="brand-dark" style="height:20px; width:auto;" />
+      <img src="/loopgain-lockup-light-sm.png" alt="LoopGain" class="brand-light" style="height:20px; width:auto;" />
     </a>
     <nav class="foot-links mono" aria-label="footer">
       <a href="https://github.com/loopgain-ai" rel="noopener">github</a>
@@ -863,14 +867,14 @@ outcome:        <span class="tk-stall">stalled</span>
       <a href="/blog/">blog</a>
       <a href="/privacy">privacy</a>
       <a href="/terms">terms</a>
-      <a href="mailto:hello@loopgain.ai">hello@loopgain.ai</a>
+      <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>
     </nav>
   </div>
   <div class="foot-row foot-news">
     <form id="newsletterForm" class="news-form">
       <label for="newsEmail" class="news-label">New posts by email</label>
       <div class="news-row">
-        <input id="newsEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="news-input" />
+        <input id="newsEmail" name="email" type="email" required autocomplete="email" placeholder="you&#64;company&#46;com" class="news-input" />
         <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" class="btn btn-amber news-btn">Subscribe</button>
       </div>
@@ -894,7 +898,7 @@ outcome:        <span class="tk-stall">stalled</span>
     <h3 id="wlTitle" class="wl-title">Join the waitlist</h3>
     <p id="wlSub" class="wl-sub">Paid plans launch soon. Leave your email and we'll tell you the moment it's live.</p>
     <label for="wlEmail" class="wl-label mono">email</label>
-    <input id="wlEmail" name="email" type="email" required autocomplete="email" placeholder="you@company.com" class="wl-input" />
+    <input id="wlEmail" name="email" type="email" required autocomplete="email" placeholder="you&#64;company&#46;com" class="wl-input" />
     <!-- honeypot: invisible to people, irresistible to bots -->
     <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <div id="wlTurnstile"></div>
