@@ -19,8 +19,8 @@
 
   // Lines that are LoopGain's own addition to the user's original loop —
   // matched by the exact API surface the system prompt instructs the model
-  // to use (from loopgain import / guard = LoopGain(...) / guard.*).
-  const LG_LINE_PATTERN = /\bguard\b|\bLoopGain\b|\bloopgain\b/;
+  // to use (from loopgain import / lg = LoopGain(...) / lg.*).
+  const LG_LINE_PATTERN = /\blg\b|\bLoopGain\b|\bloopgain\b/;
   function highlightWrappedCode(code) {
     return code.split('\n').map((line) => {
       const escaped = escapeHtml(line);
