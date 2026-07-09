@@ -1912,11 +1912,16 @@ section + section {
 }
 .wl-input:focus, .news-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(245,196,81,0.18); }
 .wl-submit { margin-top: 16px; }
-/* Turnstile slots stay empty + zero-height until Cloudflare decides a challenge
-   is needed (interaction-only injects the iframe only then) — so spacing is
-   scoped to :has(iframe) and the layout doesn't shift when no challenge shows. */
-#wlTurnstile:has(iframe) { margin-top: 20px; }
-#newsTurnstile:has(iframe) { margin-top: 20px; }
+/* Turnstile slots collapse to zero height until Cloudflare decides a
+   challenge is needed. The visible checkbox widget renders via closed
+   shadow DOM inside the slot's own child div, NOT an <iframe> — so
+   :has(iframe) never matches (verified directly: zero <iframe> elements
+   exist anywhere in the document even while the widget is visibly
+   rendered and the slot's own box has grown to the widget's real
+   height). Margin must be unconditional; it only adds a small gap in
+   the common invisible-passthrough case. */
+#wlTurnstile { margin-top: 20px; }
+#newsTurnstile { margin-top: 20px; }
 .wl-checkbox {
   display: flex; align-items: flex-start; gap: 8px;
   font-size: 12.5px; line-height: 1.5; color: var(--text-2);
