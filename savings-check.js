@@ -103,8 +103,26 @@
 
     parts.push(`<p class="sc-result-message">${escapeHtml(data.message)}</p>`);
 
+    if (data.wrapped_code) {
+      parts.push('<p class="sc-code-label">Here\'s your loop, rewritten with LoopGain — ready to paste in</p>');
+      parts.push(
+        '<div class="sc-code-block">' +
+        '<button type="button" class="sc-copy-btn" data-copy-code>copy</button>' +
+        `<pre><code>${highlightWrappedCode(data.wrapped_code)}</code></pre>` +
+        '</div>',
+      );
+      if (data.review_disclaimer) {
+        parts.push(`<p class="sc-disclaimer">${escapeHtml(data.review_disclaimer)}</p>`);
+      }
+    }
+
+    if (data.loop_detected && data.estimated_savings_note) {
+      parts.push(`<div class="sc-savings-note">${escapeHtml(data.estimated_savings_note)}</div>`);
+    }
+
     if (data.loop_detected) {
       const beforeNum = Number.isFinite(data.detected_cap) ? String(data.detected_cap) : null;
+      parts.push('<p class="sc-section-label">Why it matters — published benchmark data</p>');
       parts.push(
         '<div class="sc-reveal">' +
         '<div class="sc-reveal-side">' +
@@ -117,25 +135,8 @@
         '<span class="sc-reveal-label">mean iterations to best output — published aggregate, same max_iter=20 baseline, 2,000 real-API trials</span>' +
         '</div>' +
         '</div>' +
-        `<p class="sc-reveal-foot">${BENCH_COST_CUT} less spend · ${BENCH_SPEEDUP} faster wall-clock, aggregate across the same benchmark — <a href="/benchmarks" target="_blank" rel="noopener">see the full data</a>.</p>`,
+        `<p class="sc-reveal-foot">${BENCH_COST_CUT} less spend · ${BENCH_SPEEDUP} faster wall-clock, aggregate across the same benchmark, not a measurement of your code above — <a href="/benchmarks" target="_blank" rel="noopener">see the full data</a>.</p>`,
       );
-    }
-
-    if (data.loop_detected && data.estimated_savings_note) {
-      parts.push(`<div class="sc-savings-note">${escapeHtml(data.estimated_savings_note)}</div>`);
-    }
-
-    if (data.wrapped_code) {
-      parts.push('<p class="sc-code-label">Your loop, wrapped with LoopGain</p>');
-      parts.push(
-        '<div class="sc-code-block">' +
-        '<button type="button" class="sc-copy-btn" data-copy-code>copy</button>' +
-        `<pre><code>${highlightWrappedCode(data.wrapped_code)}</code></pre>` +
-        '</div>',
-      );
-      if (data.review_disclaimer) {
-        parts.push(`<p class="sc-disclaimer">${escapeHtml(data.review_disclaimer)}</p>`);
-      }
     }
 
     if (data.dashboard_status === 'active') {
