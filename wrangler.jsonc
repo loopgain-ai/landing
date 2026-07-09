@@ -1,18 +1,27 @@
 {
   // Cloudflare Worker config for the LoopGain landing page.
   //
-  // Deployed as a Workers-with-static-assets project: no Worker script,
-  // just the directory of static files. `_headers` (security headers)
-  // and `_redirects` (/benchmark → /benchmarks) are honored the same way
-  // Pages does. 404s serve the branded /404.html via not_found_handling.
+  // Workers-with-static-assets, now with a thin Worker (src/index.js) in
+  // front (`run_worker_first`) — added 2026-07-08 solely to generate a
+  // per-request CSP nonce for Cloudflare Turnstile's Private Access Token
+  // challenge, which injects its own inline script and gets blocked by our
+  // strict CSP without one (Cloudflare's own recommended fix — see
+  // developers.cloudflare.com/turnstile/reference/content-security-policy/).
+  // Every other request still falls through to the static assets unchanged
+  // via `env.ASSETS.fetch()`. `_headers` (security headers) and
+  // `_redirects` (/benchmark → /benchmarks) are honored the same way Pages
+  // does. 404s serve the branded /404.html via not_found_handling.
   //
   // The .assetsignore file excludes repo-management files (README,
   // LICENSE, .git, etc.) from being uploaded as servable assets.
   "$schema": "https://json.schemastore.org/wrangler.json",
   "name": "loopgain-landing",
   "compatibility_date": "2026-05-15",
+  "main": "src/index.js",
   "assets": {
     "directory": "./",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": true
   }
 }
