@@ -310,6 +310,7 @@
   const newsletterOptinEl = document.getElementById('wlNewsletterOptin');
   const fineEl = document.getElementById('wlFine');
   let currentList = 'team';
+  let currentSource = 'unknown'; // which on-page CTA opened the dialog — set per data-source attr
 
   const COPY = {
     individual: { title: 'Get free hosted-dashboard access', sub: "Solo use, single-user, no cost. Leave your email and we'll set you up with an access token.", cta: 'Request access' },
@@ -383,8 +384,9 @@
   }
 
   if (dialog && form && typeof dialog.showModal === 'function') {
-    const open = (list) => {
+    const open = (list, source) => {
       currentList = list;
+      currentSource = source || 'unknown';
       const c = COPY[list] || COPY.team;
       if (titleEl) titleEl.textContent = c.title;
       if (subEl) subEl.textContent = c.sub;
@@ -408,7 +410,7 @@
     document.querySelectorAll('[data-capture]').forEach((el) => {
       el.addEventListener('click', (e) => {
         e.preventDefault();             // suppress the mailto fallback
-        open(el.getAttribute('data-capture'));
+        open(el.getAttribute('data-capture'), el.getAttribute('data-source'));
       });
     });
 
@@ -431,7 +433,7 @@
       }
 
       const payload = {
-        email, list: currentList, source: 'landing:' + currentList,
+        email, list: currentList, source: 'landing:' + currentList + ':' + currentSource,
         consent: isIndividual ? !!(termsConsentEl && termsConsentEl.checked) : true,
         company_website: '', cf_turnstile_response: turnstileToken(wlWidget),
       };
