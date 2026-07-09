@@ -1915,8 +1915,8 @@ section + section {
 /* Turnstile slots stay empty + zero-height until Cloudflare decides a challenge
    is needed (interaction-only injects the iframe only then) — so spacing is
    scoped to :has(iframe) and the layout doesn't shift when no challenge shows. */
-#wlTurnstile:has(iframe) { margin-top: 14px; }
-#newsTurnstile:has(iframe) { margin-top: 10px; }
+#wlTurnstile:has(iframe) { margin-top: 20px; }
+#newsTurnstile:has(iframe) { margin-top: 20px; }
 .wl-checkbox {
   display: flex; align-items: flex-start; gap: 8px;
   font-size: 12.5px; line-height: 1.5; color: var(--text-2);
