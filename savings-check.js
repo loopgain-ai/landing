@@ -8,6 +8,26 @@
   const API = '/api/analyze';
   const TURNSTILE_SITEKEY = '0x4AAAAAADiBMO_v3Ti_3EcA';
 
+  // Published, independently-verified aggregate figures (benchmarks.html) —
+  // fixed constants, never model-generated. Pairs their own extracted cap
+  // (a literal fact read off their pasted code) with the benchmark's own
+  // published before/after, so the reveal is concrete without ever
+  // fabricating a savings number for their specific code.
+  const BENCH_MEAN_ITERATIONS = '1.6';
+  const BENCH_COST_CUT = '92.8%';
+  const BENCH_SPEEDUP = '~15×';
+
+  // Lines that are LoopGain's own addition to the user's original loop —
+  // matched by the exact API surface the system prompt instructs the model
+  // to use (from loopgain import / guard = LoopGain(...) / guard.*).
+  const LG_LINE_PATTERN = /\bguard\b|\bLoopGain\b|\bloopgain\b/;
+  function highlightWrappedCode(code) {
+    return code.split('\n').map((line) => {
+      const escaped = escapeHtml(line);
+      return LG_LINE_PATTERN.test(line) ? `<span class="sc-lg-line">${escaped}</span>` : escaped;
+    }).join('\n');
+  }
+
   const form = document.getElementById('scForm');
   if (!form) return; // this script only runs on /savings-check
 
@@ -83,6 +103,24 @@
 
     parts.push(`<p class="sc-result-message">${escapeHtml(data.message)}</p>`);
 
+    if (data.loop_detected) {
+      const beforeNum = Number.isFinite(data.detected_cap) ? String(data.detected_cap) : null;
+      parts.push(
+        '<div class="sc-reveal">' +
+        '<div class="sc-reveal-side">' +
+        `<span class="sc-reveal-num">${beforeNum ? escapeHtml(beforeNum) : '?'}</span>` +
+        `<span class="sc-reveal-label">${beforeNum ? 'iterations your loop runs every time' : 'no fixed cap — runs until something says stop'}</span>` +
+        '</div>' +
+        '<div class="sc-reveal-arrow">→</div>' +
+        '<div class="sc-reveal-side accent">' +
+        `<span class="sc-reveal-num">${BENCH_MEAN_ITERATIONS}</span>` +
+        '<span class="sc-reveal-label">mean iterations to best output — published aggregate, same max_iter=20 baseline, 2,000 real-API trials</span>' +
+        '</div>' +
+        '</div>' +
+        `<p class="sc-reveal-foot">${BENCH_COST_CUT} less spend · ${BENCH_SPEEDUP} faster wall-clock, aggregate across the same benchmark — <a href="/benchmarks" target="_blank" rel="noopener">see the full data</a>.</p>`,
+      );
+    }
+
     if (data.loop_detected && data.estimated_savings_note) {
       parts.push(`<div class="sc-savings-note">${escapeHtml(data.estimated_savings_note)}</div>`);
     }
@@ -92,7 +130,7 @@
       parts.push(
         '<div class="sc-code-block">' +
         '<button type="button" class="sc-copy-btn" data-copy-code>copy</button>' +
-        `<pre><code>${escapeHtml(data.wrapped_code)}</code></pre>` +
+        `<pre><code>${highlightWrappedCode(data.wrapped_code)}</code></pre>` +
         '</div>',
       );
       if (data.review_disclaimer) {
