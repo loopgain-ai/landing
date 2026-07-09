@@ -54,7 +54,7 @@
   <article class="legal-page">
     <span class="legal-eyebrow">§ privacy</span>
     <h1>Privacy Policy</h1>
-    <div class="legal-meta">Last updated: 2026-07-08 · Effective date: 2026-05-20</div>
+    <div class="legal-meta">Last updated: 2026-07-09 · Effective date: 2026-05-20</div>
 
     <p>This policy explains how <strong>LoopGain Technologies Inc.</strong> (&ldquo;LoopGain&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), a Canadian corporation located in Ontario, Canada, collects, uses, and protects information when you interact with our websites and services.</p>
 
@@ -64,6 +64,7 @@
       <li><a href="https://dashboard.loopgain.ai">dashboard.loopgain.ai</a> — the LoopGain observability dashboard</li>
       <li><code>telemetry.loopgain.ai</code> — the optional telemetry ingestion endpoint for the open-source library</li>
       <li>The <a href="https://pypi.org/project/loopgain/">loopgain</a> Python package distributed via PyPI under the Apache-2.0 license</li>
+      <li>The <a href="https://github.com/loopgain-ai/loopgain-plugin">loopgain-plugin</a> Claude Code plugin, also Apache-2.0</li>
     </ul>
 
     <hr />
@@ -86,13 +87,16 @@
     <p>The tool at <a href="/get-code">loopgain.ai/get-code</a> lets you paste one example loop from your own code. That snippet, along with a short instruction prompt, is sent to <strong>Anthropic</strong> (the maker of Claude), which processes it to judge whether it&rsquo;s an agent loop and to generate the analysis and rewritten code shown back to you. <strong>We do not store the code you paste</strong> — it is not written to any LoopGain database, before or after the request. Anthropic is a United States company; submitting code through this tool means it is transmitted to and processed on infrastructure outside Canada, subject to Anthropic&rsquo;s own privacy practices (<a href="https://www.anthropic.com/legal/privacy" rel="noopener">anthropic.com/legal/privacy</a>) and, as with any U.S.-processed data, potentially accessible under U.S. law.</p>
     <p>Submitting this form also captures your email address (see &ldquo;Email lists and lead capture&rdquo; above) and, the first time you use it, automatically provisions a free hosted-dashboard account as described below.</p>
 
-    <h3>e. Dashboard accounts</h3>
+    <h3>e. The Claude Code plugin</h3>
+    <p>The <a href="https://github.com/loopgain-ai/loopgain-plugin">loopgain-plugin</a> is an open-source Claude Code plugin that scans a codebase for wrappable loops and proposes reviewed rewrites. It runs entirely inside your own Claude Code session, using your own existing Anthropic account and infrastructure — <strong>LoopGain never receives, stores, or processes the code it scans.</strong> Unlike the &ldquo;paste your code&rdquo; tool above, no code is ever sent to LoopGain or, through LoopGain, to Anthropic. The only way any information reaches LoopGain is if you separately choose to sign up for free hosted-dashboard access (see &ldquo;Dashboard accounts&rdquo; below) or explicitly opt into telemetry from the underlying <code>loopgain</code> library (see &ldquo;Open-source library telemetry&rdquo; above) — both optional, neither triggered automatically by installing or using the plugin.</p>
+
+    <h3>f. Dashboard accounts</h3>
     <p>Signing up for free hosted-dashboard access — either directly, or as part of the code-analysis tool above — automatically creates a lightweight account: your email address, an account tier, and a cryptographically hashed copy of your access token (we do not retain the plaintext token after it is shown to you once). No password is required. Telemetry data sent to the dashboard using that token is retained for 7 days on a rolling basis. Paid dashboard tiers, once generally available, will have their own account and billing terms described here.</p>
 
-    <h3>f. Communications</h3>
+    <h3>g. Communications</h3>
     <p>If you email us at <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>, we receive your email address and the message contents. We retain emails for as long as needed to respond and maintain a record of the conversation.</p>
 
-    <h3>g. Cookies and local storage</h3>
+    <h3>h. Cookies and local storage</h3>
     <p>We do not set tracking cookies. The dashboard application may use browser local-storage for user preferences (theme, density, alert-rule configuration); this data does not leave your browser.</p>
 
     <hr />
