@@ -1,5 +1,5 @@
 /* ───────────────────────────────────────────────────────────────────
-   "Try it on your own code" savings demo (/savings-check).
+   "Try it on your own code" savings demo (/get-code).
    Own stylesheet, loaded after landing.css — inherits its :root tokens
    and [data-theme="light"] overrides, so this page stays in sync with
    the rest of the site's palette without duplicating it.

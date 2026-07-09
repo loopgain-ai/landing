@@ -1,4 +1,4 @@
-/* "Try it on your own code" savings demo (/savings-check).
+/* "Try it on your own code" savings demo (/get-code).
    Posts to the first-party capture Worker at loopgain.ai/api/analyze
    (same-origin). Own Turnstile callback (onloadTurnstileCallbackSC) so it
    doesn't collide with landing.js's dialog-scoped onloadTurnstileCallback —
@@ -29,7 +29,7 @@
   }
 
   const form = document.getElementById('scForm');
-  if (!form) return; // this script only runs on /savings-check
+  if (!form) return; // this script only runs on /get-code
 
   const codeEl = document.getElementById('scCode');
   const codeCountEl = document.getElementById('scCodeCount');
@@ -203,7 +203,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email, code, consent: true,
-          source: 'landing:savings-check',
+          source: 'landing:get-code',
           company_website: '',
           cf_turnstile_response: turnstileToken(),
         }),
