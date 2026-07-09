@@ -305,11 +305,15 @@
   const statusEl = document.getElementById('wlStatus');
   const emailEl = document.getElementById('wlEmail');
   const submitBtn = form && form.querySelector('.wl-submit');
+  const individualExtras = document.getElementById('wlIndividualExtras');
+  const termsConsentEl = document.getElementById('wlTermsConsent');
+  const newsletterOptinEl = document.getElementById('wlNewsletterOptin');
+  const fineEl = document.getElementById('wlFine');
   let currentList = 'team';
 
   const COPY = {
+    individual: { title: 'Get free hosted-dashboard access', sub: "Solo use, single-user, no cost. Leave your email and we'll set you up with an access token.", cta: 'Request access' },
     team: { title: 'Join the Team waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Team is live.", cta: 'Join the waitlist' },
-    pro: { title: 'Join the Pro waitlist', sub: "Paid plans launch soon. Leave your email and we'll tell you the moment Pro is live.", cta: 'Join the waitlist' },
     enterprise: { title: 'Talk to us about Enterprise', sub: "SLA, data residency, dedicated infrastructure. Leave your email and we'll set up a conversation.", cta: 'Request a conversation' },
     pilot: { title: 'Apply for a design-partner pilot', sub: "We're onboarding a small group of design partners. Leave your email and we'll be in touch about a pilot.", cta: 'Apply for a pilot' },
   };
@@ -387,6 +391,14 @@
       if (submitBtn) { submitBtn.textContent = c.cta; submitBtn.disabled = false; }
       if (statusEl) { statusEl.textContent = ''; statusEl.className = 'wl-status'; }
       if (emailEl) emailEl.value = '';
+      // Individual (free dashboard access, mints a real credential) needs its
+      // own explicit terms-acceptance + newsletter opt-in; other lists keep
+      // the plain implicit-consent .wl-fine text, unchanged.
+      const isIndividual = list === 'individual';
+      if (individualExtras) individualExtras.hidden = !isIndividual;
+      if (termsConsentEl) termsConsentEl.checked = false;
+      if (newsletterOptinEl) newsletterOptinEl.checked = false;
+      if (fineEl) fineEl.hidden = isIndividual;
       dialog.showModal();
       if (wlWidget === null) renderDialogWidget();
       else turnstileReset(wlWidget);  // stale/used token from a previous open
@@ -410,9 +422,23 @@
       if (fd.get('company_website')) { dialog.close(); return; }  // honeypot tripped
       const email = (fd.get('email') || '').toString().trim();
       if (!email) return;
+
+      const isIndividual = currentList === 'individual';
+      if (isIndividual && termsConsentEl && !termsConsentEl.checked) {
+        statusEl.className = 'wl-status is-err';
+        statusEl.textContent = 'Please accept the Terms of Service to continue.';
+        return;
+      }
+
+      const payload = {
+        email, list: currentList, source: 'landing:' + currentList,
+        consent: isIndividual ? !!(termsConsentEl && termsConsentEl.checked) : true,
+        company_website: '', cf_turnstile_response: turnstileToken(wlWidget),
+      };
+      if (isIndividual) payload.newsletter_optin = !!(newsletterOptinEl && newsletterOptinEl.checked);
+
       const ok = await submitCapture(
-        { email, list: currentList, source: 'landing:' + currentList, consent: true, company_website: '', cf_turnstile_response: turnstileToken(wlWidget) },
-        statusEl, submitBtn, (COPY[currentList] || COPY.team).cta,
+        payload, statusEl, submitBtn, (COPY[currentList] || COPY.team).cta,
       );
       if (!ok) turnstileReset(wlWidget);  // token is single-use; allow retry
     });

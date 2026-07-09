@@ -54,7 +54,7 @@
   <article class="legal-page">
     <span class="legal-eyebrow">§ privacy</span>
     <h1>Privacy Policy</h1>
-    <div class="legal-meta">Last updated: 2026-05-20 · Effective date: 2026-05-20</div>
+    <div class="legal-meta">Last updated: 2026-07-08 · Effective date: 2026-05-20</div>
 
     <p>This policy explains how <strong>LoopGain Technologies Inc.</strong> (&ldquo;LoopGain&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), a Canadian corporation located in Ontario, Canada, collects, uses, and protects information when you interact with our websites and services.</p>
 
@@ -78,13 +78,21 @@
     <p>The <code>loopgain</code> Python library, when used with the optional telemetry hook, can send aggregate loop-execution metrics to <code>telemetry.loopgain.ai</code>. <strong>This is opt-in</strong>: the library does not send telemetry unless the user configures the <code>LOOPGAIN_TELEMETRY_ENDPOINT</code> and <code>LOOPGAIN_TELEMETRY_TOKEN</code> environment variables and explicitly calls <code>send_telemetry()</code>.</p>
     <p>When opted in, the metrics sent include: a loop identifier (a <code>workload_id</code> you choose — we recommend it not contain personally identifying information), iteration counts, energy values, gain ratios, band classifications, and rollback events, along with the library version and timestamp. <strong>No code content, model output, prompt content, or user data is ever transmitted by the telemetry hook.</strong></p>
 
-    <h3>c. Communications</h3>
-    <p>If you email us at <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>, we receive your email address and the message contents. We retain emails for as long as needed to respond and maintain a record of the conversation. We do not send marketing email.</p>
+    <h3>c. Email lists and lead capture</h3>
+    <p>Several forms on this site collect an email address in exchange for something specific: free hosted-dashboard access, a design-partner pilot, waitlist signup for the Team or Enterprise plans, blog post notifications, or the results of the &ldquo;paste your code&rdquo; savings tool described below. When you submit one of these forms, we store your email address, which list you signed up for, the exact consent statement you agreed to, and basic anti-abuse metadata (a <strong>hashed</strong> — not raw — representation of your IP address, and your browser&rsquo;s user-agent string) used only to rate-limit and detect automated abuse.</p>
+    <p>Free hosted-dashboard access and the blog newsletter use double opt-in: we email you a confirmation link, and nothing is activated or sent until you click it. Every subscriber email includes a one-click unsubscribe link. We do not sell or share this list with third parties, and we do not send unrelated marketing email to people who sign up for one specific list.</p>
 
-    <h3>d. Dashboard accounts (future)</h3>
-    <p>When the paid dashboard tier becomes available, account creation will require an email address and pilot-tier authentication. The privacy practices for the paid product will be described here once it is generally available; no account system is in operation today.</p>
+    <h3>d. The &ldquo;paste your code&rdquo; savings tool</h3>
+    <p>The tool at <a href="/savings-check">loopgain.ai/savings-check</a> lets you paste one example loop from your own code. That snippet, along with a short instruction prompt, is sent to <strong>Anthropic</strong> (the maker of Claude), which processes it to judge whether it&rsquo;s an agent loop and to generate the analysis and rewritten code shown back to you. <strong>We do not store the code you paste</strong> — it is not written to any LoopGain database, before or after the request. Anthropic is a United States company; submitting code through this tool means it is transmitted to and processed on infrastructure outside Canada, subject to Anthropic&rsquo;s own privacy practices (<a href="https://www.anthropic.com/legal/privacy" rel="noopener">anthropic.com/legal/privacy</a>) and, as with any U.S.-processed data, potentially accessible under U.S. law.</p>
+    <p>Submitting this form also captures your email address (see &ldquo;Email lists and lead capture&rdquo; above) and, the first time you use it, automatically provisions a free hosted-dashboard account as described below.</p>
 
-    <h3>e. Cookies and local storage</h3>
+    <h3>e. Dashboard accounts</h3>
+    <p>Signing up for free hosted-dashboard access — either directly, or as part of the code-analysis tool above — automatically creates a lightweight account: your email address, an account tier, and a cryptographically hashed copy of your access token (we do not retain the plaintext token after it is shown to you once). No password is required. Telemetry data sent to the dashboard using that token is retained for 7 days on a rolling basis. Paid dashboard tiers, once generally available, will have their own account and billing terms described here.</p>
+
+    <h3>f. Communications</h3>
+    <p>If you email us at <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>, we receive your email address and the message contents. We retain emails for as long as needed to respond and maintain a record of the conversation.</p>
+
+    <h3>g. Cookies and local storage</h3>
     <p>We do not set tracking cookies. The dashboard application may use browser local-storage for user preferences (theme, density, alert-rule configuration); this data does not leave your browser.</p>
 
     <hr />
@@ -95,9 +103,11 @@
     <hr />
 
     <h2>3. Third-party services</h2>
-    <p>The following third-party services may receive information about your interaction with our sites, subject to their own privacy practices:</p>
+    <p>The following third-party services may receive information about your interaction with our sites, subject to their own privacy practices. Anthropic and Resend are United States companies; information sent to them is processed outside Canada.</p>
     <ul>
-      <li>Cloudflare (CDN, security, analytics, hosting): <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">privacy policy</a></li>
+      <li>Cloudflare (CDN, security, analytics, hosting, and Turnstile bot-verification): <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">privacy policy</a></li>
+      <li>Anthropic (processes code you submit to the savings-check tool, described above): <a href="https://www.anthropic.com/legal/privacy" rel="noopener">privacy policy</a></li>
+      <li>Resend (delivers every email we send — confirmations, tokens, analysis results, blog notifications): <a href="https://resend.com/legal/privacy-policy" rel="noopener">privacy policy</a></li>
       <li>Google Fonts (font delivery): <a href="https://developers.google.com/fonts/faq/privacy" rel="noopener">privacy notice</a></li>
       <li>GitHub (when you click through to our repositories): <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" rel="noopener">privacy statement</a></li>
       <li>PyPI / Python Software Foundation (when you click through to our package): <a href="https://www.python.org/privacy/" rel="noopener">privacy notice</a></li>

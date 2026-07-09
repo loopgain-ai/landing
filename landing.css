@@ -1201,10 +1201,10 @@ section + section {
 /* ───────────────── pricing ───────────────── */
 .price-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
-@media (max-width: 1200px) {
+@media (max-width: 900px) {
   .price-cards { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 640px) {
@@ -1917,6 +1917,13 @@ section + section {
    scoped to :has(iframe) and the layout doesn't shift when no challenge shows. */
 #wlTurnstile:has(iframe) { margin-top: 14px; }
 #newsTurnstile:has(iframe) { margin-top: 10px; }
+.wl-checkbox {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12.5px; line-height: 1.5; color: var(--text-2);
+  cursor: pointer; margin: 10px 0 0;
+}
+.wl-checkbox input { margin-top: 3px; flex: 0 0 auto; }
+.wl-checkbox a { color: var(--accent); }
 .wl-fine { font-size: 11px; line-height: 1.5; color: var(--text-4); margin: 12px 0 0; }
 .wl-status { font-size: 13px; line-height: 1.5; margin: 12px 0 0; min-height: 1.2em; color: var(--text-2); }
 .wl-status.is-ok { color: var(--band-conv); }

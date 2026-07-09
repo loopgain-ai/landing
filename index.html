@@ -134,6 +134,9 @@
           apply for a design-partner pilot
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 9 L9 3 M5 3 H9 V7" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>
         </a>
+        <a class="btn btn-ghost" href="mailto:hello&#64;loopgain&#46;ai?subject=Free%20hosted%20dashboard%20access" rel="noopener" data-capture="individual">
+          get free hosted-dashboard access
+        </a>
       </div>
 
       <p class="hero-tertiary mono">
@@ -726,9 +729,9 @@ outcome:        <span class="tk-stall">stalled</span>
 <section class="price-sec" id="pricing" data-screen-label="pricing">
   <div class="section-head">
     <span class="eyebrow mono">§08 · pricing</span>
-    <h2>Free if you self-host. Paid when you&apos;d rather not.</h2>
+    <h2>Free to self-host. Free to run solo. Paid when a team shares it.</h2>
     <p class="section-sub">
-      Apache-2.0 across the stack — library, receiver, dashboard. Self-host the whole thing if you want; the code is there. The Team, Pro, and Enterprise tiers are what you buy when you&apos;d rather we run it — each tier going further on retention, alerting, security, and compliance.
+      Apache-2.0 across the stack — library, receiver, dashboard. Self-host the whole thing, or use the hosted dashboard free as one person. Team and Enterprise are what you buy when more than one person needs the same view — each going further on retention, alerting, security, and compliance.
     </p>
   </div>
 
@@ -737,7 +740,7 @@ outcome:        <span class="tk-stall">stalled</span>
     <article class="pc">
       <header class="pc-head">
         <span class="mono pc-tag">tier · 01</span>
-        <h3>Open Source</h3>
+        <h3>Individual</h3>
         <div class="pc-price"><span class="pc-amt mono">Free</span><span class="pc-per mono">forever · Apache-2.0</span></div>
       </header>
       <ul class="pc-list">
@@ -746,6 +749,7 @@ outcome:        <span class="tk-stall">stalled</span>
         <li>Best-so-far buffer + rollback</li>
         <li>Per-run savings accounting vs a fixed <span class="mono">max_iterations</span> cap</li>
         <li>Self-host telemetry receiver + dashboard</li>
+        <li><strong>or</strong> the hosted dashboard, free, single-user — 7-day retention</li>
       </ul>
       <div class="pc-cta">
         <div class="copy-box copy-box-sm" data-copy="pip install loopgain" role="button" tabindex="0">
@@ -753,6 +757,7 @@ outcome:        <span class="tk-stall">stalled</span>
           <code class="mono">pip install loopgain</code>
           <span class="copy-hint mono">copy</span>
         </div>
+        <a class="btn btn-ghost btn-block" href="mailto:hello&#64;loopgain&#46;ai?subject=Free%20hosted%20dashboard%20access" data-capture="individual">request free hosted access →</a>
       </div>
     </article>
 
@@ -763,12 +768,15 @@ outcome:        <span class="tk-stall">stalled</span>
         <div class="pc-price"><span class="pc-amt mono">$199</span><span class="pc-per mono">/ month · per workspace</span></div>
       </header>
       <ul class="pc-list">
-        <li>Everything in Open Source</li>
-        <li>Hosted dashboard — no infra, no auth, no patches</li>
+        <li>Everything in Individual</li>
+        <li>Hosted dashboard for a shared workspace — no infra, no auth, no patches</li>
         <li>30-day run history, retained for you</li>
         <li>Alerts delivered to Slack, email, or webhooks</li>
         <li>Waste Report — fleet-wide dollar ROI for stakeholders, at your cost-per-iteration</li>
         <li>Per-iteration scrubber + share links</li>
+        <li>Saved threshold profiles — dashboard-managed, applied across your fleet</li>
+        <li>Read &amp; ingest API</li>
+        <li>Advanced alert routing</li>
       </ul>
       <div class="pc-cta">
         <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
@@ -777,37 +785,17 @@ outcome:        <span class="tk-stall">stalled</span>
       </div>
     </article>
 
-    <article class="pc pc-soon">
-      <header class="pc-head">
-        <span class="mono pc-tag">tier · 03</span>
-        <h3>Pro</h3>
-        <div class="pc-price"><span class="pc-amt mono">$999</span><span class="pc-per mono">/ month · per workspace</span></div>
-      </header>
-      <ul class="pc-list">
-        <li>Everything in Team</li>
-        <li>365-day retention</li>
-        <li>Saved threshold profiles — dashboard-managed, applied across your fleet</li>
-        <li>Read &amp; ingest API</li>
-        <li>SSO (SAML / OIDC)</li>
-        <li>Audit log + security-review support (questionnaires, architecture docs)</li>
-        <li>Advanced alert routing</li>
-        <li>Priority support — Slack Connect</li>
-      </ul>
-      <div class="pc-cta">
-        <a class="btn btn-amber btn-block" href="https://dashboard.loopgain.ai" rel="noopener">try the demo →</a>
-        <a class="btn btn-ghost btn-block" href="mailto:hello&#64;loopgain&#46;ai?subject=Pro-tier%20waitlist" data-capture="pro">join the waitlist →</a>
-        <p class="pc-cta-note mono">early teams lock founding pricing</p>
-      </div>
-    </article>
-
     <article class="pc">
       <header class="pc-head">
-        <span class="mono pc-tag">tier · 04</span>
+        <span class="mono pc-tag">tier · 03</span>
         <h3>Enterprise</h3>
         <div class="pc-price"><span class="pc-amt mono">Custom</span><span class="pc-per mono">SLA · residency · dedicated infra</span></div>
       </header>
       <ul class="pc-list">
-        <li>Everything in Pro</li>
+        <li>Everything in Team</li>
+        <li>SSO (SAML / OIDC)</li>
+        <li>Audit log + security-review support (questionnaires, architecture docs)</li>
+        <li>Priority support — Slack Connect</li>
         <li>99.9% SLA with credits</li>
         <li>Custom data residency (US / EU / APAC)</li>
         <li>Dedicated infrastructure</li>
@@ -899,11 +887,26 @@ outcome:        <span class="tk-stall">stalled</span>
     <p id="wlSub" class="wl-sub">Paid plans launch soon. Leave your email and we'll tell you the moment it's live.</p>
     <label for="wlEmail" class="wl-label mono">email</label>
     <input id="wlEmail" name="email" type="email" required autocomplete="email" placeholder="you&#64;company&#46;com" class="wl-input" />
+    <!-- Individual (free dashboard access) mints a real credential — needs
+         explicit terms acceptance + a genuinely separate, optional newsletter
+         opt-in. Other lists (team/enterprise/pilot) keep the existing
+         implicit-consent .wl-fine text below, unchanged; this block is
+         toggled visible only when list === 'individual' (see landing.js). -->
+    <div id="wlIndividualExtras" hidden>
+      <label class="wl-checkbox">
+        <input type="checkbox" id="wlTermsConsent" name="terms_consent" />
+        <span>I agree to LoopGain's <a href="/terms" target="_blank" rel="noopener">Terms of Service</a> and to be contacted about my account.</span>
+      </label>
+      <label class="wl-checkbox">
+        <input type="checkbox" id="wlNewsletterOptin" name="newsletter_optin" />
+        <span>Also send me product updates and the newsletter (optional)</span>
+      </label>
+    </div>
     <!-- honeypot: invisible to people, irresistible to bots -->
     <input type="text" name="company_website" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <div id="wlTurnstile"></div>
     <button type="submit" class="btn btn-amber btn-block wl-submit">Join the waitlist</button>
-    <p class="wl-fine mono">By joining you agree to be contacted by LoopGain about this. Unsubscribe any time.</p>
+    <p class="wl-fine mono" id="wlFine">By joining you agree to be contacted by LoopGain about this. Unsubscribe any time.</p>
     <p class="wl-status mono" id="wlStatus" role="status" aria-live="polite"></p>
   </form>
 </dialog>

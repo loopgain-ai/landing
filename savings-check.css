@@ -1,0 +1,162 @@
+/* ───────────────────────────────────────────────────────────────────
+   "Try it on your own code" savings demo (/savings-check).
+   Own stylesheet, loaded after landing.css — inherits its :root tokens
+   and [data-theme="light"] overrides, so this page stays in sync with
+   the rest of the site's palette without duplicating it.
+   ─────────────────────────────────────────────────────────────────── */
+
+.sc-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 96px) var(--gutter) 80px;
+}
+
+.sc-page h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 14px 0 18px;
+  color: var(--text-1);
+}
+
+.sc-lede {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text-2);
+  margin: 0 0 14px;
+}
+
+.sc-note {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-3);
+  margin: 0 0 36px;
+}
+.sc-note strong { color: var(--text-2); }
+
+.sc-highlight {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-1);
+  background: color-mix(in oklab, var(--accent) 10%, var(--surf-1));
+  border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--border));
+  border-radius: 9px;
+  padding: 12px 16px;
+  margin: 0 0 14px;
+}
+.sc-highlight strong { color: var(--accent); }
+
+/* ── form ── */
+.sc-form { display: flex; flex-direction: column; gap: 20px; }
+
+.sc-field { display: flex; flex-direction: column; }
+
+.sc-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  margin: 0 0 6px;
+}
+
+.sc-textarea, .sc-input {
+  width: 100%; box-sizing: border-box;
+  background: var(--bg-0);
+  border: 1px solid var(--border-2);
+  color: var(--text-1);
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: var(--mono);
+}
+.sc-input { font-family: var(--sans); font-size: 15px; }
+.sc-textarea:focus, .sc-input:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,196,81,0.18);
+}
+.sc-textarea { resize: vertical; line-height: 1.5; }
+
+.sc-hint { font-size: 11px; color: var(--text-4); margin: 6px 0 0; }
+
+.sc-consent {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 13.5px; line-height: 1.5; color: var(--text-2);
+  cursor: pointer;
+}
+.sc-consent input { margin-top: 3px; flex: 0 0 auto; }
+
+/* Turnstile slot: zero-height + no margin until Cloudflare actually injects
+   a challenge iframe (interaction-only mode) — same convention as #wlTurnstile. */
+.sc-turnstile:has(iframe) { margin-top: 2px; }
+
+.sc-status {
+  font-size: 13px; line-height: 1.5; margin: 0; min-height: 1.2em;
+  color: var(--text-2);
+}
+.sc-status.is-ok { color: var(--band-conv); }
+.sc-status.is-err { color: var(--band-osc); }
+.sc-status.is-pending { color: var(--text-3); }
+
+/* ── result ── */
+.sc-result {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.sc-result-banner {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-family: var(--mono);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 4px 10px; border-radius: 6px;
+  margin-bottom: 14px;
+}
+.sc-result-banner.detected { color: var(--band-conv); background: color-mix(in oklab, var(--band-conv) 14%, transparent); }
+.sc-result-banner.not-detected { color: var(--text-3); background: var(--surf-2); }
+
+.sc-result-message { font-size: 16px; line-height: 1.6; color: var(--text-1); margin: 0 0 14px; }
+
+.sc-savings-note {
+  font-size: 13.5px; line-height: 1.6; color: var(--text-2);
+  background: var(--surf-1); border: 1px solid var(--border);
+  border-radius: 9px; padding: 14px 16px; margin: 0 0 24px;
+}
+
+.sc-code-label { font-size: 13px; font-weight: 600; color: var(--text-1); margin: 0 0 8px; }
+
+.sc-code-block {
+  position: relative;
+  background: var(--bg-0); border: 1px solid var(--border);
+  border-radius: 9px; padding: 16px;
+  overflow-x: auto;
+  margin: 0 0 8px;
+}
+.sc-code-block pre { margin: 0; font-family: var(--mono); font-size: 12.5px; line-height: 1.6; color: var(--text-1); }
+.sc-copy-btn {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); background: var(--surf-2);
+  border: 1px solid var(--border); border-radius: 5px;
+  padding: 4px 9px; cursor: pointer;
+}
+.sc-copy-btn:hover { border-color: var(--border-2); color: var(--text-1); }
+.sc-copy-btn.copied { color: var(--band-fast); border-color: color-mix(in oklab, var(--band-fast) 40%, var(--border)); }
+
+.sc-disclaimer {
+  font-size: 12px; line-height: 1.6; color: var(--text-3);
+  margin: 0 0 28px;
+}
+
+.sc-dashboard-box {
+  background: var(--surf-1); border: 1px solid var(--border);
+  border-radius: 9px; padding: 18px 18px 20px; margin: 0 0 8px;
+}
+.sc-dashboard-box h3 { font-size: 14px; margin: 0 0 6px; color: var(--text-1); }
+.sc-dashboard-box p { font-size: 13px; line-height: 1.6; color: var(--text-2); margin: 0 0 12px; }
+
+.sc-back { margin-top: 56px; font-size: 13px; }
+.sc-back a { color: var(--accent); }
+
+@media (max-width: 640px) {
+  .sc-page { padding-top: 40px; }
+}
