@@ -54,7 +54,7 @@
   <article class="legal-page">
     <span class="legal-eyebrow">§ privacy</span>
     <h1>Privacy Policy</h1>
-    <div class="legal-meta">Last updated: 2026-07-09 · Effective date: 2026-05-20</div>
+    <div class="legal-meta">Last updated: 2026-07-10 · Effective date: 2026-05-20</div>
 
     <p>This policy explains how <strong>LoopGain Technologies Inc.</strong> (&ldquo;LoopGain&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), a Canadian corporation located in Ontario, Canada, collects, uses, and protects information when you interact with our websites and services.</p>
 
@@ -91,7 +91,7 @@
     <p>The <a href="https://github.com/loopgain-ai/loopgain-plugin">loopgain-plugin</a> is an open-source Claude Code plugin that scans a codebase for wrappable loops and proposes reviewed rewrites. It runs entirely inside your own Claude Code session, using your own existing Anthropic account and infrastructure — <strong>LoopGain never receives, stores, or processes the code it scans.</strong> Unlike the &ldquo;paste your code&rdquo; tool above, no code is ever sent to LoopGain or, through LoopGain, to Anthropic. The only way any information reaches LoopGain is if you separately choose to sign up for free hosted-dashboard access (see &ldquo;Dashboard accounts&rdquo; below) or explicitly opt into telemetry from the underlying <code>loopgain</code> library (see &ldquo;Open-source library telemetry&rdquo; above) — both optional, neither triggered automatically by installing or using the plugin.</p>
 
     <h3>f. Dashboard accounts</h3>
-    <p>Signing up for free hosted-dashboard access — either directly, or as part of the code-analysis tool above — automatically creates a lightweight account: your email address, an account tier, and a cryptographically hashed copy of your access token (we do not retain the plaintext token after it is shown to you once). No password is required. Telemetry data sent to the dashboard using that token is retained for 7 days on a rolling basis. Paid dashboard tiers, once generally available, will have their own account and billing terms described here.</p>
+    <p>Signing up for free hosted-dashboard access — either directly, or as part of the code-analysis tool above — creates an account holding your email address, an account tier, and (where you set one) a salted, one-way hash of your password: <strong>we never store the password itself</strong>. Your telemetry access token is stored in encrypted form so that logging in can configure the dashboard for you automatically; treat the token like a password, since anyone who can log in to your account can recover it. Telemetry data sent to the dashboard using that token is retained for 7 days on a rolling basis. Paid dashboard tiers, once generally available, will have their own account and billing terms described here.</p>
 
     <h3>g. Communications</h3>
     <p>If you email us at <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>, we receive your email address and the message contents. We retain emails for as long as needed to respond and maintain a record of the conversation.</p>
@@ -103,6 +103,7 @@
 
     <h2>2. How we use this information</h2>
     <p>We use the information described above to operate the websites and dashboard, improve product reliability and performance, respond to inquiries, and comply with legal obligations. <strong>We do not sell your information. We do not share it with third parties for marketing.</strong></p>
+    <p>On the <strong>Individual (free) dashboard tier</strong>, we may additionally use telemetry data in <strong>de-identified, aggregated form</strong> — combined across users, with workload identifiers removed — to improve LoopGain&rsquo;s detection methods and to publish aggregate statistics. We never publish workload names, per-customer data, or anything that could identify you or your systems. You can opt out of this aggregate use at any time by emailing <a href="mailto:hello&#64;loopgain&#46;ai">hello&#64;loopgain&#46;ai</a>; opting out does not affect your service. Telemetry on paid tiers, once available, is used only to provide the service.</p>
 
     <hr />
 
