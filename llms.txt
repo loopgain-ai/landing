@@ -35,8 +35,10 @@ The math is foundational electrical engineering control theory. Barkhausen (1921
 ## License & pricing
 
 - Library, dashboard, and telemetry receiver are all open source under Apache-2.0
-- Free if you self-host the receiver
-- Paid hosted tier for the managed dashboard + telemetry receiver
+- Free to self-host the library, receiver, and dashboard
+- Individual hosted dashboard: free, single-user, with 7-day retention
+- Team: coming soon. [Contact us about Team](mailto:hello@loopgain.ai?subject=LoopGain%20Team%20interest) to discuss your team's needs
+- [Current plans](https://loopgain.ai/#pricing)
 
 ## Optional
 
