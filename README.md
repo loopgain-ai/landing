@@ -29,3 +29,10 @@ The `.assetsignore` file excludes repo-management files (README, LICENSE, etc.) 
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
+
+## French (fr-CA) legal pages
+
+Canadian French translations of the legal pages live under `fr/` and are served at `/fr/<page>`.
+Each English legal page and its French version carry an English/Français toggle and reciprocal
+`hreflang` links. **When you change an English legal page, update its French version in the same
+change** (and the "last updated" date in both), so the two never disagree.
