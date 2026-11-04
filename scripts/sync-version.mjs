@@ -39,7 +39,11 @@ function rewrite(html, v) {
 }
 
 const version = await pypiVersion();
-const files = (await readdir(ROOT)).filter((f) => f.endsWith(".html"));
+// Root pages plus the French translations under fr/.
+const files = [
+  ...(await readdir(ROOT)).filter((f) => f.endsWith(".html")),
+  ...(await readdir(join(ROOT, "fr")).catch(() => [])).filter((f) => f.endsWith(".html")).map((f) => `fr/${f}`),
+];
 let staleFiles = [];
 
 for (const file of files) {
